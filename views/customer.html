@@ -1,0 +1,34 @@
+ <div id="page-content-wrapper">
+    <div id="page-content">
+        <div class="container">
+        <div id="page-title">
+            <h2>Customer Return reports</h2>
+        </div>
+        <div class="panel">
+            <div class="panel-body">
+                <div class="col-md-3">
+                 <input class="form-control input-sm" type="search" placeholder="Search report"  ng-model="search_report" ng-change="globalFilter()">
+                </div>
+                <div class="example-box-wrapper">
+                    <div class="hide-columns">
+                        <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/customerReports?user_id={{userdata.user_id}}" data-method="GET" >
+                            <thead>
+                            <tr>
+                                <th>Asin</th>
+                                <th>Date</th>
+                                <th>FC</th>
+                                <th>FNSKU</th>
+                                <th>OrderId</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

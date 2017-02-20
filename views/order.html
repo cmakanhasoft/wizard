@@ -1,0 +1,96 @@
+<style>
+ .pagination>.active>a{background-color:#154a82; border-color:#154a85;}
+ .pagination>.active>a:hover{background-color:#d2d8b9; border-color:#d2d8b0;color:#000;}
+</style>
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Order Refund</h2>
+   </div>
+   <div class="row">
+	<div class="col-md-12">
+	 <div class="panel">
+	  <div class="panel-body">
+	   <div class="example-box-wrapper">
+		<div class="row">
+		   <div class="col-md-6">
+			<div class="form-group">
+			  <div class="input-group input-group-lg">
+			   <input type="text" class="form-control" id="orderID" name="orderID" placeholder="Enter orderID" ng-model="orderID">
+			  </div>
+			</div>
+		   </div>
+		 <div class="col-md-3">
+		  <i class="glyph-icon tooltip-button icon-search" title="" data-original-title=".icon-search" style=" cursor:pointer;" ng-click="search()"></i>
+		 </div>
+		  </div>
+		<div class="content-box" ng-if="orderData == '-'"><h3>No records available</h3></div>
+		<div class="content-box" ng-repeat="o in orderData" ng-if="orderData != '-'">
+		 <h3 class="content-box-header bg-white">
+		  <i class="glyph-icon icon-cog"></i>
+		  Order Id :- {{o.order_id}}
+		  <div class="header-buttons">
+		   <div class="btn-group">
+			<div class="btn-group">
+			 <button id="btn-group-example" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			  Select
+			  <span class="caret"></span>
+			 </button>
+			 <ul class="dropdown-menu" role="menu" aria-labelledby="btn-group-example">
+			  <li><a href="#">Option1</a></li>
+			  <li><a href="#">Option2</a></li>
+			 </ul>
+			</div>
+		   </div>
+		  </div>
+		 </h3>
+
+		 <div class="content-box-wrapper bg-white">
+		  <div class="row">
+		   
+		   <div class="col-sm-6">
+			
+			<ul class="reset-ul">
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Order date:&nbsp;&nbsp;</b>{{o.order_date}}</li>
+
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Refund Date:&nbsp;&nbsp;</b>{{o.refund_date}}</li>
+
+			 <li><i class="glyph-icon tooltip-button icon-adjust"></i>&nbsp;&nbsp;<b>Days between order & Refund:&nbsp;&nbsp;</b> <span ng-if="o.DiffRefundOrder == 1">{{o.DiffRefundOrder}} Day</span> <span ng-if="o.DiffRefundOrder > 1">{{o.DiffRefundOrder}} Days</span></li>
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Return Date:&nbsp;&nbsp;</b>{{o.return_date}}</li>
+
+			 <li><i class="glyph-icon tooltip-button icon-adjust"></i>&nbsp;&nbsp;<b>Days between Refund & Return:&nbsp;&nbsp;</b> <span ng-if="o.DiffReturnRefund == 1">{{o.DiffReturnRefund}} Day</span> <span ng-if="o.DiffReturnRefund > 1">{{o.DiffReturnRefund}} Days</span></li>
+
+			</ul>
+		   </div>
+		   <div class="col-sm-6">
+
+			<ul class="reset-ul">
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Reimbursement Date:&nbsp;&nbsp;</b> {{o.rem_date}}</li>
+
+			 <li><i class="glyph-icon tooltip-button icon-dollar"></i>&nbsp;&nbsp;<b>Order Amount:&nbsp;&nbsp;</b> {{o.order_amount}}</li>
+			 <li><i class="glyph-icon tooltip-button icon-dollar"></i>&nbsp;&nbsp;<b>Refund Amount:&nbsp;&nbsp;</b> {{o.refund_amount}}</li>
+
+			 <li ng-if="o.reimbursement_amount != '' && o.reimbursement_amount != null && o.reimbursement_amount != undefined"><i class="glyph-icon tooltip-button icon-dollar"></i>&nbsp;&nbsp;<b>Reimbursement Amount&nbsp;&nbsp;</b>{{o.reimbursement_amount}}</li>
+
+
+			</ul>
+		   </div>
+		  </div>
+
+		 </div>
+		 
+		
+		</div>
+		<div class="search_result_pagination" ng-if="orderData != '-'">
+		 <div id="Pagination"></div>
+		</div>
+
+	   </div>
+	  </div>
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

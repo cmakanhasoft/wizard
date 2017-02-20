@@ -1,0 +1,183 @@
+<style type="text/css">
+ .tabsdemoDynamicHeight md-content {
+  background-color: transparent !important; }
+ .tabsdemoDynamicHeight md-content md-tabs {
+  background: #f6f6f6;
+  border: 1px solid #e1e1e1; }
+ .tabsdemoDynamicHeight md-content md-tabs md-tabs-wrapper {
+  background: white; }
+ .tabsdemoDynamicHeight md-content h1:first-child {
+  margin-top: 0; }
+ .pagination>.active>a{background-color:#2e5d89; border-color:#2e5d89;}
+ .pagination>.active>a:hover{background-color:#d2d8b9; border-color:#d2d8b0;color:#000;}
+ td{padding: 8px 10px !important;}
+th{padding: 8px 10px !important;}
+ </style>
+
+ <div id="sb-site">
+ <div id="page-wrapper">
+  <div id="page-content-wrapper">
+   <div id="page-content">
+	<div class="container">
+	 <div id="page-title">
+	  <h2>Inventory  Detail </h2>
+	 </div>
+	 <div class="row">
+	  <div class="modal fade" id="issueModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	   <div class="modal-dialog">
+		<div class="modal-content">
+		 <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		  <h3>FBA Issue</h3>
+		 </div>
+		 <div class="modal-body">
+		  <form role="form"  id="issue-validation">
+		   <div class="form-group">
+			<label for="contactReason">Contact Reason *:</label>
+			<div class="input-group input-group-lg">
+			 <span class="input-group-addon addon-inside bg-white font-primary">
+			  <i class="glyph-icon icon-envelope-o"></i>
+			 </span>
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="fbaissue.contactReason" required>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<label for="msku">SKU:</label>
+			<div class="input-group input-group-lg">
+			 <span class="input-group-addon addon-inside bg-white font-primary">
+			  <i class="glyph-icon icon-envelope-o"></i>
+			 </span>
+			 <input type="text" class="form-control" id="msku" name="msku"  ng-model="fbaissue.msku" readonly="" required>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<label for="issue">Please describe your issue *:</label>
+			<div class="input-group input-group-lg">
+			 <span class="input-group-addon addon-inside bg-white font-primary">
+			  <i class="glyph-icon icon-envelope-o"></i>
+			 </span>
+			 <textarea class="form-control" id="issue" name="issue" placeholder="Enter contact issue" ng-model="fbaissue.issue" required rows="10">
+                         </textarea>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" id="addPayment" ng-click="addIssue('issue-validation')">Submit</button>								</div>
+		  </form>
+		 </div>
+
+		</div>
+	   </div>
+	  </div>
+	  <div class="col-md-12">
+	   <div class="panel">
+		<div class="panel-body">
+		 <div class="example-box-wrapper">
+		  <div class="tabsdemoDynamicHeight">
+		   <md-content>
+			<md-tabs md-dynamic-height="" md-border-bottom="">
+			 <md-tab label="Destroyed by Amazon">
+			  <md-content class="md-padding">
+                              <div class="row" style="padding-bottom: 5px;">
+                                  <div class="col-md-12">
+                                    <div class="col-md-3">
+                                         <input class="form-control input-sm" type="search" placeholder="Search Transaction Id"  ng-model="term" ng-blur="search()">
+                                    </div>
+                                    <div class="col-md-9" >
+                                        <button type="button" class="btn btn-primary" id="addPayment" ng-click="openinventoryIssue()" style="float:right;">Submit Case</button></div>
+                                    </div>
+                              </div>
+                            <table  class="table table-bordered table-striped table-condensed">
+				<thead>
+				 <tr>
+                                    <th>#</th>
+                                    <th>DATE</th>
+                                    <th>REASON</th>
+                                    <th>TRANSACTION ID</th> 
+                                    <th>MERCHANT SKU</th>
+                                    <th>QUANTITY</th>
+                                    
+				 </tr>
+				</thead>
+				<tbody>
+				 <tr dt-rows ng-repeat="person in inventoryDetailData">
+                                     <td><input  type="checkbox" name="inventory_id" id="{{person.inventory_id}}" data-msku="{{person.msku}}" data-total="{{person.total}}" data-transactionId="{{person.transactionId}}" data-orderDate="{{person.orderDate}}" data-reason="{{person.reason}}" /></td>   
+				  <td>{{person.date}}</td> 
+				  <td ng-if="person.reason == '6'">Damaged by inbound carrie</td>
+				  <td ng-if="person.reason == 'D'">Destroyed</td>
+				  <td ng-if="person.reason == 'E'">Damaged At Amazon fulfillment center </td>
+				  <td ng-if="person.reason == 'Q'">Damaged - miscellameous </td>
+				  <td ng-if="person.reason == 'N'">Transfer from holding account </td>
+				  <td ng-if="person.reason == 'O'">Transfer to holding account </td>
+				  <td ng-if="person.reason == 'M'">Inventory misplaced </td>
+				  <td ng-if="person.reason == 'F'">Inventory found </td>
+				  <td>{{ person.transactionId }}</td>
+				  <td>{{ person.msku}}</td>
+				  <td>{{ person.quantity}}</td>
+				  
+				 </tr>
+				</tbody>
+			   </table>
+                            <div class="search_result_pagination" style="float:right;">
+				<div id="Pagination"></div>
+			  </div>
+			  </md-content>
+			 </md-tab>
+			 <md-tab label="Submited">
+			  <md-content class="md-padding">
+                            <div class="row">
+                              <div class="col-md-3">
+                                  <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchsubmited" ng-change="globalFilter1()">
+                              </div>
+                            </div>
+                               <table class="table table-bordered table-striped table-condensed" example-datatable1  data-url="user/submitedInventory?user_id={{userdata.user_id}}" data-method="GET" >
+                                <thead>
+                                 <tr>
+                                  <th>#</th>
+                                  <th>DATE</th>
+                                  <th>CASE ID</th>
+                                  <th>ORDER ID</th> 
+                                  <th>ACTION</th>
+                                 </tr>
+                                </thead>
+                           </table>
+			  </md-content>
+			 </md-tab>
+			 <md-tab label="Resolved">
+			  <md-content class="md-padding">
+                            <div class="row">
+                              <div class="col-md-3">
+                                  <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchresolved" ng-change="globalFilter2()">
+                              </div>
+                            </div>
+			   <table class="table table-bordered table-striped table-condensed" example-datatable2  data-url="user/resolvedInventory?user_id={{userdata.user_id}}" data-method="GET" >
+                                <thead>
+                                 <tr>
+                                  <th>#</th>
+                                  <th>DATE</th>
+                                  <th>CASE ID</th>
+                                  <th>ORDER ID</th> 
+                                  <th>ACTION</th>
+                                 </tr>
+                                </thead>
+                           </table>
+			  </md-content>
+			 </md-tab>
+			</md-tabs>
+		   </md-content>
+                      <div class="row">
+                         
+                      </div>
+		  </div>
+		 </div>
+		</div>
+	   </div>
+	  </div>
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+</div>
+
+

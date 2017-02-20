@@ -1,0 +1,54 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>FBA Issue
+		<a href="#/refundManager" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+	</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+	 <div class="example-box-wrapper">
+		  <form role="form"  id="issue-validation">
+		  <!-- <input type="text" class="form-control" id="data_id" name="contactReason" placeholder="Enter contact reason" ng-model="reimeli.data_id" required> -->
+		   <div class="form-group">
+			<label for="contactReason">Contact Reason *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="reimeli.contactReason" required>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<label for="issue">Please describe your issue *:</label>
+			<div class="input-group input-group-lg">
+			 <textarea class="form-control" id="issue" style="min-height: 350px;" name="issue"  ng-model="reimeli.issue" required rows="10" ></textarea>
+			</div>
+		   </div>
+		  <div class="form-group">
+			<label for="order_id">Order Id *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter OrderID" ng-model="reimeli.order_id" required>
+			</div>
+		   </div>
+		  <div class="form-group">
+			<label for="mail_id">Your Email*:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="mail_id" name="mail_id" placeholder="Enter Mail id" ng-model="reimeli.mail_id" required>
+			</div>
+		   </div>
+		  <div>
+		   <h2 id="pleasewait"></h2>
+		  </div>
+		   <div class="form-group" id="issusediv">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitbtn" ng-click="customerIssue('issue-validation','submit')">Submit</button>
+                    <button type="button" class="btn btn-primary" id="drftbtn" ng-click="customerIssue('issue-validation','draft')">Save Draft</button>
+		   </div>
+		  </form>
+	
+	 </div>
+
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

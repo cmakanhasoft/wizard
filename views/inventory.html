@@ -1,0 +1,35 @@
+ <div id="page-content-wrapper">
+    <div id="page-content">
+        <div class="container">
+        <div id="page-title">
+            <h2>Inventory Adjustments</h2>
+        </div>
+        <div class="panel">
+            <div class="panel-body">
+                <div class="col-md-3">
+                 <input class="form-control input-sm" type="search" placeholder="Search Inventory"  ng-model="search_inventory" ng-change="globalFilter()">
+                </div>
+                
+                <div class="example-box-wrapper">
+                    <div class="hide-columns">
+                        <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/inventory" data-method="GET"  width="100%">
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Transaction Id</th>
+                                <th>FC</th>
+                                <th>FNSKU</th>
+                                <th>Quantity</th>
+                                <th>Reason</th>
+                                <th>Disposition</th>
+                            </tr>
+                            </thead>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

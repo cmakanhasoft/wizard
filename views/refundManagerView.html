@@ -1,0 +1,99 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Return Manager <a href="#/refundManager" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a></h2>
+	
+   </div>
+<!--   Customer has not returned the yet since 24 days after refund
+Customer returned the item {diff between refund & return} days after refund
+ Customer requested the refund {diff between order & refund} days after order
+ Customer was refunded {refund amount} and the reimbursement was of only {reimbursement amount}-->
+   <div class="row">
+	<div class="col-md-12">
+	 <div class="panel">
+	  <div class="panel-body">
+	   <div class="example-box-wrapper">
+		<!--		<div class="content-box" ><h3>No records available</h3></div>-->
+		<div class="content-box">
+		 <h3 class="content-box-header bg-white">
+		  <i class="glyph-icon icon-cog"></i>
+		   Order Id :- {{orderDetail.order_id}}
+		 </h3>
+
+		 <div class="content-box-wrapper bg-white">
+		  <div class="row">
+		   <div class="col-sm-6">
+			<ul class="reset-ul">
+			 
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>SKU:&nbsp;&nbsp;</b>{{orderDetail.sku}}</li>
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Quantity:&nbsp;&nbsp;</b>{{orderDetail.quantity}}</li>
+			 <li><i class="glyph-icon tooltip-button icon-dollar"></i>&nbsp;&nbsp;<b>Price &nbsp;&nbsp;</b>{{orderDetail.orderTotal}}</li>
+			 
+			</ul>
+		   </div>
+		   <div class="col-sm-6">
+			<ul class="reset-ul">
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Order Date:&nbsp;&nbsp;</b> {{orderDetail.order_date}}</li>
+			 <li><i class="glyph-icon tooltip-button icon-adjust"></i>&nbsp;&nbsp;<b>Days between order and refund:&nbsp;&nbsp;</b>{{orderDetail.DiffOrderRefund}} Days</li>
+			 
+			 <li><i class="glyph-icon tooltip-button icon-adjust"></i>&nbsp;&nbsp;<b>Days since order and return:&nbsp;&nbsp;</b>{{orderDetail.DiffOrderReturn}} Days</li>			</ul>
+		   </div>
+		  </div>
+		  <br />
+		  <div class="row">
+		   <div class="col-sm-6">
+			<ul class="reset-ul">
+			 <li ng-if="orderDetail.amountTotal!= NULL"><i class="glyph-icon tooltip-button icon-dollar"></i>&nbsp;&nbsp;<b>Reimbursement amount:</b> &nbsp; <span >{{orderDetail.amountTotal}}</span></li>
+			 <li><i class="glyph-icon tooltip-button icon-dollar"></i>&nbsp;&nbsp;<b>Refund amount:</b> &nbsp; {{orderDetail.refund_amount * (-1)}}</li>
+			 
+			 <li><i class="glyph-icon tooltip-button icon-adjust"></i>&nbsp;&nbsp;<b>Days between order and refund:&nbsp;&nbsp;</b>{{orderDetail.DiffOrderRefund}} Days</li>
+			 
+			 <li><i class="glyph-icon tooltip-button icon-adjust"></i>&nbsp;&nbsp;<b >Days between refund and return :&nbsp;&nbsp;</b><span ng-if="orderDetail.returnRefundDate !=NULL">{{orderDetail.returnRefundDate}} Days</span> <span ng-if="orderDetail.returnRefundDate ==NULL">-</span></li>
+			</ul>
+		   </div>
+		   <div class="col-sm-6">
+			<ul class="reset-ul">
+			 <li ng-if="orderDetail.remDate != NULL "><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Reimbursement Date:&nbsp;&nbsp;</b> <span >{{orderDetail.remDate}}</span></li>
+			 
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Refund Date:&nbsp;&nbsp;</b> {{orderDetail.refund_date}}</li>
+			 <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Return Date:&nbsp;&nbsp;</b> {{orderDetail.return_date}}</li>
+			</ul>
+		   </div>
+		  </div>
+		 
+		 </div>
+		</div>
+		<div class="content-box">
+		  <div class="content-box-wrapper bg-white">
+		   <div class="row">
+			<div class="col-md-12">
+			 <ul class="reset-ul">
+			  <li ng-if="orderDetail.return_date =='' ||  orderDetail.return_date  == undefined">
+				<i class="glyph-icon tooltip-button icon-long-arrow-right" title="" data-original-title=".icon-long-arrow-right"></i> Customer has not returned the yet since {{orderDetail.currentRefundDate}} days after refund
+			  </li>
+			  <li ng-if="orderDetail.return_date !='' &&   orderDetail.return_date  != undefined">
+			   <i class="glyph-icon tooltip-button icon-long-arrow-right" title="" data-original-title=".icon-long-arrow-right"></i> 
+				 Customer returned the item {{orderDetail.returnRefundDate}} days after refund
+			  </li>
+			  <li>
+			   <i class="glyph-icon tooltip-button icon-long-arrow-right" title="" data-original-title=".icon-long-arrow-right"></i> 
+				 Customer requested the refund {{orderDetail.DiffOrderRefund}} days after order
+			  </li>
+			  <li ng-if="orderDetail.remDate != NULL && orderDetail.remDate != undefined  ">
+			   <i class="glyph-icon tooltip-button icon-long-arrow-right" title="" data-original-title=".icon-long-arrow-right"></i> 
+				 Customer was refunded {{orderDetail.refund_amount * (-1)}} and the reimbursement was of only {{orderDetail.amountTotal}}
+			  </li>
+			 </ul>
+			</div>
+		  </div>
+		  </div>
+		</div>
+	   </div>
+	  </div>
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

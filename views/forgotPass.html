@@ -1,0 +1,76 @@
+<link rel="stylesheet" type="text/css" href="assets-minified/frontend-all-demo.css"><script src="js/jquery.min.js"></script>
+<script type="text/javascript" src="assets/bootstrap/js/bootstrap.js"></script>
+ <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+     <div class="modal-dialog">
+         <div class="modal-content">
+             <div class="modal-header">
+                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<!--                 <h4 class="modal-title">Modal title</h4>-->
+             </div>
+             <div class="modal-body">
+                 <h3>You have not entered your payment details. Please proceed for adding your card details.</h3>
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-primary" id="addPayment"  data-dismiss="modal">Proceed</button>
+                 
+             </div>
+         </div>
+     </div>
+</div>
+    <!-- JS Core -->
+ <div class="center-vertical">
+    <div class="center-content row">
+
+        <div class="col-md-6 center-margin">
+
+            <h3 class="text-center pad15B font-gray text-transform-upr font-size-23">Forgot Password</h3>
+
+            <div class="content-box border-top border-red clearfix" id="logindiv">
+                <div class="content-box-wrapper row">
+
+                    <form role="form"  id="forgot-validation" class="col-md-7" >
+                        <div id="login-form">
+                          
+                            <div class="pad20A">
+				  <div class="form-group">
+                                    <label for="email">Email address *:</label>
+                                    <div class="input-group input-group-lg">
+                                        
+                                        <input type="email" class="form-control" id="exampleInputEmail1" name="email" placeholder="Enter email" ng-model="user.email_id" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-block btn-blue-alt" ng-click="send_password('forgot-validation')">Submit</button>
+                                </div>
+							 
+                            </div>
+
+                        </div>
+		     </form>
+                    <div class="col-md-4 float-right" style="height: 287px;">
+                        <div class="center-vertical">
+                            <div class="center-content">
+                                <a href="#/login" class="btn btn-block btn-md bg-facebook" >
+                                    <span class="button-content">
+                                       Login
+                                    </span>
+                                </a>
+                             
+                            </div>
+                        </div>
+                    </div>
+				 
+                </div>
+		
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+ 
+<script src="assets/plugins/form-validation/jquery.validate.min.js"></script>

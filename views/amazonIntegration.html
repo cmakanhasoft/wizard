@@ -1,0 +1,119 @@
+<style type="text/css">.codeText{background-color: #e6e8ea; color: #106CC8;padding: 0.125em 0.35em; border-radius: 2px;webkit-font-smoothing:auto;
+}</style>
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Amazon Account Integration</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+	 <div class="example-box-wrapper">
+	 	<div class="row">
+	 		<div class="col-md-12">
+                <div class="content-box">
+                    <h2 class="content-box-header bg-primary" style="font-size: 18px; background-color: #235486;">
+                        <b>STEP 1 ::>  Log In to Seller Central </b><br />
+                    </h2>
+                   <div class="content-box-wrapper">
+                    	<div class="text-center">
+						 <a href="https://sellercentral.amazon.com/" target="_blank" title="OPEN WINDOW TO SELLER CENTRAL ACCOUNT" class="btn btn-alt btn-hover btn-primary" style="background-color: #3498db;" ng-click="openStep2()"><span>OPEN WINDOW TO SELLER CENTRAL ACCOUNT</span><i class="glyph-icon icon-arrow-right"></i></a>
+                       	<div>
+                    		<p class="codeText">If the link does not open to the "User Settings" Page,  you can access user settings by clicking on "Settings" then User Permissions.</p>
+                    	</div>
+                    	</div>
+					
+                    </div>
+                </div>
+                <div class="content-box">
+                    <h2 class="content-box-header bg-primary" style="font-size: 18px; background-color: #235486;">
+                        <b>STEP 2 ::>  Invite New User </b><br />
+                    </h2>
+                    
+                    <div class="content-box-wrapper hide" id="step2">
+                    	In the "Enter e-mail address of the new user(s)" box at the top, add this email:
+                    	<br />
+                    	<h3><b>{{userdata.user_email}}</b></h3>
+                    	then click the "Send Invitation" button.<br />
+                    	<p class="codeText">
+                    		(we only need access to your reporting and the ability to manage cases- you will define limited access permissions in the next steps)
+                    	</p>
+                    	<div class="row">
+                    		<div class="text-center">
+				                <div class="col-lg-10 col-md-4 col-sm-6" >
+				                    <div>
+				                       <img src="assets/images/user-permissions.jpg" width="850" alt="UserPermissions" style="">
+				                    </div>
+				                </div>
+				            </div>    
+			            </div>
+						<div class="text-center" id="loaderDiv">
+						 <div class="remove-border glyph-icon demo-icon tooltip-button icon-spin-6 icon-spin" title="" data-original-title="icon-spin-6" style="margin-left:50%;"></div>
+						<code>Please wait.. not refresh page & not click back button</code>
+						</div>
+						
+                    </div>
+                </div>
+                <div class="content-box">
+                    <h2 class="content-box-header bg-primary" style="font-size: 18px; background-color: #235486;">
+                        <b>STEP 3 ::>  Confirm User</b><br />
+                    </h2>
+                    
+                    <div class="content-box-wrapper hide" id="step3">
+                    	<div>
+                    		<h2>Token:</h2>
+                    		<code>{{userToken.token}}</code>
+                    	</div>
+                    </div>
+                </div>
+                <div class="content-box">
+                    <h2 class="content-box-header bg-primary" style="font-size: 18px; background-color: #235486;">
+                        <b>STEP 4 ::>  View / Edit Permissions</b><br />
+                    </h2>
+                    <div class="content-box-wrapper hide" id="step4">
+
+<div class="row">
+ <div class="row">
+								  <ul>
+								   <li>In the inventory section, select View and Edit "Manage FBA Inventory/Shipments"</li>
+								   <li>In the Reports sections, select View and Edit "Feedback"</li>
+								   <li>In the Reports section View "Fulfillment Reports" And also View and Edit "Payments" option</li>
+								   <li>In the Settings section select View and Edit "Manage your Cases"</li>
+								   
+								  </ul>
+								 </div>
+                    		<div class="text-center">
+				                <div class="col-lg-10 col-md-4 col-sm-6" >
+								 
+				                    <div>
+				                       <img src="assets/images/step4.png" width="850" alt="UserPermissions" style="">
+				                    </div>
+								 <div>
+								  <img src="assets/images/step5.png" width="850" alt="UserPermissions" style="">
+								 </div>
+				                </div>
+				            </div>    
+			            </div>
+                    </div>
+                </div>
+                <div class="content-box">
+                    <h2 class="content-box-header bg-primary" style="font-size: 18px; background-color: #235486;">
+                        <b>STEP 5 ::>  Now wait for the Wizards to work</b><br />
+                    </h2>
+                    <div class="content-box-wrapper" id="step5">
+                    	<div>
+                    		<div>
+				                       
+				                    </div>
+                    	</div>
+                    </div>
+                </div>
+            </div>
+	 	</div> 
+
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

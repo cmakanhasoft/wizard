@@ -1,0 +1,180 @@
+<style type="text/css">
+ .tabsdemoDynamicHeight md-content {
+  background-color: transparent !important; }
+ .tabsdemoDynamicHeight md-content md-tabs {
+  background: #f6f6f6;
+  border: 1px solid #e1e1e1; }
+ .tabsdemoDynamicHeight md-content md-tabs md-tabs-wrapper {
+  background: white; }
+ .tabsdemoDynamicHeight md-content h1:first-child {
+  margin-top: 0; }
+ </style>
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Returns Manager</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+	 <div class="example-box-wrapper">
+	  <div class="tabsdemoDynamicHeight">
+            <md-content>
+                <md-tabs md-dynamic-height="" md-border-bottom="">
+                 <md-tab label="Reimbursement Eligible">
+                  <md-content class="md-padding">
+                   <div class="row">
+                         <div class="col-md-3">
+                                 <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchReimbursement" ng-change="globalFilter1()">
+                         </div>
+                        <div class="text-right" style="margin-right:15px;">
+ <button type="button" class="btn btn-primary" id="markasresolve" ng-click="MarkResolveIsuue()">Mark as Resolve</button>
+                         <button type="button" class="btn btn-primary" id="addPayment" ng-click="addIssue()">Submit Case</button>
+                        </div>
+                   </div>
+                    <table class="table table-bordered table-striped table-condensed" example-datatable1  data-url="user/reimbursementEligible?user_id={{userdata.user_id}}" data-method="GET" >
+                        <thead>
+                         <tr>
+                          <th>#</th>
+                          <th>ORDER ID</th>
+                          <th>ORDER DATE</th>
+                          <th>REFUND DATE</th> 
+                          <th>REFUND AMOUNT ($)</th> 
+                          <th>ACTION</th>
+                         </tr>
+                        </thead>
+                   </table>
+                  </md-content>
+                 </md-tab>
+                <md-tab label="All Refunds">
+                  <md-content class="md-padding">
+                   <div class="row">
+                         <div class="col-md-3">
+                                 <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="search_orderId" ng-change="globalFilter()">
+                         </div>
+                   </div>
+                    <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/allRefund?user_id={{userdata.user_id}}" data-method="GET" >
+                        <thead>
+                         <tr>
+                          <th>ORDER ID</th>
+                          <th>ORDER DATE</th>
+                          <th>REFUND DATE</th> 
+                          <th>REFUND AMOUNT ($)</th> 
+                          <th>ACTION</th>
+                         </tr>
+                        </thead>
+                   </table>
+
+                  </md-content>
+                 </md-tab>
+
+                 <md-tab label="Fully Reimbursed">
+                  <md-content class="md-padding">
+                   <div class="row">
+                         <div class="col-md-3">
+                                 <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchFullyReimbursement" ng-change="globalFilter2()">
+                         </div>
+                   </div>
+                    <table class="table table-bordered table-striped table-condensed" example-datatable2  data-url="user/fullyReimbursement?user_id={{userdata.user_id}}" data-method="GET" >
+                        <thead>
+                         <tr>
+                          <th>ORDER ID</th>
+                          <th>ORDER DATE</th>
+                          <th>REFUND DATE</th>
+                          <th>REFUND AMOUNT ($)</th> 
+                          <th>ACTION</th>
+                         </tr>
+                        </thead>
+                   </table>
+                  </md-content>
+                 </md-tab>
+                 <md-tab label="Discrepency">
+                  <md-content class="md-padding">
+                   <div class="row">
+                         <div class="col-md-3">
+                                 <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchdiscrepency" ng-change="globalFilter3()">
+                         </div>
+                         <div class="text-right" style="margin-right:15px;">
+                           <button type="button" class="btn btn-primary" id="MarkResolveIsuue" ng-click="MarkResolveIsuue()">Mark As Resolve</button>
+                          <button type="button" class="btn btn-primary" id="addDiscrepIssue" ng-click="addDiscrepIssue()">Submit Case</button>
+                        </div>
+                   </div>
+                    <table class="table table-bordered table-striped table-condensed" example-datatable3  data-url="user/discrepency?user_id={{userdata.user_id}}" data-method="GET" >
+                        <thead>
+                         <tr>
+                          <th>#</th>
+                          <th>ORDER ID</th>
+                          <th>ORDER DATE</th>
+                          <th>REFUND DATE</th> 
+                          <th>REFUND AMOUNT ($)</th>
+  <th>REFUND DIFF ($)</th> 
+                          <th>ACTION</th>
+                         </tr>
+                        </thead>
+                   </table>
+                  </md-content>
+                 </md-tab>
+                 <md-tab label="Submitted">
+                  <md-content class="md-padding">
+ <div class="row">
+                         <div class="col-md-3">
+                                 <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchsubmittedcase" ng-change="globalFilter4()">
+                         </div>
+                   </div>
+ <table class="table table-bordered table-striped table-condensed" example-datatable4  data-url="user/submittedCase?user_id={{userdata.user_id}}" data-method="GET" >
+                  <thead>
+                         <tr>
+                          <th>ORDER ID</th>
+                          <th>ORDER DATE</th>
+                          <th>REFUND DATE</th> 
+                          <th>ACTION</th>
+                         </tr>
+                        </thead>
+                        </table>
+                  </md-content>
+                 </md-tab>
+                 <md-tab label="Resolved">
+                  <md-content class="md-padding">
+ <div class="row">
+                         <div class="col-md-3">
+                                 <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="searchresolvedcase" ng-change="globalFilter5()">
+                         </div>
+                   </div>
+                   <table  class="table table-bordered table-striped table-condensed" example-datatable5 data-url="user/resolvedCase?user_id={{userdata.user_id}}" data-method="GET" >
+                        <thead>
+                         <tr>
+                          <th>ORDER ID</th>
+                          <th>ORDER DATE</th>
+                          <th>REFUND DATE</th> 
+                          <th>ACTION</th>
+                         </tr>
+                        </thead>
+                         </table>
+                  </md-content>
+                 </md-tab>
+                </md-tabs>
+           </md-content>
+          </div>
+
+	 </div>
+<!--	 <div class="example-box-wrapper">
+	  <div class="hide-columns">
+	   <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/refundManager?user_id={{userdata.user_id}}&role_id={{userdata.role_id}}&created_by={{userdata.created_by}}" data-method="GET" >
+		<thead>
+		 <tr>
+		  <th>ORDER ID</th>
+		  <th>DATE</th>
+		  <th>SKU</th>
+		  <th>DAYS SINCE REFUND</th>
+		  <th>POTENTIAL REIMBURSEMENT</th>
+		  <th>CASE</th>
+		 </tr>
+		</thead>
+	   </table>
+	  </div>
+	 </div>-->
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

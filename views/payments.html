@@ -1,0 +1,37 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Payments Order</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+	 <div class="col-md-3">
+	  <input class="form-control input-sm" type="search" placeholder="Search Order"  ng-model="search_order" ng-change="globalFilter()">
+	 </div>
+
+	 <div class="example-box-wrapper">
+	  <div class="hide-columns">
+	   <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/dataRange" data-method="GET"  width="100%">
+		<thead>
+		 <tr>
+		  <th>Date</th>
+		  <th>Type</th>
+		  <th>Order id</th>
+		  <th>Quantity</th>
+		  <th>Marketplace</th>
+		  <th>Order city</th>
+		  <th>Order postal</th>
+		  <th>Product sales</th>
+		  <th>Total</th>  
+		 </tr>
+		</thead>
+
+	   </table>
+	  </div>
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

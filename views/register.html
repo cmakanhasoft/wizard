@@ -1,0 +1,98 @@
+<link rel="stylesheet" type="text/css" href="assets-minified/frontend-all-demo.css">
+<!-- JS Core -->
+
+<div class="center-vertical">
+ <div class="center-content row">
+
+  <div class="col-md-6 center-margin">
+
+   <h3 class="text-center pad15B font-gray text-transform-upr font-size-23">Register</h3>
+   <div class="content-box border-top border-red clearfix" id="signupDiv">
+	<div class="content-box-wrapper row">
+	 <form role="form"  id="signup-validation" class="col-md-7" >
+	  <div id="login-form">
+	   <div class="pad20A">
+		<div class="form-group">
+		 <label for="firstName">First Name *:</label>
+		 <div class="input-group input-group-lg">
+		  <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Enter FirstName" ng-model="registerUser.firstName" required>
+		 </div>
+		</div>
+		<div class="form-group">
+		 <label for="LastName:">Last Name *:</label>
+		 <div class="input-group input-group-lg">
+		  <input type="text" class="form-control" id="LastName:" placeholder="Enter LastName" ng-model="registerUser.lastName" name="lastName" required>
+		 </div>
+		</div>
+		<div class="form-group">
+		 <label for="email">Email address *:</label>
+		 <div class="input-group input-group-lg">
+		  <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="registerUser.email" validateemail required data-rowId='' name="email">
+		 </div>
+		</div>
+		<div class="form-group">
+		 <label for="Password">Password *:</label>
+		 <div class="input-group input-group-lg">
+		  <input type="password" class="form-control" id="Password" placeholder="Enter password" ng-model="registerUser.password"  required name="password"  >
+		 </div>
+		</div>
+		<div id="planDiv">
+		  <label for="plan">Select type of service *:</label>
+		  <br />
+<!--		<div class=" radio-primary" ng-repeat="p in plan">
+		   <label>
+		  <div class="radio" id="uniform-inlineRadio110"><span class="" id="check_{{$index}}"><input type="radio" id="{{$index}}" value="{{p.id}}" name="plan" class="custom-radio" ng-click="checkplan($index)" ng-model="registerUser.plan"><i class="glyph-icon icon-circle" ></i></span></div>
+			{{p.name}}
+		   </label>
+		  </div>-->
+
+		  <div class=" radio-primary">
+		   <label>
+			<div class="radio" id="uniform-inlineRadio110"><span class="" id="check_0" style="border-color:#755454;"><input type="radio" id="0" value="basic_service" name="plan" class="custom-radio" ng-click="checkplan('0')" ng-model="registerUser.plan"><i class="glyph-icon icon-circle" ></i></span></div>
+			Basic Service <br />
+			<p style="font-size: 12px;"> Reimbursement for Returns, Damaged, Lost, Overcharged Fees, Missing Reimbursement Payments, Wrong reimbursement amounts </p>
+		   </label>
+		  </div>
+		  <div class=" radio-primary">
+		   <label>
+		  <div class="radio" id="uniform-inlineRadio110"><span class="" id="check_1" style="border-color:#755454;"><input type="radio" id="1" value="white_service" name="plan" class="custom-radio" ng-click="checkplan('1')" ng-model="registerUser.plan"><i class="glyph-icon icon-circle" ></i></span></div>
+			White Glove Service <br />
+			<p style="font-size: 12px;">All of the above PLUS Real live human beings taking care of your full account. We will find every single claim, fight to win denied cases, and make sure that not a penny is left behind.</p>
+		   </label>
+		   
+		  </div>
+		</div>
+<!--		<div class="form-group">
+		 <label for="phone">Phone *:</label>
+		 <div class="input-group input-group-lg">
+		  <input type="phone" class="form-control" id="phone" placeholder="Enter phone" ng-model="registerUser.phone"  required name="phone" >
+		 </div>
+		</div>-->
+
+		<div class="form-group">
+		 <button type="submit" class="btn btn-block btn-blue-alt" ng-click="signup('signup-validation')">Submit</button>
+		</div>
+	   </div>
+	  </div>
+
+	 </form>
+	 <div class="col-md-4 float-right" style="height: 287px;">
+	  <div class="center-vertical">
+	   <div class="center-content">
+		<a href="#/login" class="btn btn-block btn-md bg-facebook" >
+		 <span class="button-content">
+		  Login
+		 </span>
+		</a>
+
+	   </div>
+	  </div>
+	 </div>
+
+	</div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script src="assets/plugins/form-validation/jquery.validate.min.js"></script>

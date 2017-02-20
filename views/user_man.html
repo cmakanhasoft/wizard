@@ -1,0 +1,42 @@
+ <div id="page-content-wrapper">
+    <div id="page-content">
+        <div class="container">
+        <div id="page-title">
+            <h2>User Management</h2>
+        </div>
+        <div class="panel">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            <input class="form-control input-sm" type="search" placeholder="Search User"  ng-model="search_user" ng-change="globalFilter()">
+                        </div>
+                        <div class="text-right">
+                            <div class="col-md-8">
+
+                            <a class="btn btn-border btn-alt border-primary font-primary" href="#/addUser" title=""><span>Add User</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-box-wrapper">
+                    <div class="hide-columns">
+                        <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/subUser?user_id={{userdata.user_id}}" data-method="GET" >
+                            <thead>
+                            <tr>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>TYPE</th>
+                                <th>PHONE</th>
+                                <th>STATUS</th>
+                            </tr>
+                            </thead>
+                            
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

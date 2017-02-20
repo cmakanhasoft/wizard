@@ -1,0 +1,49 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>FBA Issue
+		<a href="#/refundManager" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+	</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+	 <div class="example-box-wrapper">
+	  	
+	  	 
+		  <form role="form"  id="issue-validation">
+		  <!-- <input type="text" class="form-control" id="data_id" name="contactReason" placeholder="Enter contact reason" ng-model="dis.data_id" required> -->
+		   <div class="form-group">
+			<label for="contactReason">Contact Reason *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="dis.contactReason" required>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<label for="msku">SKU:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="msku" name="msku"  ng-model="dis.msku" required>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<label for="issue">Please describe your issue *:</label>
+			<div class="input-group input-group-lg">
+			 <textarea class="form-control" id="issue" style="min-height: 350px;" name="issue"  ng-model="dis.issue" required rows="10" ></textarea>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" id="addPayment" ng-click="submitDisIssue('issue-validation')">Submit</button>								</div>
+		  </form>
+		 
+
+	   
+	  
+
+	 </div>
+
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

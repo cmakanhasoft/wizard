@@ -1,0 +1,144 @@
+<script src="js\jquery.creditCardValidator.js"></script>
+<style>
+    /* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+ #cardnumber {
+background-image: url(http://103.239.146.250:878/AmazonSuite/backend/assets/images/images.png), url(http://103.239.146.250:878/AmazonSuite/backend/assets/images/images.png);
+  background-position: 2px -121px, 260px -61px;
+  background-size: 120px 361px, 120px 361px;
+  background-repeat: no-repeat;
+  padding-left: 54px;
+     width: 333px;
+    height: 35px;
+    border: 1px solid #e4e7ea;
+}
+ #cardnumber.visa {
+  background-position: 2px -163px, 260px -61px;
+}
+#cardnumber.visa_electron {
+  background-position: 2px -205px, 260px -61px;
+}
+ #cardnumber.mastercard {
+  background-position: 2px -247px, 260px -61px;
+}
+ #cardnumber.maestro {
+  background-position: 2px -289px, 260px -61px;
+}
+ #cardnumber.discover {
+  background-position: 2px -331px, 260px -61px;
+}
+ #cardnumber.valid.visa {
+  background-position: 2px -163px, 260px -87px;
+}
+ #cardnumber.valid.visa_electron {
+  background-position: 2px -205px, 260px -87px;
+}
+ #cardnumber.valid.mastercard {
+  background-position: 2px -247px, 260px -87px;
+}
+ #cardnumber.valid.maestro {
+  background-position: 2px -289px, 260px -87px;
+}
+ #cardnumber.valid.discover {
+  background-position: 2px -331px, 260px -87px;
+}
+.payment-errors{color: #e42323;}
+input:focus { 
+    border-color: #03a9f3 !important;
+}
+
+    </style>
+    <div class="center-vertical" >
+    <div class="center-content row">
+      <center> <h3 class="box-title  m-b-0">{{successmsg}}</h3>
+       <small>Please Pay Fees and Activate your account </small>     
+      </center>
+      <center> <img src="http://103.239.146.250:878/AmazonSuite/backend/assets/images/payments.png">     
+     </center>
+        <form  class="center-margin col-xs-11 col-sm-5" method="POST" id="payment-form">
+          
+            <div id="login-form" class="content-box">
+                <center>
+                 <span class="payment-errors"></span>
+                </center>
+                <div class="content-box-wrapper pad20A">
+                    <div class="form-group">
+                        <label for="nameOfCard">Name on Card </label>
+                        <div class="input-group input-group-lg">
+                            <input type="text" size="20" class="form-control" ng-model="cardDetail.cardname" placeholder="Name on Card ">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Card Number </label>
+                        <div class="input-group input-group-lg">
+                            <input type="text" size="20" class="form-control" data-mask="4242-4242-4242-4242" id="cardnumber" ng-model="cardDetail.cardnumber"  data-stripe="number" placeholder="4242 4242 4242 4242">
+                        </div>
+                    </div>
+                 <div class="col-md-12">
+                   <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="email">EXP Date:</label>
+                        <div class="input-group input-group-lg">
+                         <div class="col-sm-6">
+                            <input type="number" min="0" class="form-control" size="2" ng-model="cardDetail.exp_month" data-stripe="exp_month" placeholder="MM">
+                         </div>
+                         <div class="col-sm-6">
+                            <input type="number" min="0" class="form-control" size="2" ng-model="cardDetail.exp_year" data-stripe="exp_year" placeholder="YYYY">
+                        </div>
+                        </div>
+                    </div> 
+                   </div>
+                  <div class="col-md-6">
+                  <div class="form-group">
+                        <label for="email">CVC:</label>
+                        <input type="password" class="form-control" size="4" ng-model="cardDetail.cvc" data-stripe="cvc" placeholder="CVC">
+                  </div>
+                  </div>
+                    </div>
+                 <p ng-if="error" style="color:red"> {{expmonth}} </p> 
+                </div>
+                <div class="button-pane">
+                   <input type="submit"  value="Submit Payment" class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" id="paymentBtn">
+               
+               <small style="display: none;" id="showLoderText">Please wait! We are now processing your payment.</small>
+                </div>
+             <center> 
+              <img src="http://103.239.146.250:878/AmazonSuite/backend/assets/images/stripe-payments.png">     
+             </center>
+            </div>
+        </form>
+        
+    </div>
+</div>
+    
+ 
+
+<script>
+    $(function() {
+        $('#cardnumber').validateCreditCard(function(result) {
+         debugger;
+         console.log(result);
+            if(result.card_type == null)
+            {
+                $('#cardnumber').removeClass();
+            }
+            else
+            {
+                $('#cardnumber').addClass(result.card_type.name);
+            }
+            
+            if(!result.valid)
+            {
+                $('#cardnumber').removeClass("valid");
+            }
+            else
+            {
+                $('#cardnumber').addClass("valid");
+            }
+            
+        });
+    });
+</script>

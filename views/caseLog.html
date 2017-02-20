@@ -1,0 +1,68 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Case Log</h2>
+   </div>
+   <div class="row">
+	<div class="col-md-12">
+	 <div class="panel">
+	  <div class="panel-body">
+	    <div class="example-box-wrapper">
+                <md-content>
+                    <md-tabs md-dynamic-height="" md-border-bottom="">
+                        <md-tab label="Case Log">
+                          <md-content class="md-padding">
+                           <div class="row">
+                                <div class="col-md-3">
+                                    <input class="form-control input-sm" type="search" placeholder="Search Case"  ng-model="search_orderId" ng-change="globalFilter()">
+                                </div>
+                           </div>
+                              <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/getcaselog?user_id={{userdata.user_id}}" data-method="GET" >
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>CASE ID</th>
+                                    <th>ORDER ID</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                              </table>
+                          </md-content>
+                         </md-tab>
+
+                        <md-tab label="Draft">
+                          <md-content class="md-padding">
+                           <div class="row">
+                                 <div class="col-md-3">
+                                         <input class="form-control input-sm" type="search" placeholder="Search Case"  ng-model="draft" ng-change="globalFilter1()">
+                                 </div>
+                               <div class="col-md-3" style="float:right;">
+                                  <button type="button" class="btn btn-primary" id="addPayment" ng-click="addDraftcustomerIssue()">Submit Case</button>       
+                               </div>
+                           </div>
+                            <table class="table table-bordered table-striped table-condensed" example-datatable1  data-url="user/darft?user_id={{userdata.user_id}}" data-method="GET" >
+                                <thead>
+                                 <tr>
+                                     <th>#</th>
+                                    <th>Date</th>
+                                    <th>CASE ID</th>
+                                    <th>ORDER ID</th>
+                                    <th>Action</th>
+                                 </tr>
+                                </thead>
+                           </table>
+                          </md-content>
+                         </md-tab>
+                    </md-tabs>
+                </md-content>
+		 
+	    </div>
+	   </div>
+	  </div>
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+
