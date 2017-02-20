@@ -72,48 +72,29 @@ class User_model extends CI_Model {
     public function inventoryDetail($data){
      
       if(isset($data['term']) && !empty($data['term'])){
-       $wh='AND a.transactionId LIKE "%'.$data['term'].'%"';
+       $wh='AND (i.transactionId LIKE "%'.$data['term'].'%")';
+       $wha='AND (a.transactionId LIKE "%'.$data['term'].'%") ';
       }else {
        $wh='';
+       $wha='';
       }
       $userId=$data['user_id'];
-       //$total = $this->getFaceCount($data); 
-       //$res['count'] = $total['total_page'];
+//       $total = $this->getFaceCount($data); 
+//       $res['count'] = $total['total_page'];
 //       $res['total_record'] = $total['total_record'];
-        
-       $position = (($data['page']-1) * $data['limit']);
-      
-       //$sql='select a.reason,a.inventory_id,a.msku , CASE WHEN a.quantity <0 THEN a.quantity*-1  ELSE a.quantity END AS quantity from inventory_adjustments as a where (a.reason in("D","E","Q","6")) AND (a.user_id='.$userId.') '.$wh.' group by a.msku,a.inventory_id limit '.$position.', '.$data['limit'].' ';
-     echo  $sql="select DISTINCT a.*,d.sku,(select total from data_range_report_order where sku= order by datetime desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.")  ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ".$wh.") order by d.datetime desc limit ".$position.", ".$data['limit'].""; die;
+//        
+//       $position = (($data['page']-1) * $data['limit']);
+       $sql="select t.*,o.* from (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select   max(data_range_report_order.data_id) from data_range_report_order where  data_range_report_order.sku in  (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.") ".$wh." group by i.msku ) group by data_range_report_order.sku) ) as t left join ( select i.inventory_id,i.date,i.transactionId,CASE WHEN i.quantity <0 THEN i.quantity *-1 ELSE i.quantity END AS quantity,i.reason,i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6') ) group by i.msku) as o on t.sku=o.msku"; 
       $limitData=  $this->db->query($sql)->result_array();
+      
       $finalArray=[];
       for($i=0;$i<count($limitData); $i++){
-       array_push($finalArray,$limitData[$i]);
+        if($limitData[$i]['inventory_id'] !='' && !empty($limitData[$i]['inventory_id']) && $limitData[$i]['inventory_id']!= null){
+            array_push($finalArray,$limitData[$i]);
+            }
       }
-      
-//        if($limitData[$i]['reason']=='O' || $limitData[$i]['reason']=='N' || $limitData[$i]['reason']=='M' || $limitData[$i]['reason']=='F'){
-//            if($limitData[$i]['quantity']<0){
-//              $limit=($limitData[$i]['quantity']) * -1;
-//            }else {
-//             $limit=$limitData[$i]['quantity'];
-//            }
-//            $l='limit '.$limit.'';
-//         }else {
-//          $l='';
-//         }
-//              $query="select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,CASE WHEN i.quantity <0 THEN (i.quantity *-1)*(d.total) ELSE (i.quantity) * (d.total) END AS total,MAX(d.datetime) as orderDate,i.inventory_id,i.date,i.msku,i.transactionId,i.reason from inventory_adjustments as i left join data_range_report_order as d on d.sku=i.msku where (i.reason in('".$limitData[$i]['reason']."' )) AND (i.user_id=".$userId.") AND (d.user_id=".$userId.") AND (i.msku='".$limitData[$i]['msku']."' ) ".$wh." ORDER BY i.inventory_id DESC limit ".$limit.""; 
-//          $query="select DISTINCT a.*,d.sku,(select total from data_range_report_order where sku='".$limitData[$i]['msku']."' order by datetime desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('".$limitData[$i]['reason']."')) AND (i.inventory_id=".$limitData[$i]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData[$i]['msku']."') ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ".$wh.") order by d.datetime desc ".$l.""; 
-//
-//          $datao= $this->db->query($query)->result_array();
-//          
-//          for($j=0;$j<count($datao);$j++){
-//           if($datao[$j]['transactionId'] !='' && !empty($datao[$j]['transactionId']) && $datao[$j]['transactionId']!= null){
-//            array_push($finalArray,$datao[$j]);
-//           }
-//          }
-//        print_r($finalArray); die;
-      
-      $sql1='select a.reason,a.inventory_id,a.msku , sum(a.quantity) as quantity from inventory_adjustments as a where (a.reason in("M","F")) AND (a.user_id='.$userId.') '.$wh.' group by a.msku,a.inventory_id limit '.$position.', '.$data['limit'].' '; 
+     
+       $sql1='select a.reason,a.inventory_id,a.msku ,CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("M","F")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku  '; 
       $limitData1=$this->db->query($sql1)->result_array();
       for($k=0;$k<count($limitData1); $k++){
       
@@ -122,14 +103,10 @@ class User_model extends CI_Model {
         }else {
          $limit=($limitData1[$k]['quantity']);
         }
-        
-//           $query="select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,CASE WHEN i.quantity <0 THEN (i.quantity *-1)*(d.total) ELSE (i.quantity) * (d.total) END AS total,MAX(d.datetime) as orderDate,i.inventory_id,i.date,i.msku,i.transactionId,i.reason from inventory_adjustments as i left join data_range_report_order as d on d.sku=i.msku where (i.reason in('M')) AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."' ) AND d.user_id=".$userId." ".$wh." ORDER BY i.inventory_id DESC  limit ".$limit."  "; 
-          $query="select DISTINCT a.*,d.sku,(select total from data_range_report_order where sku='".$limitData1[$k]['msku']."' order by datetime desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('".$limitData1[$k]['reason']."')) AND (i.inventory_id=".$limitData1[$k]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."') ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ".$wh.") order by d.datetime desc limit ".$limit.""; 
+  
+          $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$limitData1[$k]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('M')) AND (i.inventory_id=".$limitData1[$k]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."') ".$wha.") as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$limit.""; 
           $datam= $this->db->query($query)->result_array();
           for($l=0;$l<count($datam);$l++){
-            if($datam[$l]['quantity']<0){
-             $datam[$l]['quantity']=($datam[$l]['quantity'])*(-1);
-            }
             if($datam[$l]['inventory_id'] !='' && !empty($datam[$l]['inventory_id']) && $datam[$l]['inventory_id']!= null){
             array_push($finalArray,$datam[$l]);
             }
@@ -137,14 +114,26 @@ class User_model extends CI_Model {
         
       }
       
-       $sql2='select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,CASE WHEN i.quantity <0 THEN (i.quantity *-1)*(d.total) ELSE (i.quantity) * (d.total) END AS total,MAX(d.datetime) as orderDate,i.inventory_id,i.date,i.msku,i.transactionId,i.reason from inventory_adjustments as i left join data_range_report_order as d on d.sku=i.msku where (i.reason in("D","E","Q","6" )) AND (i.user_id='.$userId.') AND (d.user_id='.$userId.') '.$wh.' limit '.$position.', '.$data['limit'].''; 
+       $sql2='select a.reason,a.inventory_id,a.msku , CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("O","N")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku ';
+     
+       
       $destroydata= $this->db->query($sql2)->result_array();
       for($a=0;$a<count($destroydata);$a++){
-        if($destroydata[$a]['quantity'] !='' && !empty($destroydata[$a]['quantity']) && $destroydata[$a]['quantity']!= null){
-         array_push($finalArray,$destroydata[$a]);
-        }
+        $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$destroydata[$a]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('O'))   AND (i.user_id=".$userId.") AND (i.msku='".$destroydata[$a]['msku']."') ".$wha." ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$destroydata[$a]['quantity'].""; 
+          $datao= $this->db->query($query)->result_array();
+          
+          for($o=0;$o<count($datao);$o++){
+            if($datao[$o]['inventory_id'] !='' && !empty($datao[$o]['inventory_id']) && $datao[$o]['inventory_id']!= null){
+            array_push($finalArray,$datao[$o]);
+            }
+          }
       }
-      
+      $sort = array();
+      foreach($finalArray as $k=>$v) {
+          $sort['date'][$k] = $v['date'];
+          $sort['inventory_id'][$k] = $v['inventory_id'];
+      }
+      array_multisort($sort['date'], SORT_DESC,$finalArray);
       $res['result']=$finalArray;
       return $res;
   }
@@ -152,65 +141,55 @@ class User_model extends CI_Model {
   public function getFaceCount($data)
     {  
         if(isset($data['term']) && !empty($data['term'])){
-         $wh='AND d.transactionId LIKE "%'.$data['term'].'%"';
+         $wh='AND (i.transactionId LIKE "%'.$data['term'].'%") || (i.msku="%'.$data['term'].'%")';
+       $wha='AND (a.transactionId LIKE "%'.$data['term'].'%") || (a.msku="%'.$data['term'].'%")';
         }else {
          $wh='';
+         $wha='';
         }
         $userId=$data['user_id'];
-        $sql='select d.reason,d.inventory_id,d.msku , sum(d.quantity) as quantity from inventory_adjustments as d where (d.reason in("O","N","D","E","Q","6","M","F" )) AND (d.user_id='.$userId.') '.$wh.' group by d.msku,d.inventory_id  '; 
+        $sql="select t.*,o.* from (select data_range_report_order.product_sales,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select   max(data_range_report_order.data_id) from data_range_report_order where  data_range_report_order.sku in  (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.") ".$wh." group by i.msku ) group by data_range_report_order.sku) ) as t left join ( select i.quantity,i.reason,i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) group by i.msku) as o on t.sku=o.msku "; 
       $limitData=  $this->db->query($sql)->result_array();
 
       $finalArray=[];
       $l='';
       for($i=0;$i<count($limitData); $i++){
-       if($limitData[$i]['reason']=='O' || $limitData[$i]['reason']=='N' || $limitData[$i]['reason']=='M' || $limitData[$i]['reason']=='F'){
-        if($limitData[$i]['quantity']<0){
-          $limit=($limitData[$i]['quantity']) * -1;
-        }else {
-         $limit=$limitData[$i]['quantity'];
-        }
-        $l='limit '.$limit.'';
-       }else {
-        $l='';
-       }
-
-//              $query="select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,CASE WHEN i.quantity <0 THEN (i.quantity *-1)*(d.total) ELSE (i.quantity) * (d.total) END AS total,MAX(d.datetime) as orderDate,i.inventory_id,i.date,i.msku,i.transactionId,i.reason from inventory_adjustments as i left join data_range_report_order as d on d.sku=i.msku where (i.reason in('".$limitData[$i]['reason']."' )) AND (i.user_id=".$userId.") AND (d.user_id=".$userId.") AND (i.msku='".$limitData[$i]['msku']."' ) ".$wh." ORDER BY i.inventory_id DESC limit ".$limit.""; 
-          
-         $query="select a.* from (select d.reason,CASE WHEN d.quantity <0 THEN (d.quantity *-1) ELSE d.quantity END AS quantity ,d.inventory_id,d.date,d.msku,d.transactionId from inventory_adjustments as d where (d.reason in('".$limitData[$i]['reason']."')) AND (d.inventory_id=".$limitData[$i]['inventory_id'].") AND (d.user_id=".$userId.") AND (d.msku='".$limitData[$i]['msku']."') ".$wh
-         ." ) as a ".$l."";
-          $datao= $this->db->query($query)->result_array();
-         
-          for($j=0;$j<count($datao);$j++){
-           
-             if($datao[$j]['transactionId'] !='' && !empty($datao[$j]['transactionId']) && $datao[$j]['transactionId']!= null){
-              array_push($finalArray,$datao[$j]);
-            }
-          }
-        }
-      
-      /*$sql1='select i.inventory_id,i.msku , sum(i.quantity) as quantity from inventory_adjustments as i where (i.reason in("M","F")) AND (i.user_id='.$userId.') '.$wh.' group by i.msku,i.inventory_id '; 
+       array_push($finalArray,$limitData[$i]);
+      }
+       $sql1='select a.reason,a.inventory_id,a.msku ,CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("M","F")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku '; 
       $limitData1=$this->db->query($sql1)->result_array();
       for($k=0;$k<count($limitData1); $k++){
+      
         if($limitData1[$k]['quantity']<0){
           $limit=($limitData1[$k]['quantity']) * -1;
-           $query="select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,CASE WHEN i.quantity <0 THEN (i.quantity *-1)*(d.total) ELSE (i.quantity) * (d.total) END AS total,MAX(d.datetime) as orderDate,i.inventory_id,i.date,i.msku,i.transactionId,i.reason from inventory_adjustments as i left join data_range_report_order as d on d.sku=i.msku where (i.reason in('M')) AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."' ) AND d.user_id=".$userId." ".$wh." ORDER BY i.inventory_id DESC  limit ".$limit."  "; 
+        }else {
+         $limit=($limitData1[$k]['quantity']);
+        }
+  
+          $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$limitData1[$k]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('M')) AND (i.inventory_id=".$limitData1[$k]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."') ".$wha.") as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$limit.""; 
           $datam= $this->db->query($query)->result_array();
           for($l=0;$l<count($datam);$l++){
-            if($datam[$l]['quantity']<0){
-             $datam[$l]['quantity']=($datam[$l]['quantity'])*(-1);
-            }
+            if($datam[$l]['inventory_id'] !='' && !empty($datam[$l]['inventory_id']) && $datam[$l]['inventory_id']!= null){
             array_push($finalArray,$datam[$l]);
+            }
           }
-        }
       }
       
-       $sql2='select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,CASE WHEN i.quantity <0 THEN (i.quantity *-1)*(d.total) ELSE (i.quantity) * (d.total) END AS total,MAX(d.datetime) as orderDate,i.inventory_id,i.date,i.msku,i.transactionId,i.reason from inventory_adjustments as i left join data_range_report_order as d on d.sku=i.msku where (i.reason in("D","E","Q","6" )) AND (i.user_id='.$userId.') AND (d.user_id='.$userId.')'.$wh; 
+      $sql2='select a.reason,a.inventory_id,a.msku , CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("O","N")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku ';
+       
       $destroydata= $this->db->query($sql2)->result_array();
       for($a=0;$a<count($destroydata);$a++){
-         array_push($finalArray,$destroydata[$a]);
-      }*/
-         $count = count($finalArray); 
-        return array('total_page'=>ceil($count/$data['limit']),"total_record"=>$count);
+        $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$destroydata[$a]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('O'))   AND (i.user_id=".$userId.") AND (i.msku='".$destroydata[$a]['msku']."') ".$wha." ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId.") order by d.datetime desc "; 
+          $datao= $this->db->query($query)->result_array();
+          
+          for($o=0;$o<count($datao);$o++){
+            if($datao[$o]['inventory_id'] !='' && !empty($datao[$o]['inventory_id']) && $datao[$o]['inventory_id']!= null){
+            array_push($finalArray,$datao[$o]);
+            }
+          }
+      }
+      $count = count($finalArray);
+      return array('total_page'=>ceil($count/$data['limit']),"total_record"=>$count);
     }
    public function misplaced($data){
       $userId=$data['user_id'];
@@ -1447,7 +1426,7 @@ $data_string = json_encode($data);
       $this->db->update("user_email",$updateArray);
       return $this->db->affected_rows();
    }
-   public function darft($data){
+   public function draft($data){
     $table = 'customerissue';
      $primaryKey = 'customerissue.issue_id';
      $extraWhere='';
@@ -1461,7 +1440,8 @@ $data_string = json_encode($data);
         array('db' => 'order_id', 'dt' =>3,'searchable'=>'order_id'),
         
         array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
-              $str='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              $str ='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              $str .='   <a  href="#/caselogEdit/'.$row['issue_id'].'" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
               return $str;
        })
      );
@@ -1545,7 +1525,7 @@ $data_string = json_encode($data);
        })
      );
      
-     $order= 'ORDER BY inventoryissue.issue_id DESC';
+     $order= 'ORDER BY inventoryissue.createdDate DESC';
      $sql= 'select  DATE_FORMAT(inventoryissue.createdDate, "%Y-%m-%d") as date,inventoryissue.* from inventoryissue $where $order $limit '; 
 
      $extraWhere .='inventoryissue.user_id ='.$data['user_id'].' AND inventoryissue.issuse_status="1"';
@@ -1570,12 +1550,13 @@ $data_string = json_encode($data);
         array('db' => 'msku', 'dt' =>3,'searchable'=>'msku'),
         
         array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
-              $str='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              $str = '<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              $str .='    <a  href="#/caselogEdit/'.$row['issue_id'].'" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
               return $str;
        })
      );
      
-     $order= 'ORDER BY inventoryissue.issue_id DESC';
+     $order= 'ORDER BY inventoryissue.createdDate DESC';
      $sql= 'select  DATE_FORMAT(inventoryissue.createdDate, "%Y-%m-%d") as date,inventoryissue.* from inventoryissue $where $order $limit '; 
 
      $extraWhere .='inventoryissue.user_id ='.$data['user_id'].' AND inventoryissue.issuse_status="5"';
@@ -1626,7 +1607,8 @@ $data_string = json_encode($data);
         array('db' => 'msku', 'dt' =>3,'searchable'=>'msku'),
         
         array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
-              $str='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              //$str='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              $str ='<a  href="#/inventorycaseEdit/'.$row['issue_id'].'" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
               return $str;
        })
      );
@@ -1724,6 +1706,15 @@ $data_string = json_encode($data);
 //           }
      }
     }
+    return true;
+   }
+   public function inventoryCaseData($data){
+    return $this->db->select('*')->from('inventoryissue')->where('issue_id',$data['issue_id'])->get()->result_array();
+   }
+   public function editInventoryCase($data){
+    $data['modifyDate']=date('Y-m-d H:i:s');
+    $this->db->where('issue_id',$data['issue_id']);
+    $this->db->update('inventoryissue',$data);
     return true;
    }
 }

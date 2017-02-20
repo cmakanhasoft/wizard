@@ -13,10 +13,10 @@ if (currentFilePath.length > 1) {
 //console.log(cookies);
 //phantom.cookies = JSON.parse(fs.read(cookieFileName));
 var casper = require('casper').create({
-    clientScripts:  [
-        fs.workingDirectory +'/jquery.min.js',     // These two scripts will be injected in remote
-        fs.workingDirectory +'/underscore.js'   // DOM on every request
-    ],
+//    clientScripts:  [
+//        fs.workingDirectory +'/jquery.min.js',     // These two scripts will be injected in remote
+//        fs.workingDirectory +'/underscore.js'   // DOM on every request
+//    ],
     pageSettings: {
         loadImages:  false,        // The WebPage instance used by Casper will
         loadPlugins: false ,        // use these settings
@@ -51,7 +51,8 @@ var ft = new Date();
 ft.setFullYear(ft.getFullYear() - 1);
  var fdate = ft.toISOString().split('T')[0]; 
  var fdateArr = fdate.split("-");
-var startDate = fdateArr[1] + "/" + fdateArr[2] + "/" + fdateArr[0];
+//var startDate = fdateArr[1] + "/" + fdateArr[2] + "/" + fdateArr[0];
+var startDate = '12/01/2015';
  
  
  var tt = new Date();
@@ -60,10 +61,11 @@ tt.setDate(tt.getDate() - 2);
  var tdateArr = tdate.split("-");
 var endDate = tdateArr[1] + "/" + tdateArr[2] + "/" + tdateArr[0];
 
+
  
  /// before 7 dayes reocord
  var ft7 = new Date();
-ft7.setFullYear(ft7.getFullYear() - 7);
+ft7.setDate(ft7.getDate() - 7);
  var fdate7 = ft7.toISOString().split('T')[0];  
  var fdateArr7 = fdate7.split("-");
 var startDate7 = fdateArr7[1] + "/" + fdateArr7[2] + "/" + fdateArr7[0];
@@ -172,7 +174,11 @@ casper.then(function(){
                 $("#drrToDate").val(pendDate);
             },pstartDate,pendDate);
        });
-       
+       this.echo("evemuter stat" +pstartDate)
+       this.echo("evemuter end" +pendDate)
+       this.wait(2000, function () {
+          this.capture('popover.png');
+      }) 
 });
 casper.then(function(){
      this.mouse.click("#drrGenerateReportsGenerateButton-announce");

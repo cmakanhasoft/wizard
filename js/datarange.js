@@ -31,8 +31,8 @@ casper.cli.drop("casper-path");
 var username = casper.cli.get('email');
 var password = casper.cli.get('password');
 var datarange_count=casper.cli.get('datarange_count');
-if (!(username && password)) {
-    this.echo("Please provide --email , --password");
+if (!(username && password  && datarange_count)) {
+    this.echo("Please provide --email , --password, --datarange_count");
     casper.exit();
 }
 

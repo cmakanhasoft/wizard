@@ -16,10 +16,16 @@
                 $elem.show();
                 $loading.hide();
             }, _renderDataTableAndEmitEvent = function ($elem, options, $scope) {
+                 debugger;
                 var tableId = '#' + $elem.attr('id');
-                if($.fn.dataTable.isDataTable( tableId )) {
-                    return $(tableId).DataTable();
-                }
+                setTimeout(function(){
+//                     alert('no');
+//                    if($.fn.dataTable.DataTable( tableId )) {
+//                         alert('yes');
+//                    return $(tableId).DataTable();
+//                } 
+                },500);
+                
                 
                 var oTable = $elem.DataTable(options);
                 $scope.$emit('event:dataTableLoaded', { id: $elem.attr('id') });

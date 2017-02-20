@@ -34,7 +34,7 @@ class User extends REST_Middel_Controller {
      if($getData['role_id']!='1' && $getData['role_id'] !='2')      {
         $getData['user_id']=$getData['created_by'];
       }
-     //$destroyedByAmazonData=$this->user_model->destroyedByAmazon($getData);
+     //$destroyedByAmazonData=$this->user_model->destroyedByAmazon($getData); 
      
      $inventoryDetailData=$this->user_model->inventoryDetail($getData);
      
@@ -42,14 +42,14 @@ class User extends REST_Middel_Controller {
      if(!empty($inventoryDetailData)){
        $message['error']=false;
        $message['data']=$inventoryDetailData;
-       $message['total_page']=$inventoryDetailData['count'];
-       $message['total_record']=$inventoryDetailData['total_record'];
-       $message['current_page'] = $getData['page'];
+//       $message['total_page']=$inventoryDetailData['count'];
+//       $message['total_record']=$inventoryDetailData['total_record'];
+//       $message['current_page'] = $getData['page'];
      }else {
        $message['error'] = true;
        $message['data'] = $inventoryDetailData;
-       $message['current_page'] = $getData['page'];
-       $message['total_page']=1;
+//       $message['current_page'] = $getData['page'];
+//       $message['total_page']=1;
      }
      $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
@@ -1343,9 +1343,9 @@ Team WizardofAMZ
      }
      $addtime=$this->user_model->addTime($message['message']);
     }
-    public function darft_get(){
+    public function draft_get(){
       $getData=$this->get();
-      $this->set_response($this->user_model->darft($getData), REST_Controller::HTTP_CREATED);
+      $this->set_response($this->user_model->draft($getData), REST_Controller::HTTP_CREATED);
     }
     public function sendDraftCase_post(){
      $postData=$this->post();
@@ -1409,6 +1409,31 @@ Team WizardofAMZ
      }else{
        $message['error']=true;
        $message['message']="Your case not  submited";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function inventoryCaseData_get(){
+     $getData=$this->get();
+     $data=$this->user_model->inventoryCaseData($getData);
+     if(!empty($data)){
+       $message['error']=false;
+       $message['data']=$data;
+       $message['message']="Get inventory case data";
+     }else{
+       $message['error']=true;
+       $message['message']="Inventory case not avilable";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+   }
+   public function editInventoryCase_post(){
+     $postData=$this->post();
+     $inventoryLogData=$this->user_model->editInventoryCase($postData);
+     if($inventoryLogData){
+         $message['error']= false;
+         $message['message']='Case updated successfully'; 
+     }else{
+         $message['error']=true;
+         $message['message']="Case not updated";
      }
      $this->set_response($message, REST_Controller::HTTP_CREATED);
     }

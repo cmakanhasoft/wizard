@@ -512,7 +512,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     filter_data.page = 1;
                $http({
                     method: "GET",
-                    url: path + 'user/orderDetail?limit=10&page=' + filter_data.page + '&user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by+'&term='+term
+                    url: path + 'user/orderDetail?limit=5&page=' + filter_data.page + '&user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by+'&term='+term
                }).then(function mySucces(response) {
                     debugger;
                     if (response.data.error == false) {
@@ -535,7 +535,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                               $http({
                                    method: 'GET',
                                    async: true,
-                                   url: path + 'user/orderDetail?limit=10&page=' + page + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by + '&user_id=' + $rootScope.userdata.user_id}).
+                                   url: path + 'user/orderDetail?limit=5&page=' + page + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by + '&user_id=' + $rootScope.userdata.user_id}).
                                       then(function mySucces(response) {
                                            $scope.orderData = response.data.data;
                                            filter_data.page = page;
@@ -686,60 +686,62 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                 }
           }
 
-//          $http({
-//               method: "GET",
-//               url: path + 'user/inventoryDetail?user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
-//          }).then(function mySucces(response) {
-//               if (response.data.error == false) {
-//                    $scope.inventoryDetailData = response.data.inventoryDetailData;
-//                } else {
-//                    $scope.inventoryDetailData = '-';
-//               }
-//          });
+          $http({
+               method: "GET",
+               url: path + 'user/inventoryDetail?user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
+          }).then(function mySucces(response) {
+               if (response.data.error == false) {
+                    debugger;
+                    $scope.inventoryDetailData = response.data.data.result;
+                } else {
+                    $scope.inventoryDetailData = '-';
+               }
+          });
           
-          var filter_data={};
-       
-        if(filter_data.page == undefined || filter_data.page == '')
-            filter_data.page = 1;
-        $http({               
-         method: "GET",
-         url: path + 'user/inventoryDetail?limit=10&page='+filter_data.page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
-         }).then(function mySucces(response) {
-             if (response.data.error == false){
-                  debugger;
-                  console.log(response);
-                  $scope.inventoryDetailData = response.data.data.result;
-                  //$scope.orderData = response.data.data;
-                  $scope.total_order = response.data.data.total_record; 
-                  
-                  if(jQuery('#Pagination').data("twbs-pagination")) {
-                       jQuery('#Pagination').twbsPagination('destroy');
-                   }
-                   
-                   jQuery('#Pagination').twbsPagination({
-                        totalPages: response.data.total_page,
-                        visiblePages: 5,
-                        startPage :filter_data.page,
-                        first: '<<',
-                        last: '>>',
-                        next: '>',
-                        prev: '<',
-                        onPageClick: function(event, page) {
-                            $http({
-                                method: 'GET',
-                                async: true,
-                                url: path + 'user/inventoryDetail?limit=10&page='+page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by}).
-                                then(function mySucces(response) {
-                                   $scope.inventoryDetailData = response.data.data.result;
-                                   filter_data.page = page;
-                            });
-                        }
-                    });
-             } else {
-                $scope.inventoryDetailData='-';  
-             }
-         });
-         
+//          var filter_data={};
+//       
+//        if(filter_data.page == undefined || filter_data.page == '')
+//            filter_data.page = 1;
+//        $http({               
+//         method: "GET",
+//         url: path + 'user/inventoryDetail?limit=5&page='+filter_data.page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
+//         }).then(function mySucces(response) {
+//             if (response.data.error == false){
+//                  debugger;
+//                  console.log(response);
+//                  $scope.inventoryDetailData = response.data.data.result;
+//                  //$scope.orderData = response.data.data;
+//                  $scope.total_order = response.data.data.total_record; 
+//                  
+//                  if(jQuery('#Pagination').data("twbs-pagination")) {
+//                       jQuery('#Pagination').twbsPagination('destroy');
+//                   }
+//                   
+//                   jQuery('#Pagination').twbsPagination({
+//                        totalPages: response.data.total_page,
+//                        visiblePages: 5,
+//                        startPage :filter_data.page,
+//                        first: '<<',
+//                        last: '>>',
+//                        next: '>',
+//                        prev: '<',
+//                        onPageClick: function(event, page) {
+//                            $http({
+//                                method: 'GET',
+//                                async: true,
+//                                url: path + 'user/inventoryDetail?limit=5&page='+page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by}).
+//                                then(function mySucces(response) {
+//                                   $scope.inventoryDetailData = response.data.data.result;
+//                                   filter_data.page = page;
+//                            });
+//                        }
+//                    });
+//              
+//             } else {
+//                $scope.inventoryDetailData='-';  
+//             }
+//         });
+//         
          $scope.search = function(){
        
             if($scope.term != '' || $scope.term != undefined)
@@ -750,7 +752,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
             filter_data.page = 1;
                $http({               
                 method: "GET",
-                url: path + 'user/inventoryDetail?limit=10&page='+filter_data.page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by+'&term='+$scope.term,
+                url: path + 'user/inventoryDetail?limit=5&page='+filter_data.page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by+'&term='+$scope.term,
                 }).then(function mySucces(response) {
              if (response.data.error == false){
                   debugger;
@@ -762,8 +764,8 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                   if(jQuery('#Pagination').data("twbs-pagination")) {
                        jQuery('#Pagination').twbsPagination('destroy');
                    }
-                   
-                   jQuery('#Pagination').twbsPagination({
+                   setTimeout(function(){
+                         jQuery('#Pagination').twbsPagination({
                         totalPages: response.data.total_page,
                         visiblePages: 5,
                         startPage :filter_data.page,
@@ -775,13 +777,15 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                             $http({
                                 method: 'GET',
                                 async: true,
-                                url: path + 'user/inventoryDetail?limit=10&page='+page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by}).
+                                url: path + 'user/inventoryDetail?limit=5&page='+page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by}).
                                 then(function mySucces(response) {
                                    $scope.inventoryDetailData = response.data.data.result;
                                    filter_data.page = page;
                             });
                         }
                     });
+                   },500);
+                   
                }
           });
          }
@@ -1559,6 +1563,40 @@ debugger;
           $scope.globalFilter1 = function() {
                $scope.quoteDatatable1.fnFilter($scope.search_inventorydraftLog);
           };
+}]).controller('inventorycaseEditCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          };
           
+          if($stateParams.issue_id){
+                         $http({
+                    url: path + "user/inventoryCaseData?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
+                    method: "GET"
+               }).success(function(response) {
+                    debugger;
+                    if (response.error == false) {
+                         $scope.inventoryCaseData=response.data[0];
+                    } else {
+                         //alert('token not get');
+                     }
+               });
+          }
+          $scope.editInventoryCase=function(frm_id){
+                 if ($('#' + frm_id).valid()) {
+                    $http({
+                         method: "POST",
+                         url: path + 'user/editInventoryCase',
+                         data: $scope.inventoryCaseData
+                    }).then(function mySucces(response) {
+                         if (response.data.error == false) {
+                              show_notification('Success', response.data.message, '#/inventoryCaseLog', 'no');
+                         } else {
+                              $('#resetdiv').removeClass('hide');
+                              show_notification('Error', response.data.message, '', 'no');
+                         }
+                    });
+               }
+          }
 }]);
      

@@ -1,0 +1,64 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Edit case
+		<a href="#/caseLog" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+	</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+            
+	 <div class="example-box-wrapper">
+              <form role="form"  id="case-validation">
+	 	<div class="form-group">
+                    <div class="input-group input-group-lg">
+                     <input type="hidden" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="inventoryCaseData.issue_id" required>
+                    </div>
+                </div>	
+		   <div class="form-group">
+		   <label for="contactReason">Case Id :</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter case id" ng-model="inventoryCaseData.caseId" >
+			</div>
+		   </div>
+		   <div class="form-group">
+		   <label for="contactReason">Contact Reason *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="inventoryCaseData.contactReason" required>
+			</div>
+		   </div>
+		  <div class="form-group">
+			<label for="issue">Please describe your issue *:</label>
+			<div class="input-group input-group-lg">
+			 <textarea class="form-control" id="issue" style="min-height: 350px;" name="issue"  ng-model="inventoryCaseData.issue" required rows="10" ></textarea>
+			</div>
+		   </div>
+		  <div class="form-group">
+			<label for="msku">ASIN, SKU, or FNSKU (optional) *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="msku" name="msku" placeholder="Enter OrderID" ng-model="inventoryCaseData.msku" required>
+			</div>
+		   </div>
+		  <div class="form-group">
+			<label for="mail_id">Your Email*:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="mail_id" name="mail_id" placeholder="Enter Mail id" ng-model="inventoryCaseData.mail_id" required>
+			</div>
+		   </div>
+             <div class="col-lg-3">
+		   <div class="form-group">
+                     <button type="submit" class="btn btn-block btn-blue-alt" ng-click="editInventoryCase('case-validation')">Submit</button>
+                   </div>
+             </div>
+             <div class="col-lg-3">
+                 <a href="#/inventoryCaseLog" class="btn btn-block btn-blue-alt" >Cancle</a>
+             </div>
+                  </form>
+	 </div>
+
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

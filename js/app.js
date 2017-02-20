@@ -384,6 +384,19 @@
             requiredPermissions:['1','2','3','4','5']
           }
         }
+   }).state('/inventorycaseEdit/:issue_id ', {
+        url: '/inventorycaseEdit/:issue_id',
+        templateUrl: 'views/inventorycaseEdit.html',
+        controller: 'inventorycaseEditCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'inventoryCaseLog',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2','3','4','5']
+          }
+        }
       })
   }]);
  app.run(['$rootScope', '$cookies','$state','authorization',function($rootScope,$cookies,$state,authorization) {
@@ -391,7 +404,6 @@
   $rootScope.$on('$stateChangeStart', function(event, toState) {
         if($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
         {
-		console.log($rootScope.userdata)
           $rootScope.userdata = JSON.parse($cookies.get('userdata'));
         }
 
