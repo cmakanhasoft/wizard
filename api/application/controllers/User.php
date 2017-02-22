@@ -1050,8 +1050,8 @@ Team WizardofAMZ
          if(file_exists($rfileName)){
          
          $rresult=$this->user_model->addRemb($rfileName,$rembData[0]['user_id']);
+         unlink($rfileName);
          if($rresult){
-            unlink($rfileName);
             $changeStatus=$this->user_model->changeRemClick($rembData);
             $message['message']='Rem report inserted.';
             $message['error']=false;
@@ -1434,6 +1434,44 @@ Team WizardofAMZ
      }else{
          $message['error']=true;
          $message['message']="Case not updated";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function fileUpload_post() {
+       $output_dir = $_SERVER['DOCUMENT_ROOT'].'/amazon_local/uploads/';
+       //$output_dir = $_SERVER['DOCUMENT_ROOT'].'/uploads/facility_image/';
+       if(isset($_FILES["myfile"]))
+       {
+            $error =$_FILES["myfile"]["error"];
+            //You need to handle  both cases
+            //If Any browser does not support serializing of multiple files using FormData() 
+            if(!is_array($_FILES["myfile"]["name"])) //single file
+            {
+            $fileName = md5($_FILES["myfile"]["name"]).'_'.$_FILES["myfile"]["name"];
+            move_uploaded_file($_FILES["myfile"]["tmp_name"],$output_dir.$fileName);
+            $ret[]= $fileName;
+            } else  //Multiple files, file[]
+            {
+              $fileCount = count($_FILES["myfile"]["name"]);
+              for($i=0; $i < $fileCount; $i++)
+              {
+                    $fileName = md5($_FILES["myfile"]["name"]).'_'.$_FILES["myfile"]["name"][$i];
+                    move_uploaded_file($_FILES["myfile"]["tmp_name"][$i],$output_dir.$fileName);
+                    $ret[]= $fileName;
+              }
+            }
+            echo json_encode($ret);
+         }
+    }
+    public function saveMailReply_post(){
+     $postData=$this->post();
+     $replyData=$this->user_model->saveMailReply($postData);
+     if($replyData){
+         $message['error']= false;
+         $message['message']='Mail sent successfully'; 
+     }else{
+         $message['error']=true;
+         $message['message']="Mail not sent";
      }
      $this->set_response($message, REST_Controller::HTTP_CREATED);
     }

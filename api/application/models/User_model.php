@@ -1190,6 +1190,7 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
    public function caselogDetail($data){
     $result=[];
 //    $result['caseLog']=$this->db->select('*')->from('customerissue')->where('issue_id',$data['issue_id'])->get()->result_array();
+    $result['userData']=$this->db->select('*')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
     $query="select DATE_FORMAT(customerissue.createdDate, '%Y-%m-%d') as issueDate,customerissue.* from customerissue where customerissue.issue_id= ".$data['issue_id']."";
      $result['caseLog']=$this->db->query($query)->result_array();
     if(!empty($result['caseLog'][0]['caseId'])){
@@ -1717,6 +1718,18 @@ $data_string = json_encode($data);
     $this->db->update('inventoryissue',$data);
     return true;
    }
+    public function saveMailReply($data){
+     $data['replyData']['createdDate']=date('Y-m-d H:i:s');
+     $this->db->insert('case_log_reply_msg',$data['replyData']);
+     $reply_id=$this->db->insert_id();
+     if(!empty($reply_id)){
+       for($i=0;$i<count($data['reply_file']);$i++){
+         $fileData=array('reply_id'=>$reply_id,'file_name'=>$data['reply_file'][$i][0],'createdDate'=>date('Y-m-d H:i:s'));
+         $this->db->insert('reply_attachment',$fileData);
+       }
+     }
+     return true;
+    }
 }
 
 ?>

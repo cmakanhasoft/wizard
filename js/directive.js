@@ -331,3 +331,59 @@ app.directive('validateemailformat',function ($rootScope,$http) {
 }
 }
 });
+
+app.directive('fileUploaders',function () {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+        elem.uploadFile({
+		url:path +"user/fileUpload/",
+		fileName:"myfile",
+                         dragDrop: true,
+                         returnType: "json",
+                         showDelete: true,
+                         showPreview:true,
+                         previewHeight:100,
+                         previewWidth:100,
+                         allowedTypes:"xls,csv,doc,pdf,txt",
+                         statusBarWidth:300,
+                         dragdropWidth:300,
+                onSelect:function(files)
+                {
+                    files[0].name;
+                    files[0].size;
+                    return true; //to allow file submission.
+                },
+                onSuccess:function(files,data,xhr,pd)
+                {
+                  
+                  if(scope.reply_file == undefined){
+                     scope.reply_file =[];
+                  }
+                  scope.reply_file.push(data);
+                   $("#eventsmessage").html($("#eventsmessage").html()+"<br/>Success for: "+JSON.stringify(data));
+                },
+                afterUploadAll:function(obj,data)
+                {
+                    console.log(scope.reply_file);
+                        $("#eventsmessage").html($("#eventsmessage").html()+"<br/>All files are uploaded.");
+                },
+                onLoad:function(obj)
+                {
+                    
+                },
+                deleteCallback: function (data, pd) {
+                    for (var i = 0; i < data.length; i++) {
+                        $.post(path +"facility/deletefacilityimage/", {op: "delete",name: data[i]},
+                            function (resp,textStatus, jqXHR) {
+                                //Show Message	
+                               
+                            });
+                    }
+                    pd.statusbar.hide(); //You choice.
+
+                },  
+            });
+        }
+    }
+});

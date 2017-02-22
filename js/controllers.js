@@ -1297,6 +1297,9 @@ debugger;
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
           }
+          $scope.sentReplay=function(){
+               $('#replyModal').modal('toggle');
+          }
           $scope.addDraftcustomerIssue = function() {
                debugger;
                     if($scope.inventory==undefined){
@@ -1430,7 +1433,9 @@ debugger;
                          }).success(function(response) {
                               debugger;
                               if (response.error == false) {
+                                   debugger;
                                    $scope.caseLog=response.data.caseLog[0];
+                                   $scope.userData=response.data.userData[0];
                                    $scope.caseLogDetail=response.data.caseLogMesgDetail;
                                    console.log($scope.caseLogDetail);
                                    setTimeout(function(){
@@ -1442,6 +1447,31 @@ debugger;
                                    //alert('token not get');
                                }
                          });
+          }
+          $scope.mailReply=function(frm_id){
+               if ($scope.reply_file == undefined) {
+                    $scope.reply_file = {};
+                }
+                
+               // if ($('#' + frm_id).valid()) {
+                     $scope.casereply.caseID=$('#caseID').val();
+                     $scope.casereply.from=$('#from').val();
+                     $scope.casereply.to='Amazon';
+                    $http({
+                              url: path + "user/saveMailReply",
+                              method: "POST",
+                              data:{'reply_file':$scope.reply_file,'replyData':$scope.casereply}
+                         }).success(function(response) {
+                              debugger;
+                              if (response.error == false) {
+                                   show_notification('Success', response.message, '', 'no');
+                                   $('#replyModal').modal('hide');
+                              } else {
+                                      show_notification('Error', response.message, '', 'no');
+                               }
+                         });
+               
+          //}
           }
           $scope.acc=function(id){
                $("[id^=accordion]").removeClass('open');
