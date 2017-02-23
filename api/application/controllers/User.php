@@ -1475,4 +1475,8 @@ Team WizardofAMZ
      }
      $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
+    public function addremId_post(){
+     $data=$this->user_model->addremId();
+     
+    }
 }

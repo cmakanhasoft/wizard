@@ -84,17 +84,30 @@ class User_model extends CI_Model {
 //       $res['total_record'] = $total['total_record'];
 //        
 //       $position = (($data['page']-1) * $data['limit']);
-       $sql="select t.*,o.* from (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select   max(data_range_report_order.data_id) from data_range_report_order where  data_range_report_order.sku in  (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.") ".$wh." group by i.msku ) group by data_range_report_order.sku) ) as t left join ( select i.inventory_id,i.date,i.transactionId,CASE WHEN i.quantity <0 THEN i.quantity *-1 ELSE i.quantity END AS quantity,i.reason,i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6') ) group by i.msku) as o on t.sku=o.msku"; 
-      $limitData=  $this->db->query($sql)->result_array();
-      
+         //$sql="select t.*,o.* from (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select   max(data_range_report_order.data_id) from data_range_report_order where  data_range_report_order.sku in  (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.") ".$wh." group by i.msku ) group by data_range_report_order.sku) ) as t left join ( select i.inventory_id,i.date,i.transactionId,CASE WHEN i.quantity <0 THEN i.quantity *-1 ELSE i.quantity END AS quantity,i.reason,i.msku,count(i.msku) as totalmsku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6') ) group by i.msku) as o on t.sku=o.msku"; 
+     //$DEQ6sql="select c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason'   from (select a.reason, a.msku,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE  (i.reason in('D','E','Q'))AND i.user_id=".$userId." group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p  where (p.reason in ('Damaged_warehouse') AND p.user_id=".$userId.")  group by p.msku) as b on a.msku=b.msku  Union select a.reason, a.msku,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE  (i.reason in('6'))AND i.user_id=".$userId." group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p  where (p.reason in ('Damaged_inbound') AND p.user_id=".$userId.")  group by p.msku) as b on a.msku=b.msku) as c"; die;
+       $DEQ6sql="select c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason' from (select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('D','E','Q'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_warehouse') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku
+Union select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('6'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_inbound') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku) as c";
+      $DEQ6Data=  $this->db->query($DEQ6sql)->result_array();
+      echo "<pre>";
+      print_r($DEQ6Data);  die;
       $finalArray=[];
-      for($i=0;$i<count($limitData); $i++){
-        if($limitData[$i]['inventory_id'] !='' && !empty($limitData[$i]['inventory_id']) && $limitData[$i]['inventory_id']!= null){
-            array_push($finalArray,$limitData[$i]);
-            }
+      for($i=0;$i<count($DEQ6Data); $i++){
+       
+        if($DEQ6Data[$i]['totalRecord'] > 0){
+        $limit=$DEQ6Data[$i]['totalRecord'];
+        }else if($DEQ6Data[$i]['totalRecord'] == ''){
+         $limit=$DEQ6Data[$i]['inventoryTotal'];
+        }else if($DEQ6Data[$i]['totalRecord']<0){
+         $limit=$DEQ6Data[$i]['inventoryTotal'];
+        }else if($DEQ6Data[$i]['totalRecord'] == 0){
+         $limit=0;
+        }
+        $DEQ6subSql="";
+       
       }
-     
-       $sql1='select a.reason,a.inventory_id,a.msku ,CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("M","F")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku  '; 
+     die;
+       echo $sql1='select a.reason,a.inventory_id,a.msku ,CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("M","F")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku  '; die;
       $limitData1=$this->db->query($sql1)->result_array();
       for($k=0;$k<count($limitData1); $k++){
       
@@ -104,19 +117,17 @@ class User_model extends CI_Model {
          $limit=($limitData1[$k]['quantity']);
         }
   
-          $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$limitData1[$k]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('M')) AND (i.inventory_id=".$limitData1[$k]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."') ".$wha.") as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$limit.""; 
+        echo $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$limitData1[$k]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('M')) AND (i.inventory_id=".$limitData1[$k]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."') ".$wha.") as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$limit.""; die;
           $datam= $this->db->query($query)->result_array();
           for($l=0;$l<count($datam);$l++){
             if($datam[$l]['inventory_id'] !='' && !empty($datam[$l]['inventory_id']) && $datam[$l]['inventory_id']!= null){
             array_push($finalArray,$datam[$l]);
             }
           }
-        
       }
       
-       $sql2='select a.reason,a.inventory_id,a.msku , CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("O","N")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku ';
+      $sql2='select a.reason,a.inventory_id,a.msku , CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("O","N")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku ';
      
-       
       $destroydata= $this->db->query($sql2)->result_array();
       for($a=0;$a<count($destroydata);$a++){
         $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$destroydata[$a]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('O'))   AND (i.user_id=".$userId.") AND (i.msku='".$destroydata[$a]['msku']."') ".$wha." ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$destroydata[$a]['quantity'].""; 
@@ -1729,6 +1740,19 @@ $data_string = json_encode($data);
        }
      }
      return true;
+    }
+    public function addremId(){
+     $DEQ6sql="select c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason' from (select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('D','E','Q'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_warehouse') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku
+Union select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('6'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_inbound') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku) as c";
+     
+     $DEQ6Data=  $this->db->query($DEQ6sql)->result_array();
+      echo "<pre>";
+      print_r($DEQ6Data);  die;
+      for ($i=0;$i<count($DEQ6Data); $i++){
+       
+      }
+      $finalArray=[];
+     
     }
 }
 
