@@ -1,0 +1,41 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2><b>{{sku}}</b> History
+    <a href="#/inventoryad" style="float:right; font-size: 25px;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+  </h2>
+
+   </div>
+   <div class="row">
+	<div class="col-md-12">
+	 <div class="panel">
+	  <div class="panel-body">
+	    <div class="example-box-wrapper">
+                
+         <div class="row">
+              <div class="col-md-3">
+                  <input class="form-control input-sm" type="search" placeholder="Search inventory"  ng-model="search_orderId" ng-change="globalFilter()">
+              </div>
+         </div>
+            <table class="table table-bordered table-striped table-condensed" example-datatable  data-url="user/skuHistory?user_id={{userdata.user_id}}&sku={{sku}}" data-method="GET" >
+              <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>MSKU</th>
+                  <th>REASON</th>
+                  <th>REIMBURSEMENT ID </th>
+                  <th>TRANSACTION ID</th>
+                  <th>QUANTITY</th>
+              </tr>
+              </thead>
+            </table>
+      </div>
+	   </div>
+	  </div>
+	 </div>
+	</div>
+   </div>
+  </div>
+ </div>
+

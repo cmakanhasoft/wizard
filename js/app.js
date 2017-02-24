@@ -397,6 +397,20 @@
             requiredPermissions:['1','2','3','4','5']
           }
         }
+      }).state('/skuhistory/:sku ', {
+        url: '/skuhistory/:sku',
+        templateUrl: 'views/skuhistory.html',
+        controller: 'skuhistoryCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'inventoryad',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2','3','4','5']
+          }
+        }
+        
       })
   }]);
  app.run(['$rootScope', '$cookies','$state','authorization',function($rootScope,$cookies,$state,authorization) {

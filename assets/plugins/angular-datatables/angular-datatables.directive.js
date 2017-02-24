@@ -28,7 +28,9 @@
                 
                 
                 var oTable = $elem.DataTable(options);
-                $scope.$emit('event:dataTableLoaded', { id: $elem.attr('id') });
+                $scope.$emit('event:dataTableLoaded', {
+                     id: $elem.attr('id')
+                });
                 return oTable;
             }, _doRenderDataTable = function($elem, options, $scope) {
                 // Add $timeout to be sure that angular has finished rendering before calling datatables
@@ -280,8 +282,11 @@
         };
     }).
     directive('dtRows', function ($rootScope, DT_LAST_ROW_KEY) {
-        return {
+         return {
             restrict: 'A',
+            LengthChange: false,
+            Paginate:false,
+            
             link: function($scope) {
                 if ($scope.$last === true) {
                     $rootScope.$broadcast(DT_LAST_ROW_KEY);

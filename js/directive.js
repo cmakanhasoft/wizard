@@ -22,7 +22,7 @@ app.directive('loading', ['$http', function ($http) {
           return $http.pendingRequests.length > 0;
         };
         scope.$watch(scope.isLoading, function (value) {
-          debugger;
+      
           if (value) {
             element.removeClass('ng-hide');
           } else {

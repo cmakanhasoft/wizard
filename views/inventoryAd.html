@@ -18,51 +18,114 @@
 	  <h2>Inventory  Detail </h2>
 	 </div>
 	 <div class="row">
-	  <div class="modal fade" id="issueModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal fade" id="rembModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	   <div class="modal-dialog">
 		<div class="modal-content">
 		 <div class="modal-header">
 		  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		  <h3>FBA Issue</h3>
+		  <h3>REIMBURSEMENT ID Detail</h3>
 		 </div>
 		 <div class="modal-body">
-		  <form role="form"  id="issue-validation">
+		  <form role="form"  id="sku-validation">
 		   <div class="form-group">
-			<label for="contactReason">Contact Reason *:</label>
+			<label for="sku">Reimbursement ID *:</label>
 			<div class="input-group input-group-lg">
-			 <span class="input-group-addon addon-inside bg-white font-primary">
-			  <i class="glyph-icon icon-envelope-o"></i>
-			 </span>
-			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="fbaissue.contactReason" required>
+			 <input type="text" class="form-control" id="sku" name="sku" placeholder="Enter Reimbursement ID" ng-model="remb.rembId" required>
+			 <input type="hidden" class="form-control" id="inventory_id" name="inventory_id" value="">
+                         <input type="hidden" class="form-control" id="reason" name="reason" value="">
 			</div>
 		   </div>
-		   <div class="form-group">
-			<label for="msku">SKU:</label>
-			<div class="input-group input-group-lg">
-			 <span class="input-group-addon addon-inside bg-white font-primary">
-			  <i class="glyph-icon icon-envelope-o"></i>
-			 </span>
-			 <input type="text" class="form-control" id="msku" name="msku"  ng-model="fbaissue.msku" readonly="" required>
-			</div>
-		   </div>
-		   <div class="form-group">
-			<label for="issue">Please describe your issue *:</label>
-			<div class="input-group input-group-lg">
-			 <span class="input-group-addon addon-inside bg-white font-primary">
-			  <i class="glyph-icon icon-envelope-o"></i>
-			 </span>
-			 <textarea class="form-control" id="issue" name="issue" placeholder="Enter contact issue" ng-model="fbaissue.issue" required rows="10">
-									  
-			 </textarea>
-			</div>
-		   </div>
-		   <div class="form-group">
+		  
+		   <div class="form-group" id="issusediv">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary" id="addPayment" ng-click="addIssue('issue-validation')">Submit</button>								</div>
+			<button type="button" class="btn btn-primary" id="addPayment" ng-click="checkRembId('sku-validation')">Submit</button>			
+                   </div>
+                <div class="form-group" id="pleasewait">
+                </div>
+                <div class="row" ng-if="temprembidStatus">
+                    <b>The mentioned reimbursement ID is not yet found in our records. Usually, it takes a few days until the reimbursement is displayed in your records. Do you want to be notified after 7 days for this ID?
+                    </b>
+                    <div class="col-md-12" style="float:right;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" id="addPayment" ng-click="saveTempRembid()">Yes</button>              </div>	
+                 </div>
+                 <div class="row" ng-if="inventoryData !='' &&   rembData !=''">
+                        <div class="col-md-12" style="float:right;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="assignRembId" ng-click="assignRembId()">Update</button>		</div>	
+                  </div>
+                  <div class="row" ng-if="inventoryData =='' &&   rembData !=''">
+                        <div class="col-md-12" style="float:right;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="updateRembId" ng-click="updateRembId()">Update</button>		</div>	
+                  </div>
 		  </form>
-		 </div>
-
-		</div>
+		<br />
+                <br />
+                    <div class="row" ng-if="rembData !=''">
+                        <div class="col-md-12">
+                            <div id="page-title">
+                                <h2> &nbsp; &nbsp;Rembursement  Detail </h2>
+                            </div>
+                         <table class="table table-bordered table-striped table-condensed">
+				<thead>
+				 <tr>
+                                    <th>DATE</th>
+                                    <th>REASON</th>
+                                    <th>MERCHANT SKU</th>
+                                    <th>REIMBURSEMENT ID</th>
+                                 </tr>
+				</thead>
+				<tbody>
+				 <tr  ng-repeat="r  in  rembData">
+                                  <td>{{r.date}}</td> 
+                                  <td>{{r.reason}}</td>
+				  <td>{{r.msku}}</td>
+				  <td>{{r.remId}}</td>
+                                 </tr>
+				</tbody>
+			   </table>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="inventoryData !=''">
+                        <div class="col-md-12">
+                            <div id="page-title">
+                                <h2> &nbsp; &nbsp;Inventory  Detail </h2>
+                            </div>
+                        <table class="table table-bordered table-striped table-condensed">
+				<thead>
+				 <tr>
+                                    <th>DATE</th>
+                                    <th>REASON</th>
+                                    <th>TRANSACTION ID</th> 
+                                    <th>MERCHANT SKU</th>
+                                    <th>QUANTITY</th>
+                                    <th>REIMBURSEMENT ID</th>
+                                 </tr>
+				</thead>
+				<tbody>
+				 <tr  ng-repeat="i  in  inventoryData">
+                                  <td>{{i.date}}</td> 
+				  <td ng-if="i.reason == '6'">Damaged by inbound carrie</td>
+				  <td ng-if="i.reason == 'D'">Destroyed</td>
+				  <td ng-if="i.reason == 'E'">Damaged At Amazon fulfillment center </td>
+				  <td ng-if="i.reason == 'Q'">Damaged - miscellameous </td>
+				  <td ng-if="i.reason == 'N'">Transfer from holding account </td>
+				  <td ng-if="i.reason == 'O'">Transfer to holding account </td>
+				  <td ng-if="i.reason == 'M'">Inventory misplaced </td>
+				  <td ng-if="i.reason == 'F'">Inventory found </td>
+				  <td>{{ i.transactionId }}</td>
+				  <td>{{ i.msku}}</td>
+				  <td>{{ i.quantity}}</td>
+				  <td>{{ i.rembId}}</td>
+                                 </tr>
+				</tbody>
+			   </table>
+                        </div>
+                    </div>
+                    
+                      </div>
+                </div>
 	   </div>
 	  </div>
 	  <div class="col-md-12">
@@ -74,7 +137,16 @@
 			<md-tabs md-dynamic-height="" md-border-bottom="">
 			 <md-tab label="Destroyed by Amazon">
 			  <md-content class="md-padding">
-                              <button type="button" class="btn btn-primary" id="addPayment" ng-click="openinventoryIssue()" style="float:right; margin-bottom: 5px;">Submit Case</button>
+                              <div class="row">
+                                  <div class="col-md-3"></div>
+                                  <div class="col-md-6">
+                                      <h3> <b>{{totalAmount}} </b></h3>
+                                  </div>
+                                  
+                                    <div class="col-md-3">
+                                    <button type="button" class="btn btn-primary" id="addPayment" ng-click="openinventoryIssue()" style="float:right; margin-bottom: 5px;">Submit Case</button>
+                                    </div>
+                              </div>
                            <table datatable="ng" class="table table-bordered table-striped table-condensed">
 				<thead>
 				 <tr>
@@ -84,12 +156,13 @@
                                     <th>TRANSACTION ID</th> 
                                     <th>MERCHANT SKU</th>
                                     <th>QUANTITY</th>
+                                    <th>Action</th>
                                     
 				 </tr>
 				</thead>
 				<tbody>
 				 <tr dt-rows ng-repeat="person in inventoryDetailData">
-                                     <td><input  type="checkbox" name="inventory_id" id="{{person.inventory_id}}" data-msku="{{person.msku}}" data-total="{{person.total}}" data-transactionId="{{person.transactionId}}" data-orderDate="{{person.orderDate}}" data-reason="{{person.reason}}" /></td>   
+                                     <td><input  type="checkbox" name="inventory_id" id="{{person.inventory_id}}" data-msku="{{person.msku}}" data-total="{{person.total}}" data-transactionId="{{person.transactionId}}" data-orderDate="{{person.orderDate}}" data-reason="{{person.reason}}" ng-click="totalamount()" /></td>   
 				  <td>{{person.date}}</td> 
 				  <td ng-if="person.reason == '6'">Damaged by inbound carrie</td>
 				  <td ng-if="person.reason == 'D'">Destroyed</td>
@@ -102,6 +175,7 @@
 				  <td>{{ person.transactionId }}</td>
 				  <td>{{ person.msku}}</td>
 				  <td>{{ person.quantity}}</td>
+                                  <td><a href="#/skuhistory/{{ person.msku}}" title="History"><i class="glyph-icon tooltip-button icon-history" title="History" data-original-title=".icon-history"></i></a>&nbsp; &nbsp; <a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" ng-click="openRembPopup(person.inventory_id,person.reason)" ><i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"></i></a>  </td>
 				  
 				 </tr>
 				</tbody>
@@ -146,6 +220,44 @@
                                  </tr>
                                 </thead>
                            </table>
+			  </md-content>
+			 </md-tab>
+                          <md-tab label="Auto matched">
+			  <md-content class="md-padding">
+                              <button type="button" class="btn btn-primary" id="addPayment" ng-click="openinventoryIssue()" style="float:right; margin-bottom: 5px;">Submit Case</button>
+                           <table datatable="ng" class="table table-bordered table-striped table-condensed">
+				<thead>
+				 <tr>
+                                    <th>#</th>
+                                    <th>DATE</th>
+                                    <th>REASON</th>
+                                    <th>TRANSACTION ID</th> 
+                                    <th>MERCHANT SKU</th>
+                                    <th>QUANTITY</th>
+                                    <th>Reimbursement ID</th>
+                                    
+				 </tr>
+				</thead>
+				<tbody>
+				 <tr dt-rows ng-repeat="p in automatchdata">
+                                     <td><input  type="checkbox" name="inventory_id" id="{{p.inventory_id}}" data-msku="{{p.msku}}" data-total="{{p.total}}" data-transactionId="{{p.transactionId}}" data-orderDate="{{p.orderDate}}" data-reason="{{p.reason}}"  /></td>   
+				  <td>{{p.date}}</td> 
+				  <td ng-if="p.reason == '6'">Damaged by inbound carrie</td>
+				  <td ng-if="p.reason == 'D'">Destroyed</td>
+				  <td ng-if="p.reason == 'E'">Damaged At Amazon fulfillment center </td>
+				  <td ng-if="p.reason == 'Q'">Damaged - miscellameous </td>
+				  <td ng-if="p.reason == 'N'">Transfer from holding account </td>
+				  <td ng-if="p.reason == 'O'">Transfer to holding account </td>
+				  <td ng-if="p.reason == 'M'">Inventory misplaced </td>
+				  <td ng-if="p.reason == 'F'">Inventory found </td>
+				  <td>{{ p.transactionId }}</td>
+				  <td>{{ p.msku}}</td>
+				  <td>{{ p.quantity}}</td>
+				  <td>{{ p.rembId}}</td>
+				  
+				 </tr>
+				</tbody>
+			   </table>
 			  </md-content>
 			 </md-tab>
 			</md-tabs>

@@ -618,11 +618,11 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     transactionId[i] = $(this).attr("data-transactionId");
                  });
                 if(Object.keys(transactionId).length==0){
-                show_notification('Error' ,"Please select at least one checkbox" ,'','no');
-                
-           }else if(Object.keys(transactionId).length>3){
-                 show_notification('Error' ,"You can select only 3 order." ,'','no');
-           }else  { 
+                    show_notification('Error' ,"Please select at least one checkbox" ,'','no');
+
+               }else if(Object.keys(transactionId).length>3){
+                    show_notification('Error' ,"You can select only 3 order." ,'','no');
+               }else  { 
                          $("input:checkbox[name=inventory_id]:checked").each(function (i) {
                          inventory_id[i] = $(this).attr("id");
                          msku[i] = $(this).attr("data-msku");
@@ -685,110 +685,122 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                      $('#issueModal').modal('hide');
                 }
           }
-
-          $http({
+          $scope.openRembPopup=function(inventory_id,reason){
+               $('#rembModal').modal('toggle');
+               $('#inventory_id').val(inventory_id);
+               $('#reason').val(reason);
+          }
+          $scope.assignRembId=function(){
+               $scope.remb.inventory_id=$('#inventory_id').val();
+               $scope.remb.reason=$('#reason').val();
+               $http({
+                    url: path + "user/assignRembId",
+                    method: "POST",
+                    data: {'updateRem': $scope.remb,'inventoryData':$scope.inventoryData,'rembData':$scope.rembData},
+                }).success(function(response) {
+                         debugger;
+                         if(response.error==false){
+                              $('#rembModal').modal('hide');
+                                show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         }else {
+                              show_notification('Error' ,response.message,'','no');
+                         }
+               });
+          }
+          $scope.updateRembId=function(){
+               $scope.remb.inventory_id=$('#inventory_id').val();
+               $scope.remb.reason=$('#reason').val();
+               $http({
+                    url: path + "user/updateRembId",
+                    method: "POST",
+                    data: {'updateRem': $scope.remb,'rembData':$scope.rembData},
+                }).success(function(response) {
+                         debugger;
+                         if(response.error==false){
+                              $('#rembModal').modal('hide');
+                                show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         }else {
+                              show_notification('Error' ,response.message,'','no');
+                         }
+               });
+          }
+          $scope.saveTempRembid=function(){
+               debugger;
+               $('#rembModal').modal('hide');
+                   $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $scope.remb.inventory_id=$('#inventory_id').val();
+                   
+                   $http({
+                    url: path + "user/saveTempRembid",
+                    method: "POST",
+                    data: $scope.remb,
+                }).success(function(response) {
+                     debugger;
+                     location.reload();
+               });
+              
+          }
+          $scope.checkRembId=function(frm_id){
+               debugger;
+               if ($('#' + frm_id).valid()) {
+                   $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   $http({
+                    url: path + "user/checkRembId",
+                    method: "POST",
+                    data: $scope.remb,
+                }).success(function(response) {
+                     $('#pleasewait').html('');
+                     debugger;
+                         $scope.inventoryData=response.data.inventoryData;
+                         $scope.rembData=response.data.rembData;
+                         if($scope.rembData !='' &&  $scope.inventoryData!='' && $scope.inventoryData != undefined  &&  $scope.rembData != undefined){
+                              $scope.temprembidStatus=false;
+                         }else if($scope.rembData !='' &&  $scope.rembData != undefined && ($scope.inventoryData =='' || $scope.inventoryData == undefined)) {
+                              $scope.temprembidStatus=false;
+                         } else if(($scope.inventoryData =='' || $scope.inventoryData == undefined) && ($scope.rembData =='' || $scope.rembData == undefined) ){
+                               $scope.temprembidStatus=true;
+                         } 
+               });
+              }
+          }
+          $scope.temprembidStatus=false;
+          if($scope.inventoryData == undefined || $scope.inventoryData == ''){
+               $scope.inventoryData='';
+          }
+          if($scope.rembData == undefined || $scope.rembData == ''){
+               $scope.rembData='';
+          }
+           $http({
                method: "GET",
                url: path + 'user/inventoryDetail?user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
           }).then(function mySucces(response) {
                if (response.data.error == false) {
                     debugger;
                     $scope.inventoryDetailData = response.data.data.result;
+                    $scope.automatchdata = response.data.data.automatchdata;
                 } else {
                     $scope.inventoryDetailData = '-';
                }
           });
           
-//          var filter_data={};
-//       
-//        if(filter_data.page == undefined || filter_data.page == '')
-//            filter_data.page = 1;
-//        $http({               
-//         method: "GET",
-//         url: path + 'user/inventoryDetail?limit=5&page='+filter_data.page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
-//         }).then(function mySucces(response) {
-//             if (response.data.error == false){
-//                  debugger;
-//                  console.log(response);
-//                  $scope.inventoryDetailData = response.data.data.result;
-//                  //$scope.orderData = response.data.data;
-//                  $scope.total_order = response.data.data.total_record; 
-//                  
-//                  if(jQuery('#Pagination').data("twbs-pagination")) {
-//                       jQuery('#Pagination').twbsPagination('destroy');
-//                   }
-//                   
-//                   jQuery('#Pagination').twbsPagination({
-//                        totalPages: response.data.total_page,
-//                        visiblePages: 5,
-//                        startPage :filter_data.page,
-//                        first: '<<',
-//                        last: '>>',
-//                        next: '>',
-//                        prev: '<',
-//                        onPageClick: function(event, page) {
-//                            $http({
-//                                method: 'GET',
-//                                async: true,
-//                                url: path + 'user/inventoryDetail?limit=5&page='+page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by}).
-//                                then(function mySucces(response) {
-//                                   $scope.inventoryDetailData = response.data.data.result;
-//                                   filter_data.page = page;
-//                            });
-//                        }
-//                    });
-//              
-//             } else {
-//                $scope.inventoryDetailData='-';  
-//             }
-//         });
-//         
-         $scope.search = function(){
-       
-            if($scope.term != '' || $scope.term != undefined)
-             console.log($scope.term) ;
-               var filter_data={};
-       
-        if(filter_data.page == undefined || filter_data.page == '')
-            filter_data.page = 1;
-               $http({               
-                method: "GET",
-                url: path + 'user/inventoryDetail?limit=5&page='+filter_data.page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by+'&term='+$scope.term,
-                }).then(function mySucces(response) {
-             if (response.data.error == false){
-                  debugger;
-                  console.log(response);
-                  $scope.inventoryDetailData = response.data.data.result;
-                  //$scope.orderData = response.data.data;
-                  $scope.total_order = response.data.data.total_record; 
-                  
-                  if(jQuery('#Pagination').data("twbs-pagination")) {
-                       jQuery('#Pagination').twbsPagination('destroy');
-                   }
-                   setTimeout(function(){
-                         jQuery('#Pagination').twbsPagination({
-                        totalPages: response.data.total_page,
-                        visiblePages: 5,
-                        startPage :filter_data.page,
-                        first: '<<',
-                        last: '>>',
-                        next: '>',
-                        prev: '<',
-                        onPageClick: function(event, page) {
-                            $http({
-                                method: 'GET',
-                                async: true,
-                                url: path + 'user/inventoryDetail?limit=5&page='+page+'&user_id='+$rootScope.userdata.user_id+'&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by}).
-                                then(function mySucces(response) {
-                                   $scope.inventoryDetailData = response.data.data.result;
-                                   filter_data.page = page;
-                            });
-                        }
-                    });
-                   },500);
-                   
-               }
-          });
-         }
+         $scope.totalamount=function(){
+              debugger;
+              var totalVal=[];
+              var total=0;
+                 $(':checkbox:checked').each(function(i){
+                    totalVal[i] = $(this).attr("data-total");
+                     total += parseFloat(totalVal[i]);
+                 });
+                 var totalPrice=total.toFixed(2);
+                 
+                    $scope.totalAmount='Total amount ::  '+'$'+totalPrice;
+               
+                 console.log(totalPrice);
+               
+         } 
+         
           $scope.globalFilter1 = function() {
                $scope.quoteDatatable1.fnFilter($scope.searchsubmited);
           };
@@ -1627,6 +1639,15 @@ debugger;
                          }
                     });
                }
+          }
+          
+}]).controller('skuhistoryCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          if($stateParams.sku){
+               $rootScope.sku=$stateParams.sku;
           }
 }]);
      
