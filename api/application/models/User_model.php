@@ -70,75 +70,15 @@ class User_model extends CI_Model {
 //   }
     
     public function inventoryDetail($data){
-     
-      if(isset($data['term']) && !empty($data['term'])){
-       $wh='AND (i.transactionId LIKE "%'.$data['term'].'%")';
-       $wha='AND (a.transactionId LIKE "%'.$data['term'].'%") ';
-      }else {
-       $wh='';
-       $wha='';
-      }
       $userId=$data['user_id'];
 //       $total = $this->getFaceCount($data); 
 //       $res['count'] = $total['total_page'];
 //       $res['total_record'] = $total['total_record'];
 //        
 //       $position = (($data['page']-1) * $data['limit']);
-         //$sql="select t.*,o.* from (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select   max(data_range_report_order.data_id) from data_range_report_order where  data_range_report_order.sku in  (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.") ".$wh." group by i.msku ) group by data_range_report_order.sku) ) as t left join ( select i.inventory_id,i.date,i.transactionId,CASE WHEN i.quantity <0 THEN i.quantity *-1 ELSE i.quantity END AS quantity,i.reason,i.msku,count(i.msku) as totalmsku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6') ) group by i.msku) as o on t.sku=o.msku"; 
-     //$DEQ6sql="select c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason'   from (select a.reason, a.msku,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE  (i.reason in('D','E','Q'))AND i.user_id=".$userId." group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p  where (p.reason in ('Damaged_warehouse') AND p.user_id=".$userId.")  group by p.msku) as b on a.msku=b.msku  Union select a.reason, a.msku,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE  (i.reason in('6'))AND i.user_id=".$userId." group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p  where (p.reason in ('Damaged_inbound') AND p.user_id=".$userId.")  group by p.msku) as b on a.msku=b.msku) as c"; die;
-       $DEQ6sql="select c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason' from (select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('D','E','Q'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_warehouse') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku
-Union select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('6'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_inbound') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku) as c";
-      $DEQ6Data=  $this->db->query($DEQ6sql)->result_array();
-      echo "<pre>";
-      print_r($DEQ6Data);  die;
-      $finalArray=[];
-      for($i=0;$i<count($DEQ6Data); $i++){
-       
-        if($DEQ6Data[$i]['totalRecord'] > 0){
-        $limit=$DEQ6Data[$i]['totalRecord'];
-        }else if($DEQ6Data[$i]['totalRecord'] == ''){
-         $limit=$DEQ6Data[$i]['inventoryTotal'];
-        }else if($DEQ6Data[$i]['totalRecord']<0){
-         $limit=$DEQ6Data[$i]['inventoryTotal'];
-        }else if($DEQ6Data[$i]['totalRecord'] == 0){
-         $limit=0;
-        }
-        $DEQ6subSql="";
-       
-      }
-     die;
-       echo $sql1='select a.reason,a.inventory_id,a.msku ,CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("M","F")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku  '; die;
-      $limitData1=$this->db->query($sql1)->result_array();
-      for($k=0;$k<count($limitData1); $k++){
-      
-        if($limitData1[$k]['quantity']<0){
-          $limit=($limitData1[$k]['quantity']) * -1;
-        }else {
-         $limit=($limitData1[$k]['quantity']);
-        }
-  
-        echo $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$limitData1[$k]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('M')) AND (i.inventory_id=".$limitData1[$k]['inventory_id'].") AND (i.user_id=".$userId.") AND (i.msku='".$limitData1[$k]['msku']."') ".$wha.") as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$limit.""; die;
-          $datam= $this->db->query($query)->result_array();
-          for($l=0;$l<count($datam);$l++){
-            if($datam[$l]['inventory_id'] !='' && !empty($datam[$l]['inventory_id']) && $datam[$l]['inventory_id']!= null){
-            array_push($finalArray,$datam[$l]);
-            }
-          }
-      }
-      
-      $sql2='select a.reason,a.inventory_id,a.msku , CASE WHEN sum(a.quantity) <0 THEN (sum(a.quantity) *-1) ELSE sum(a.quantity) END AS quantity from inventory_adjustments as a where (a.reason in("O","N")) AND (a.user_id='.$userId.') '.$wha.' group by a.msku ';
-     
-      $destroydata= $this->db->query($sql2)->result_array();
-      for($a=0;$a<count($destroydata);$a++){
-        $query="select DISTINCT a.*,d.sku,(select product_sales from data_range_report_order where sku='".$destroydata[$a]['msku']."' order by data_id desc limit 1) as total from (select i.reason,CASE WHEN i.quantity <0 THEN (i.quantity *-1) ELSE i.quantity END AS quantity ,i.inventory_id,i.date,i.msku,i.transactionId from inventory_adjustments as i where (i.reason in('O'))   AND (i.user_id=".$userId.") AND (i.msku='".$destroydata[$a]['msku']."') ".$wha." ) as a left join data_range_report_order as d on d.sku=a.msku where (d.user_id=".$userId." ) order by d.datetime desc limit ".$destroydata[$a]['quantity'].""; 
-          $datao= $this->db->query($query)->result_array();
-          
-          for($o=0;$o<count($datao);$o++){
-            if($datao[$o]['inventory_id'] !='' && !empty($datao[$o]['inventory_id']) && $datao[$o]['inventory_id']!= null){
-            array_push($finalArray,$datao[$o]);
-            }
-          }
-      }
+        
+        $DEQ6sql="select a.*,b.total from (select i.msku,i.transactionId,i.quantity,i.date,i.reason from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND i.update_status='0' AND (i.rembId = '0' || i.rembId = '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId.") group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku";
+      $finalArray=  $this->db->query($DEQ6sql)->result_array();
       $sort = array();
       foreach($finalArray as $k=>$v) {
           $sort['date'][$k] = $v['date'];
@@ -1741,18 +1681,106 @@ $data_string = json_encode($data);
      }
      return true;
     }
-    public function addremId(){
-     $DEQ6sql="select c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason' from (select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('D','E','Q'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_warehouse') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku
-Union select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('6'))AND i.user_id=1 group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_inbound') AND p.user_id=1) group by p.msku) as b on a.msku=b.msku) as c";
-     
+    public function addDEQ6RembId($data){
+     $userId=$data['user_id'];
+     $DEQ6sql="SELECT c.*, CASE WHEN (c.reason='E'|| c.reason='Q' || c.reason='D') THEN 'Damaged_warehouse' WHEN c.reason='6' THEN 'Damaged inbound' END AS 'preason' from (select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal ,(a.itotal-b.ptotal) as totalRecord from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('D','E','Q')) AND i.update_status='0' AND i.inventory_status='0' AND i.user_id=".$userId." group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_warehouse') AND p.update_status='0' AND p.user_id=".$userId." AND p.porder_status='0') group by p.msku) as b on a.msku=b.msku Union select a.reason, a.msku,b.ptotal as remTotal,a.itotal as inventoryTotal, a.itotal-b.ptotal from (SELECT i.reason,count(i.msku) as itotal, i.msku FROM `inventory_adjustments` as i WHERE (i.reason in('6')) AND i.update_status='0' AND i.inventory_status='0' AND i.user_id=".$userId." group by i.msku) as a left join (SELECT p.msku,p.reason, count(p.msku) as ptotal FROM `payment_reimburs` as p where (p.reason in ('Damaged_inbound') AND p.update_status='0' AND p.user_id=".$userId." AND p.porder_status='0') group by p.msku) as b on a.msku=b.msku) as c where c.totalRecord IS NOT NULL limit 1";
      $DEQ6Data=  $this->db->query($DEQ6sql)->result_array();
-      echo "<pre>";
-      print_r($DEQ6Data);  die;
+    
       for ($i=0;$i<count($DEQ6Data); $i++){
+        
+        if($DEQ6Data[$i]['totalRecord'] ==0){
+         $remlimit =$DEQ6Data[$i]['remTotal'];
+         $inventorylimit =$DEQ6Data[$i]['inventoryTotal'];
+        }else if($DEQ6Data[$i]['totalRecord'] <0){
+          $remlimit =$DEQ6Data[$i]['inventoryTotal'];
+          $inventorylimit =$DEQ6Data[$i]['inventoryTotal'];
+        }else if($DEQ6Data[$i]['totalRecord'] >0){
+          $remlimit =$DEQ6Data[$i]['remTotal'];
+          $inventorylimit =$DEQ6Data[$i]['remTotal'];
+        }
+       
+         $inventorySql="select i.inventory_id,i.user_id from inventory_adjustments as i  where i.msku='".$DEQ6Data[$i]['msku']."' AND i.update_status='0' AND i.inventory_status='0' AND i.reason='".$DEQ6Data[$i]['reason']."' AND i.user_id=".$userId." order by i.date DESC limit ".$inventorylimit." "; 
+       $inventoryData=  $this->db->query($inventorySql)->result_array();
+          $rembsql="select r.remId,r.payment_reimbur_id from  payment_reimburs as r where r.msku='".$DEQ6Data[$i]['msku']."' AND r.reason='".$DEQ6Data[$i]['preason']."' AND r.user_id=".$userId." AND r.porder_status='0' AND r.update_status='0' order by r.date DESC limit ".$remlimit." ";  
+       $rembData=$this->db->query($rembsql)->result_array();
+       
+       
+        for($j=0;$j<count($rembData);$j++){
+           $updateArray=array('rembId'=>$rembData[$j]['remId'],'update_status'=>'1');
+          
+           $this->db->where('inventory_id',$inventoryData[$j]['inventory_id']);
+           $this->db->update('inventory_adjustments',$updateArray);
+           
+           $rembupdateArray=array('update_status'=>'1');
+           $this->db->where('payment_reimbur_id',$rembData[$j]['payment_reimbur_id']);
+           $this->db->update('payment_reimburs',$rembupdateArray);
+        }
+       
        
       }
-      $finalArray=[];
+      return true;
+    }
+    public function getDEQ6user(){
+     $currentDate=date('Y-m-d H:i:s');
+     $sql="select user_id from user_email where deq6_time < '".$currentDate."' AND first_time_status='1' limit 1 ";
+     return $this->db->query($sql)->result_array();
      
+    }
+    public function updateDEQ6user($data){
+      $latestTime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +15 minutes"));
+     $updateArray=array('deq6_time'=>$latestTime);
+     $this->db->where('user_id',$data['user_id']);
+     $this->db->update('user_email',$updateArray);
+     return $this->db->affected_rows();
+    }
+    public function addMfRembId($data){
+      $userId=$data['user_id'];
+     $mfSql="select e.* from (select b.msku,b.iTotal,c.pTotal,(b.iTotal-c.pTotal) as total from (select a.msku,a.inTotal * (-1) as iTotal from (select sum(i.quantity) as inTotal,i.msku from  inventory_adjustments as i where i.reason in ('M','F') AND i.inventory_status='0' AND i.user_id=".$userId." AND i.update_status='0' AND i.inventory_status='0' group by i.msku ) as a WHERE a.inTotal<0) as b left join (select count(p.msku) as pTotal,p.msku from payment_reimburs as p WHERE p.user_id=".$userId." AND p.porder_status='0' AND p.update_status='0' AND p.reason in ('Lost_warehouse') GROUP by p.msku ) as c on b.msku=c.msku ) as e WHERE e.total IS NOT NULL";
+     $mfData=$this->db->query($mfSql)->result_array();
+     for ($i=0;$i<count($mfData); $i++){
+        
+        if($mfData[$i]['total'] ==0){
+         $remlimit =$mfData[$i]['pTotal'];
+         $inventorylimit =$mfData[$i]['iTotal'];
+        }else if($mfData[$i]['total'] <0){
+          $remlimit =$mfData[$i]['iTotal'];
+          $inventorylimit =$mfData[$i]['iTotal'];
+        }else if($mfData[$i]['total'] >0){
+          $remlimit =$mfData[$i]['pTotal'];
+          $inventorylimit =$mfData[$i]['pTotal'];
+        }
+        
+        $inventorySql="select i.inventory_id,i.user_id from inventory_adjustments as i  where i.msku='".$mfData[$i]['msku']."' AND i.update_status='0' AND i.inventory_status='0' AND i.reason in ('M') AND i.user_id=".$userId." order by i.date DESC limit ".$inventorylimit." "; 
+       $inventoryData=  $this->db->query($inventorySql)->result_array();
+          $rembsql="select r.remId,r.payment_reimbur_id from  payment_reimburs as r where r.msku='".$mfData[$i]['msku']."' AND r.reason in('Lost_warehouse') AND r.user_id=".$userId." AND r.porder_status='0' AND r.update_status='0' order by r.date DESC limit ".$remlimit." ";  
+       $rembData=$this->db->query($rembsql)->result_array();
+       for($j=0;$j<count($rembData);$j++){
+           $updateArray=array('rembId'=>$rembData[$j]['remId'],'update_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+          
+           $this->db->where('inventory_id',$inventoryData[$j]['inventory_id']);
+           $this->db->update('inventory_adjustments',$updateArray);
+           
+           $rembupdateArray=array('update_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+           $this->db->where('payment_reimbur_id',$rembData[$j]['payment_reimbur_id']);
+           $this->db->update('payment_reimburs',$rembupdateArray);
+        }
+     }
+    return true;
+     
+     
+    }
+    public function getMfuser(){
+     $currentDate=date('Y-m-d H:i:s');
+     $sql="select user_id from user_email where mf_time < '".$currentDate."' AND first_time_status='1' limit 1 ";
+     return $this->db->query($sql)->result_array();
+     
+    }
+    public function updateMfuser($data){
+      $latestTime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +15 minutes"));
+     $updateArray=array('mf_time'=>$latestTime);
+     $this->db->where('user_id',$data['user_id']);
+     $this->db->update('user_email',$updateArray);
+     return $this->db->affected_rows();
     }
 }
 

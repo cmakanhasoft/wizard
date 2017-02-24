@@ -953,6 +953,9 @@ Team WizardofAMZ
     $this->set_response($message, REST_Controller::HTTP_CREATED);
    }
    public function stest_post(){
+    $currentDate=date('Y-m-d H:i:s');
+    echo $sql="select user_id from user_email where deq6_time < '".$currentDate."' limit 1 "; die;
+    echo $latestTime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +15 minutes")); die;
     $a= $this->user_model->newUser();
     print_r($a); die;
    }
@@ -1439,7 +1442,6 @@ Team WizardofAMZ
     }
     public function fileUpload_post() {
        $output_dir = $_SERVER['DOCUMENT_ROOT'].'/amazon_local/uploads/';
-       //$output_dir = $_SERVER['DOCUMENT_ROOT'].'/uploads/facility_image/';
        if(isset($_FILES["myfile"]))
        {
             $error =$_FILES["myfile"]["error"];
@@ -1475,8 +1477,57 @@ Team WizardofAMZ
      }
      $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
-    public function addremId_post(){
-     $data=$this->user_model->addremId();
+    public function updateDEQ6_get(){
+     $data=$this->user_model->getDEQ6user();
+     if(!empty($data)){
+       $deqdata=$this->user_model->addDEQ6RembId($data[0]);
+       if($deqdata){
+         $updatetime=$this->user_model->updateDEQ6user($data[0]);
+         if($updatetime){
+           $message['error']=FALSE;
+           $message['message']="user deq6 time update ";
+         }else {
+           $message['error']=true;
+           $message['message']="user deq6 time not update ";
+         }
+         
+       }else {
+         $message['error']=false;
+         $message['message']="DEQ6 update remb id";
+       }
+       
+     }else {
+         $message['error']=true;
+         $message['message']="DEQ6 no user";
+     }
+     $addtime=$this->user_model->addTime($message['message']);
+    }
+    public function updateMf_get(){
+      //$deqdata=$this->user_model->addMfRembId();
+      $data=$this->user_model->getMfuser();
+     if(!empty($data)){
+       $deqdata=$this->user_model->addMfRembId($data[0]);
+       if($deqdata){
+         $updatetime=$this->user_model->updateMfuser($data[0]);
+         if(!empty($updatetime)){
+           $message['error']=FALSE;
+           $message['message']="user mf time update ";
+         }else {
+           $message['error']=true;
+           $message['message']="user mf time not update ";
+         }
+         
+       }else {
+         $message['error']=false;
+         $message['message']="mf update remb id";
+       }
+       
+     }else {
+         $message['error']=true;
+         $message['message']="mf no user";
+     }
+     $addtime=$this->user_model->addTime($message['message']);
+     
      
     }
 }
