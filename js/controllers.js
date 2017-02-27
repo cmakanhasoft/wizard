@@ -678,6 +678,25 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     
                     
           }
+          $('body').on('hidden.bs.modal', '.modal', function (e) {
+               $("#rembModal").click(function(ev) {
+                    e.preventDefault();
+                    var target = $(this).attr("href");
+
+                    // load the url and show modal on success
+                    $("#rembModal .modal-body").load(target, function() { 
+                         $("#rembModal").modal("show"); 
+                    });
+               });
+          });
+          
+        // $('body').on('hidden.bs.modal', '.modal', function (e) {
+             //  $(this).removeData('bs.modal');
+           //    $(this).location.reload(true);
+                       //$(e.target).removeData("bs.modal").find(".modal-content").empty();
+              //$(this).find("input,textarea,select").val('').end();
+            //$(this).find("#errorMessage").html('').end();
+          //     });
           $scope.addIssue = function(frm_id) {
                if ($("#" + frm_id).valid()) {
                     debugger;
@@ -686,10 +705,24 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                 }
           }
           $scope.openRembPopup=function(inventory_id,reason){
-               $('#rembModal').modal('toggle');
-               $('#inventory_id').val(inventory_id);
-               $('#reason').val(reason);
+              
+              var target = '#/editRembId/'+inventory_id+'/'+reason;
+
+               // load the url and show modal on success
+               $("#myModal .modal-body").load(target, function() { 
+                   $('#myModal').modal('toggle');
+               });
+//               var target = '#/editRembId/'+inventory_id+'/'+reason;
+//
+//               // load the url and show modal on success
+//               $("#myModal .modal-body").load(target, function() { 
+//                    
+//               });
+//               $('#myModal').modal('toggle');
+//               $('#inventory_id').val(inventory_id);
+//               $('#reason').val(reason);
           }
+          
           $scope.assignRembId=function(){
                $scope.remb.inventory_id=$('#inventory_id').val();
                $scope.remb.reason=$('#reason').val();
@@ -1649,5 +1682,74 @@ debugger;
           if($stateParams.sku){
                $rootScope.sku=$stateParams.sku;
           }
+ }]).controller('editRembIdCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+}]).controller('modalController',['$rootScope','$modal', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modal, $scope, $window, $http, $location, $stateParams, $cookies) {
+    var __email = $("div.gb_xb").text();if(!__email){__email = $("div.gb_wb").text();}
+   // $scope.api = APP.API;
+    //$scope.items = ['item1', 'item2', 'item3'];
+    //$scope.animationsEnabled = false;
+    //    if ($modalInstance) {
+    //        $modalInstance.dismiss('cancel');
+    //    }
+    $scope.open = function(template, controller, size, type) {
+      debugger;
+        
+        var modalInstance = $modal.open({
+            templateUrl: 'http://103.239.146.250:898/amazon_local/#/editRembId/1/1',
+            controller: controller,
+            size: size,
+            backdrop: false,
+            keyboard: true,
+            resolve: {
+//                related: function() {
+//                    //debugger;
+//            
+//                    // console.log(this);
+//                    //  console.log($scope.$parent);
+//                    //  //debugger;
+//                    if ($scope.$parent.relatedinfo && $scope.$parent.title == "Contact") {
+//                        var firstname = '';
+//                        if (typeof $scope.$parent.data !== "undefined") {
+//                            firstname = $scope.$parent.data.first_name;
+//                        }
+//                        return {related_to: $scope.$parent.contactID, related_name: firstname, 'related_type': 1}
+//                    } else if ($scope.$parent.relatedinfo && $scope.$parent.title == "Company") {
+//                        var comapny_name = "";
+//                        if (typeof $scope.$parent.data !== "undefined") {
+//                            comapny_name = $scope.$parent.data.company_name;
+//                        }
+//                        return {related_to: $scope.$parent.companyID, related_name: comapny_name, 'related_type': 2}
+//                    } else if ($scope.$parent.opportunity && $scope.$parent.title == "Opportunities") {
+//                        return {related_to: $scope.$parent.opportunity.related_to, related_name: $scope.$parent.opportunity.related_name, 'related_type': $scope.$parent.opportunity.related_type, 'is_opportunity': $scope.$parent.opportunity.opportunity_id}
+//                    }
+//                    $(".modal-dialog").draggable({handle: ".modal-header"});
+//                },
+                open: function() {
+                    setTimeout(function() {
+                         $('#myModal').modal('show');
+                       // $(".modal-dialog").draggable({handle: ".modal-header"});
+//                        if(template == "contact-create.html"){
+//                            var PreData = JSON.parse(localStorage["ArcExt."+__email+"PreData"]);
+//                            $("div.modal-dialog").find("select#type").val(PreData.type).trigger("change");
+//                            $("div.modal-dialog").find("input[name=first_name]").val(PreData.name).trigger("input");
+//                            $("div.modal-dialog").find("input[name=email1]").val(PreData.email).trigger("input");
+//                            localStorage["ArcExt."+__email+"createType"]="{}";
+//                            form.email1.$error=false;
+//                        }
+                    }, 300);
+                }
+            }
+        });
+        //
+        modalInstance.result.then(function(selectedItem) {
+            $scope.selected = {related_to: $scope.$parent.contactID, related_name: $scope.$parent.data.first_name, 'related_type': 1};
+        }, function() {
+        
+        });
+    };
 }]);
      

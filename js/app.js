@@ -1,5 +1,5 @@
   var app = angular.module('myapp', [
-  'ngRoute','ngSanitize','ngMaterial','ngMessages','ngCookies','ui.router','datatables','material.svgAssetsCache']);
+  'ngRoute','ngSanitize','ngMaterial','ngMessages','ngCookies','ui.router','datatables','material.svgAssetsCache','ui.bootstrap.modal']);
   app.config(['$stateProvider','$urlRouterProvider',
   function($stateProvider,$urlRouterProvider) {
   /** @ngInject */
@@ -411,6 +411,19 @@
           }
         }
         
+      }).state('/editRembId/:inventory_id/:reason ', {
+        url: '/editRembId/:inventory_id/:reason',
+        templateUrl: 'views/editRembId.html',
+        controller: 'inventoryadCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'inventoryad',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2','3','4','5']
+          }
+        }
       })
   }]);
  app.run(['$rootScope', '$cookies','$state','authorization',function($rootScope,$cookies,$state,authorization) {

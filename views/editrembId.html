@@ -1,0 +1,114 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Edit case
+		<a href="#/caseLog" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+	</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+            
+	 <div class="example-box-wrapper">
+        <form role="form"  id="sku-validation">
+		   <div class="form-group">
+			<label for="sku">Reimbursement ID *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="sku" name="sku" placeholder="Enter Reimbursement ID" ng-model="remb.rembId" required>
+			 <input type="text" class="form-control" id="inventory_id" name="inventory_id" value="">
+                         <input type="text" class="form-control" id="reason" name="reason" value="">
+			</div>
+		   </div>
+		  
+		   <div class="form-group" id="issusediv">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" id="addPayment" ng-click="checkRembId('sku-validation')">Submit</button>			
+                   </div>
+                <div class="form-group" id="pleasewait">
+                </div>
+                <div class="row" id="errorMessage" ng-if="temprembidStatus">
+                    <b>The mentioned reimbursement ID is not yet found in our records. Usually, it takes a few days until the reimbursement is displayed in your records. Do you want to be notified after 7 days for this ID?
+                    </b>
+                    <div class="col-md-12" style="float:right;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-primary" id="addPayment" ng-click="saveTempRembid()">Yes</button>              </div>	
+                 </div>
+                 <div class="row" ng-if="inventoryData !='' &&   rembData !=''">
+                        <div class="col-md-12" style="float:right;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="assignRembId" ng-click="assignRembId()">Update</button>		</div>	
+                  </div>
+                  <div class="row" ng-if="inventoryData =='' &&   rembData !=''">
+                        <div class="col-md-12" style="float:right;">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="updateRembId" ng-click="updateRembId()">Update</button>		</div>	
+                  </div>
+		  </form>
+		  <div class="row" ng-if="rembData !=''">
+                        <div class="col-md-12">
+                            <div id="page-title">
+                                <h2> &nbsp; &nbsp;Rembursement  Detail </h2>
+                            </div>
+                         <table class="table table-bordered table-striped table-condensed">
+				<thead>
+				 <tr>
+                                    <th>DATE</th>
+                                    <th>REASON</th>
+                                    <th>MERCHANT SKU</th>
+                                    <th>REIMBURSEMENT ID</th>
+                                 </tr>
+				</thead>
+				<tbody>
+				 <tr  ng-repeat="r  in  rembData">
+                                  <td>{{r.date}}</td> 
+                                  <td>{{r.reason}}</td>
+				  <td>{{r.msku}}</td>
+				  <td>{{r.remId}}</td>
+                                 </tr>
+				</tbody>
+			   </table>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="inventoryData !=''">
+                        <div class="col-md-12">
+                            <div id="page-title">
+                                <h2> &nbsp; &nbsp;Inventory  Detail </h2>
+                            </div>
+                        <table class="table table-bordered table-striped table-condensed">
+				<thead>
+				 <tr>
+                                    <th>DATE</th>
+                                    <th>REASON</th>
+                                    <th>TRANSACTION ID</th> 
+                                    <th>MERCHANT SKU</th>
+                                    <th>QUANTITY</th>
+                                    <th>REIMBURSEMENT ID</th>
+                                 </tr>
+				</thead>
+				<tbody>
+				 <tr  ng-repeat="i  in  inventoryData">
+                                  <td>{{i.date}}</td> 
+				  <td ng-if="i.reason == '6'">Damaged by inbound carrie</td>
+				  <td ng-if="i.reason == 'D'">Destroyed</td>
+				  <td ng-if="i.reason == 'E'">Damaged At Amazon fulfillment center </td>
+				  <td ng-if="i.reason == 'Q'">Damaged - miscellameous </td>
+				  <td ng-if="i.reason == 'N'">Transfer from holding account </td>
+				  <td ng-if="i.reason == 'O'">Transfer to holding account </td>
+				  <td ng-if="i.reason == 'M'">Inventory misplaced </td>
+				  <td ng-if="i.reason == 'F'">Inventory found </td>
+				  <td>{{ i.transactionId }}</td>
+				  <td>{{ i.msku}}</td>
+				  <td>{{ i.quantity}}</td>
+				  <td>{{ i.rembId}}</td>
+                                 </tr>
+				</tbody>
+			   </table>
+                        </div>
+                    </div>
+	 </div>
+
+	</div>
+   </div>
+  </div>
+ </div>
+</div>
