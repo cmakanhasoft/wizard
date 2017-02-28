@@ -48,11 +48,11 @@ var payment_count=casper.cli.get('payment_count');
 //var startDate=curr_month+'/'+curr_date+'/'+curr_year;
 //var endDate=curr_month+'/'+curr_date+'/'+prev_year;
 var ft = new Date();
-ft.setFullYear(ft.getFullYear() - 1);
+ft.setFullYear(ft.getFullYear() );
+ft.setMonth(ft.getMonth() -18);
  var fdate = ft.toISOString().split('T')[0]; 
  var fdateArr = fdate.split("-");
-//var startDate = fdateArr[1] + "/" + fdateArr[2] + "/" + fdateArr[0];
-var startDate = '12/01/2015';
+var startDate = fdateArr[1] + "/" + fdateArr[2] + "/" + fdateArr[0];
  
  
  var tt = new Date();
@@ -63,9 +63,9 @@ var endDate = tdateArr[1] + "/" + tdateArr[2] + "/" + tdateArr[0];
 
 
  
- /// before 7 dayes reocord
+ /// before 3 days reocord
  var ft7 = new Date();
-ft7.setDate(ft7.getDate() - 7);
+ft7.setDate(ft7.getDate() - 4);
  var fdate7 = ft7.toISOString().split('T')[0];  
  var fdateArr7 = fdate7.split("-");
 var startDate7 = fdateArr7[1] + "/" + fdateArr7[2] + "/" + fdateArr7[0];
@@ -73,9 +73,7 @@ var startDate7 = fdateArr7[1] + "/" + fdateArr7[2] + "/" + fdateArr7[0];
  
 if(payment_count==0){
     var pstartDate=startDate;
-    console.log(pstartDate);
     var pendDate=endDate;
-    console.log(pendDate);
 }else {
     var pstartDate=startDate7;
     var pendDate=endDate;
@@ -103,10 +101,6 @@ if(inventory_count==0){
    var ipath= "https://sellercentral.amazon.com/gp/ssof/reports/request-download.html/ref=ag_xx_cont_fbafulrpts?recordType=INVENTORY_ADJUSTMENT&eventDateTypeFilterOption=orderDate&eventDateOption=0&startDate="+startDate7+"&endDate="+endDate+"";
 }
 
-
-console.log(cpath);
-console.log(rpath);
-console.log(ipath);
 if (!(username && password)) {
     this.echo("Please provide --email , --password");
     casper.exit();

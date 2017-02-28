@@ -3,14 +3,15 @@
   app.config(['$stateProvider','$urlRouterProvider',
   function($stateProvider,$urlRouterProvider) {
   /** @ngInject */
-    $urlRouterProvider.otherwise("/");
+    $urlRouterProvider.otherwise("/login");
     $stateProvider.
-    state('/', {
-        url: '/',
-        templateUrl: 'views/front.html',
-        controller: 'frontCtrl',
-        headeruse: 'frontguest', 
-      }).state('/login', {
+//    state('/', {
+//        url: '/',
+//        templateUrl: 'views/front.html',
+//        controller: 'frontCtrl',
+//        headeruse: 'frontguest', 
+//      }).
+     state('/login', {
         url: '/login',
         templateUrl: 'views/login.html',
         headeruse: 'frontguest',
@@ -445,7 +446,7 @@
               //$state.go('/euser_booking_view');
           } else {
               $cookies.remove('userdata');
-              window.location.href = '#/';
+              window.location.href = '#/login';
               $rootScope.userdata = '';
           }
         }

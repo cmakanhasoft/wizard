@@ -13,28 +13,28 @@
     <div class="panel">
 	<div class="panel-body">
    <div class="example-box-wrapper" ng-if="userdata.role_id=='1' || userdata.role_id== '2'">
-		  <form role="form"  id="user-validation" class="col-md-7" >
-		  <div id="login-form">
-		  <div class="form-group">
-                <label class="col-sm-3 control-label">Select User</label>
-                <div class="col-sm-6">
-                    <select class="form-control" ng-model="user.user_id" ng-disabled='dis'  name="user_id" id="user_id" required >
-                        <option value="">-- Select User --</option>
-                        <option value="{{u.user_id}}" ng-repeat="u in userList">{{u.firstName}}</option>
-                        
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label"></label>
-                <div class="col-sm-3">
-                     <button type="submit" class="btn btn-block btn-blue-alt hide" id='chnageuserbtn' ng-click="changeUser('user-validation')">Submit</button>
-                     <button type="submit" class="btn btn-block btn-blue-alt" id='chnagebtn' ng-click="change()">Change</button>
-                </div>
-            </div>
 		  
-         </div>
-      </form>
+		 <div class="col-sm-12">
+                          <div class="col-sm-1">
+                              <label>User</label></div>
+                          <div class="col-sm-4">
+                              <select class="form-control" ng-model="user.user_id" ng-disabled='dis'  name="user_id" id="user_id" required  ng-change="getUserTime(user.user_id)">
+                                  <option value="">-- Select User --</option>
+                                  <option value="{{u.user_id}}" ng-repeat="u in userList">{{u.firstName}} - {{u.lastName}} - {{u.email}}</option>
+
+                              </select>
+                          </div>
+                          <div class="col-sm-2" >
+                            <button type="submit" class="btn btn-block btn-blue-alt hide" id='chnageuserbtn' ng-click="changeUser('user-validation')">Submit</button>
+                            <button type="submit" class="btn btn-block btn-blue-alt" id='chnagebtn' ng-click="change()" style="margin-top: 0px;">Change</button>
+                       </div>
+                     <div class="col-sm-4"><span>Last data updated Date :</span> {{lastUpdatedDataDate}}</div>
+            
+                      </div>
+            
+		  
+      
+     
 	 </div>
 
 	</div>

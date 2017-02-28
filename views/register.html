@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="assets-minified/frontend-all-demo.css">
+
 <!-- JS Core -->
 
 <div class="center-vertical">
@@ -8,6 +8,7 @@
 
    <h3 class="text-center pad15B font-gray text-transform-upr font-size-23">Register</h3>
    <div class="content-box border-top border-red clearfix" id="signupDiv">
+       
 	<div class="content-box-wrapper row">
 	 <form role="form"  id="signup-validation" class="col-md-7" >
 	  <div id="login-form">
@@ -36,15 +37,23 @@
 		  <input type="password" class="form-control" id="Password" placeholder="Enter password" ng-model="registerUser.password"  required name="password"  >
 		 </div>
 		</div>
-		<div id="planDiv">
+               <div class="form-group">
+                   <label for="rembService">what reimbirsment services you have used in past *:</label> <a href="#" class="btn btn-xs hover-info tooltip-button" data-placement="left" title="Download" style="font-size: 20px;">
+                    <i class="glyph-icon tooltip-button icon-question-circle" title="(refunds manager, refund sniper, etc.)" data-original-title=".icon-question-circle"></i>
+        </a>
+		 <div class="input-group input-group-lg">
+		  <input type="text" class="form-control" id="rembService" placeholder="Enter Rembursement Service" ng-model="registerUser.rembService"  name="rembService"  >
+		 </div>
+		</div>
+<!--		<div id="planDiv">
 		  <label for="plan">Select type of service *:</label>
 		  <br />
-<!--		<div class=" radio-primary" ng-repeat="p in plan">
+		<div class=" radio-primary" ng-repeat="p in plan">
 		   <label>
 		  <div class="radio" id="uniform-inlineRadio110"><span class="" id="check_{{$index}}"><input type="radio" id="{{$index}}" value="{{p.id}}" name="plan" class="custom-radio" ng-click="checkplan($index)" ng-model="registerUser.plan"><i class="glyph-icon icon-circle" ></i></span></div>
 			{{p.name}}
 		   </label>
-		  </div>-->
+		  </div>
 
 		  <div class=" radio-primary">
 		   <label>
@@ -61,7 +70,7 @@
 		   </label>
 		   
 		  </div>
-		</div>
+		</div>-->
 <!--		<div class="form-group">
 		 <label for="phone">Phone *:</label>
 		 <div class="input-group input-group-lg">
@@ -90,9 +99,10 @@
 	 </div>
 
 	</div>
+       
    </div>
   </div>
  </div>
 </div>
 
-<script src="assets/plugins/form-validation/jquery.validate.min.js"></script>
+

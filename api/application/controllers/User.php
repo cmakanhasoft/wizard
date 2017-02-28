@@ -372,8 +372,8 @@ class User extends REST_Middel_Controller {
       $postData['createdDate']=date('Y-m-d H:i:s');
       $postData['modifyDate']=date('Y-m-d H:i:s');
       $user_id = $this->user_model->signup($postData);
-      $ip=$this->user_model->getDigitalOcean(); 
-      $userIp=$this->user_model->updateUserip($ip,$user_id);
+      //$ip=$this->user_model->getDigitalOcean(); 
+      //$userIp=$this->user_model->updateUserip($ip,$user_id);
       $url = 'http://'.$_SERVER['HTTP_HOST']."/amazon_local/#/account_activation/".$token."/".$user_id;
       
 
@@ -953,7 +953,7 @@ Team WizardofAMZ
     $this->set_response($message, REST_Controller::HTTP_CREATED);
    }
    public function stest_post(){
-    $currentDate=date('Y-m-d H:i:s');
+    echo $afterdate=date('Y-m-d', strtotime("+3 days")); die;
     echo $sql="select user_id from user_email where deq6_time < '".$currentDate."' limit 1 "; die;
     echo $latestTime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +15 minutes")); die;
     $a= $this->user_model->newUser();
@@ -1601,13 +1601,14 @@ Team WizardofAMZ
     }
     public function saveTempRembid_post(){
      $postData=$this->post();
+     
      $data=$this->user_model->saveTempRembid($postData);
      if($data){
       $message['error']=false;
       $message['message']="Reimbursement id inserted in teamp table";
     }else {
       $message['error']=true;
-      $message['message']="Reimbursement id not inserted in teamp table";
+      $message['message']="Some error";
     }
     $this->set_response($message, REST_Controller::HTTP_CREATED);       
     }
@@ -1651,4 +1652,5 @@ Team WizardofAMZ
      $this->set_response($message, REST_Controller::HTTP_CREATED);
      
     }
+    
 }

@@ -69,7 +69,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          url: path + 'user/login',
                          data: $scope.user
                     }).then(function mySucces(response) {
-                         debugger;
                          if (response.data.error == false) {
                               $cookies.put('userdata', JSON.stringify(response.data.data[0]));
                               $rootScope.userdata = response.data.data[0];
@@ -100,14 +99,12 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                }, 1000)
 
           });
-          debugger;
-         $scope.send_str_url='';
+          $scope.send_str_url='';
           if ($stateParams.user_id) {
                $http({
                     method: "GET",
                     url: path + 'user/activation?user_id=' + $stateParams.user_id + '&token=' + $stateParams.token,
                }).then(function mySucces(response) {
-                    debugger;
                     if (response.data.error == false) {
                          $scope.send_str_url = true;
                          $('#activation').removeClass('hide');
@@ -133,19 +130,18 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                }
           }
 
-          $scope.checkplan = function(id) {
-               debugger;
-               $('#check_' + id).addClass('checked');
-               if (id == 0) {
-                    $('#check_' + id).addClass('checked');
-                    $('#check_1').removeClass('checked');
-                    $('#palnerror').html('');
-               } else {
-                    $('#check_' + id).addClass('checked');
-                    $('#check_0').removeClass('checked');
-                    $('#palnerror').html('');
-               }
-          }
+//          $scope.checkplan = function(id) {
+//               $('#check_' + id).addClass('checked');
+//               if (id == 0) {
+//                    $('#check_' + id).addClass('checked');
+//                    $('#check_1').removeClass('checked');
+//                    $('#palnerror').html('');
+//               } else {
+//                    $('#check_' + id).addClass('checked');
+//                    $('#check_0').removeClass('checked');
+//                    $('#palnerror').html('');
+//               }
+//          }
           //----- get plan
 //          $http({
 //               method: "GET",
@@ -173,22 +169,20 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
 //          });
 
           $scope.signup = function(frm_id) {
-               debugger;
                if($scope.registerUser==undefined){
                     $scope.registerUser={};
                }
-               console.log($scope.registerUser);
-               if($scope.registerUser.plan=='' || $scope.registerUser.plan==undefined){
-                    setTimeout(function(){
-                          $('#plan-error').html('');
-                    },200);
-                   
-                    $( "#planDiv" ).after( "<p id='palnerror'>This field is required.</p>" );
-                    $( "#palnerror" ).css( 'color','red');
-                    $( "#palnerror" ).css( 'font-weight','700');
-                }else {
-                     $('#palnerror').html('');
-                }
+//               if($scope.registerUser.plan=='' || $scope.registerUser.plan==undefined){
+//                    setTimeout(function(){
+//                          $('#plan-error').html('');
+//                    },200);
+//                   
+//                    $( "#planDiv" ).after( "<p id='palnerror'>This field is required.</p>" );
+//                    $( "#palnerror" ).css( 'color','red');
+//                    $( "#palnerror" ).css( 'font-weight','700');
+//                }else {
+//                     $('#palnerror').html('');
+//                }
               
                if ($("#" + frm_id).valid()) {
                     
@@ -428,7 +422,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          data: $scope.user,
                          url: path + 'user/addUser',
                     }).then(function mySucces(response) {
-                         debugger;
                          if (response.data.error == false) {
                               show_notification('Success', response.data.message, '#/user_man', 'yes');
 
@@ -468,7 +461,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          data: $scope.user,
                          url: path + 'user/addSubUserPass',
                     }).then(function mySucces(response) {
-                         debugger;
                          if (response.data.error == false) {
                               show_notification('Success', response.data.message, '#/login', 'yes');
                          } else {
@@ -502,7 +494,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           }
           
           $scope.filterFun =function(term){
-               debugger;
                if(term==undefined){
                     term='';
                }
@@ -514,7 +505,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "GET",
                     url: path + 'user/orderDetail?limit=5&page=' + filter_data.page + '&user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by+'&term='+term
                }).then(function mySucces(response) {
-                    debugger;
                     if (response.data.error == false) {
                          $scope.orderData = response.data.data;
                          $scope.total_order = response.data.total_record;
@@ -551,7 +541,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
 
      if($location.$$path == '/order')
           {
-                 debugger;
               $scope.filterFun();
           }
           
@@ -570,12 +559,9 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     url: path + "user/getInventoryissue?issue_id="+$stateParams.issueid,
                     method: "GET",
                 }).success(function(response) {
-                     debugger;
-                    if (response.error == false) {
+                     if (response.error == false) {
                          $scope.inventory = response.data[0];
-                         debugger;
                          $scope.desvc=$scope.inventory.issue;
-                         console.log($scope.inventory);
                      } else {
                          show_notification('Error', response.message, '', 'no');
                     }
@@ -585,7 +571,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                if ($('#' + frm_id).valid()) {
                    $scope.inventory.user_id=$rootScope.userdata.user_id;
                    $scope.inventory.type=type;
-                   console.log($scope.inventory);
                    $('#issusediv').addClass('hide');
                    $('#pleasewait').html('Please Wait...');
                    
@@ -594,8 +579,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          method: "POST",
                          data: $scope.inventory,
                      }).success(function(response){
-                         debugger;
-                        if (response.error == false) {
+                         if (response.error == false) {
                              show_notification('Success', response.message, '#/inventoryad', 'yes');
                          } else {
                              show_notification('Error', response.message, '', 'no');
@@ -604,7 +588,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
               }
           }
           $scope.openinventoryIssue = function() {
-                    debugger;
                     var inventory_id=[];
                     var msku=[];
                     var a=[];
@@ -639,7 +622,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          var summery='';
                         
                          for(var j=0;j<a.length;j++){
-                             console.log(a);
                               var sym='';
                                var issueReson='';
                              if(j<a.length-1){
@@ -678,10 +660,8 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     
                     
           }
-         
           $scope.addIssue = function(frm_id) {
                if ($("#" + frm_id).valid()) {
-                    debugger;
                     $scope.fbaissue.msku = $('#msku').val();
                      $('#issueModal').modal('hide');
                 }
@@ -693,7 +673,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                url: path + 'user/inventoryDetail?user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
           }).then(function mySucces(response) {
                if (response.data.error == false) {
-                    debugger;
                     $scope.inventoryDetailData = response.data.data.result;
                     $scope.automatchdata = response.data.data.automatchdata;
                 } else {
@@ -702,7 +681,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           });
           
          $scope.totalamount=function(){
-              debugger;
               var totalVal=[];
               var total=0;
                  $(':checkbox:checked').each(function(i){
@@ -720,8 +698,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
            $scope.globalFilter2 = function() {
                $scope.quoteDatatable2.fnFilter($scope.searchresolved);
           };
-          
-          $scope.test='123';
      }]).controller('frontCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
           {
@@ -763,13 +739,33 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           $scope.changeUser=function(){ 
                $scope.dis=true;
                $rootScope.userdata.user_id =$scope.user.user_id;
-               $cookies.put('userdata', JSON.stringify($rootScope.userdata));
+               
+                $http({
+                    url: path + "user/getDashboardData?user_id="+$rootScope.userdata.user_id ,
+                    method: "GET"
+               }).success(function(response) {
+                    debugger;
+                    if (response.error == false) {
+                         $scope.countRemResolveddData=response.data.countRemResolveddData;
+                         $scope.countRemSubmitedData=response.data.countRemSubmitedData;
+                         
+                         $scope.inventoryResolveCount=response.data.inventoryResolveCount;
+                         $scope.remResolveData=response.data.remResolveData;
+                         $scope.lastUpdatedDataDate=response.data.lastUpdatedDataDate;
+                         $cookies.put('userdata', JSON.stringify($rootScope.userdata));
                $('#chnageuserbtn').addClass('hide');
                $('#chnagebtn').removeClass('hide');
                 sessionStorage.setItem("userdata", JSON.stringify($rootScope.userdata));
                show_notification('Success', 'You have successfully changed the user. Go to Returns Manager to view data', '', 'no');
+                    } else {
+                         //alert('token not get');
+                     }
+               });
+               
           }
-          
+          $scope.getUserTime=function(user_id){
+                  
+          }
            $http({
                     url: path + "user/allUserList",
                     method: "GET"
@@ -785,13 +781,13 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     url: path + "user/getDashboardData?user_id="+$rootScope.userdata.user_id,
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $scope.countRemResolveddData=response.data.countRemResolveddData;
                          $scope.countRemSubmitedData=response.data.countRemSubmitedData;
                          
                          $scope.inventoryResolveCount=response.data.inventoryResolveCount;
                          $scope.remResolveData=response.data.remResolveData;
+                         $scope.lastUpdatedDataDate=response.data.lastUpdatedDataDate;
                     } else {
                          //alert('token not get');
                      }
@@ -837,7 +833,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          method: "GET",
                          url: path + 'user/getIssueId?order_id='+order_id,
                     }).then(function mySucces(response) {
-                         debugger;
                          if (response.data.error == false) {
                              window.location.href = '#/caselogView/'+response.data.data.issue_id;
                          } else {
@@ -853,8 +848,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $('#msku').val(msku);
           }
           $scope.addDiscrepIssue=function(){
-               debugger;
-            var order_count=[];
+           var order_count=[];
               $(':checkbox:checked').each(function(i){
                     order_count[i] = $(this).attr("data-orderid");
                  });
@@ -903,12 +897,10 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           }
 
           $scope.MarkResolveIsuue = function() {
-debugger;
                var Resolveorder = [];
                $(':checkbox:checked').each(function(i) {
                     Resolveorder[i] = $(this).attr("data-orderid");
                });
-               console.log(Resolveorder);
                if (Resolveorder.length == 0) {
                     show_notification('Error', "Please select at least one checkbox", '', 'no');
                }
@@ -917,7 +909,6 @@ debugger;
                     method: "POST",
                     data: Resolveorder,
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          show_notification('Success', response.message, '#/refundManager', 'yes');
                     } else {
@@ -986,7 +977,6 @@ debugger;
                               var mulOrderId='';
                              
                                for(var j=0;j<a.length;j++){
-                                    console.log(a);
                                      var sym=''
                                     if(j<a.length-1){
                                          sym =' | ';
@@ -1055,11 +1045,9 @@ debugger;
           }
           
          $scope.customerIssue=function(frm_id,type){
-              debugger;
-              if ($('#' + frm_id).valid()) {
+             if ($('#' + frm_id).valid()) {
                    $scope.reimeli.user_id=$rootScope.userdata.user_id;
                    $scope.reimeli.type=type;
-                   console.log($scope.reimeli);
                    $('#issusediv').addClass('hide');
                    $('#pleasewait').html('Please Wait...');
                    
@@ -1068,7 +1056,6 @@ debugger;
                     method: "POST",
                     data: $scope.reimeli,
                 }).success(function(response) {
-                     debugger;
                     if (response.error == false) {
                          show_notification('Success', response.message, '#/refundManager', 'yes');
                      } else {
@@ -1079,7 +1066,6 @@ debugger;
           }
           $scope.scheduleIssue=function(frm_id){
                 if ($('#' + frm_id).valid()) {
-                   console.log($scope.reimeli);
                    $('#issusediv').addClass('hide');
                    $('#pleasewait').html('Please Wait...');
                    $http({
@@ -1087,7 +1073,6 @@ debugger;
                          method: "POST",
                          data: $scope.reimeli,
                     }).success(function(response) {
-                         debugger;
                         if (response.error == false) {
                              show_notification('Success', response.message, '#/refundManager', 'yes');
                          } else {
@@ -1131,8 +1116,7 @@ debugger;
                     url: path + "user/refundOrderDetail?order_id="+$stateParams.id+'&user_id=' + $rootScope.userdata.user_id,
                     method: "GET",
                 }).success(function(response) {
-                     debugger;
-                    if (response.error == false) {
+                     if (response.error == false) {
                          $scope.orderDetail = response.data[0];
                      } else {
                          show_notification('Error', response.message, '', 'no');
@@ -1145,12 +1129,9 @@ debugger;
                     url: path + "user/getCustomerissue?issue_id="+$stateParams.issueid,
                     method: "GET",
                 }).success(function(response) {
-                     debugger;
-                    if (response.error == false) {
+                     if (response.error == false) {
                          $scope.case = response.data[0];
-                         debugger;
                          $scope.desvc=$scope.case.issue;
-                         console.log($scope.case);
                      } else {
                          show_notification('Error', response.message, '', 'no');
                     }
@@ -1257,7 +1238,6 @@ debugger;
                     url: path + "user/getUserToken?user_id="+$rootScope.userdata.user_id,
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $('#loading1').addClass('hide');
                          $scope.userToken = response.data[0];
@@ -1350,8 +1330,7 @@ debugger;
                       $('#issue_status').val(id);
                   }
                   else if(type=="notes"){
-                       debugger;
-                      $('#statusDiv').addClass('hide');
+                       $('#statusDiv').addClass('hide');
                       $('#statuscross').addClass('hide');
                       $('#rembIdDiv').addClass('hide');
                       $('#caseIdDiv').addClass('hide');
@@ -1364,8 +1343,7 @@ debugger;
                   }
           }
           $scope.status=function(){
-               debugger;
-               setTimeout(function(){
+                setTimeout(function(){
                     $('#rembpencil').addClass('hide');
                },100);
             
@@ -1392,14 +1370,12 @@ debugger;
                     $scope.saveCaseData. note=$('#note').val();
                     $scope.saveCaseData. order_id=$('#order_id').val();
                }
-               console.log($scope.saveCaseData);
                 $http({
                     url: path + "user/saveCaseData",
                     method: "POST",
                     data:$scope.saveCaseData
                }).success(function(response) {
-                    debugger;
-                         if (response.error == false) {
+                       if (response.error == false) {
                               show_notification('Success', response.message, '#/caselogView/'+$scope.saveCaseData.issue_id, 'yes');
                          } else {
                               show_notification('Error', response.message, '', 'no');
@@ -1412,13 +1388,10 @@ debugger;
                               url: path + "user/caselogDetail?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
                               method: "GET"
                          }).success(function(response) {
-                              debugger;
                               if (response.error == false) {
-                                   debugger;
                                    $scope.caseLog=response.data.caseLog[0];
                                    $scope.userData=response.data.userData[0];
                                    $scope.caseLogDetail=response.data.caseLogMesgDetail;
-                                   console.log($scope.caseLogDetail);
                                    setTimeout(function(){
                                         $('#accordion-0').addClass('open');
                                    $('#accordion-0').css('display','block');
@@ -1533,7 +1506,6 @@ debugger;
                     if ($('#' + frm_id).valid()) {
                          $scope.caseLogData.user_id=$rootScope.userdata.user_id;
                          $scope.caseLogData.type='submit';
-                         console.log($scope.caseLogData);
                          $('#issusediv').addClass('hide');
                          $('#pleasewait').html('Please Wait...');
 
@@ -1542,8 +1514,7 @@ debugger;
                           method: "POST",
                           data: $scope.caseLogData,
                       }).success(function(response) {
-                           debugger;
-                          if (response.error == false) {
+                           if (response.error == false) {
                                show_notification('Success', response.message, '#/caseLog', 'yes');
                            } else {
                                show_notification('Error', response.message, '', 'no');
@@ -1558,7 +1529,6 @@ debugger;
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
           }
           $scope.addDraftinventoryIssue=function(){
-                    debugger;
                     if($scope.inventory==undefined){
                     $scope.inventory={};
                   } 
@@ -1581,7 +1551,6 @@ debugger;
                         method: "POST",
                         data:$scope.inventory
                    }).success(function(response) {
-                        debugger;
                              if (response.error == false) {
                                   show_notification('Success', response.message, '#/inventoryCaseLog', 'yes');
                              } else {
@@ -1607,7 +1576,6 @@ debugger;
                     url: path + "user/inventoryCaseData?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $scope.inventoryCaseData=response.data[0];
                     } else {
@@ -1635,7 +1603,6 @@ debugger;
                if ($('#' + frm_id).valid()) {
                    $scope.inventoryCaseData.user_id=$rootScope.userdata.user_id;
                    $scope.inventoryCaseData.type='submited';
-                   console.log($scope.inventoryCaseData);
                    $('#issusediv').addClass('hide');
                    $('#pleasewait').html('Please Wait...');
                    
@@ -1644,8 +1611,7 @@ debugger;
                          method: "POST",
                          data: $scope.inventoryCaseData,
                      }).success(function(response){
-                         debugger;
-                        if (response.error == false) {
+                         if (response.error == false) {
                              show_notification('Success', response.message, '#/inventoryCaseLog', 'yes');
                          } else {
                              show_notification('Error', response.message, '', 'no');
@@ -1667,8 +1633,6 @@ debugger;
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
           }
-          debugger;
-         console.log($rootScope.reason);
           if($scope.remb==undefined){
                     $scope.remb={};
                }
@@ -1683,7 +1647,6 @@ debugger;
           }
           
           $scope.checkRembId=function(frm_id){
-               debugger;
                if ($('#' + frm_id).valid()) {
                    $scope.remb.user_id=$rootScope.userdata.user_id;
                    $('#issusediv').addClass('hide');
@@ -1694,7 +1657,6 @@ debugger;
                     data: $scope.remb,
                 }).success(function(response) {
                      $('#pleasewait').html('');
-                     debugger;
                          $scope.inventoryData=response.data.inventoryData;
                          $scope.rembData=response.data.rembData;
                          if($scope.rembData !='' &&  $scope.inventoryData!='' && $scope.inventoryData != undefined  &&  $scope.rembData != undefined){
@@ -1709,10 +1671,9 @@ debugger;
           }
           
            $scope.saveTempRembid=function(){
-               debugger;
                $('#rembModal').modal('hide');
                    $scope.remb.user_id=$rootScope.userdata.user_id;
-                   $scope.remb.inventory_id=$('#inventory_id').val();
+                   $scope.remb.inventory_id=$rootScope.inventory_id;
                    
                    $http({
                     url: path + "user/saveTempRembid",
@@ -1720,19 +1681,22 @@ debugger;
                     data: $scope.remb,
                 }).success(function(response) {
                      debugger;
-                     location.reload();
+                     if(response.error==false){
+                         location.reload();
+                    }else {
+                         show_notification('Error' ,response.message,'','no');
+                    }
                });
               
           }
           $scope.assignRembId=function(){
-               $scope.remb.inventory_id=$('#inventory_id').val();
-               $scope.remb.reason=$('#reason').val();
+               $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $scope.remb.inventory_id=$rootScope.inventory_id;
                $http({
                     url: path + "user/assignRembId",
                     method: "POST",
                     data: {'updateRem': $scope.remb,'inventoryData':$scope.inventoryData,'rembData':$scope.rembData},
                 }).success(function(response) {
-                         debugger;
                          if(response.error==false){
                               $('#rembModal').modal('hide');
                                 show_notification('Success', response.message, '#/inventoryad', 'yes');
@@ -1742,14 +1706,13 @@ debugger;
                });
           }
           $scope.updateRembId=function(){
-               $scope.remb.inventory_id=$('#inventory_id').val();
-               $scope.remb.reason=$('#reason').val();
+               $scope.remb.user_id=$rootScope.userdata.user_id;
+               $scope.remb.inventory_id=$rootScope.inventory_id;
                $http({
                     url: path + "user/updateRembId",
                     method: "POST",
                     data: {'updateRem': $scope.remb,'rembData':$scope.rembData},
                 }).success(function(response) {
-                         debugger;
                          if(response.error==false){
                               $('#rembModal').modal('hide');
                                 show_notification('Success', response.message, '#/inventoryad', 'yes');
@@ -1759,9 +1722,8 @@ debugger;
                });
           }
            $scope.cancel = function() {
-                debugger;
                 $modalInstance.dismiss('cancel');
-   };
+          }
           
 }]).controller('modalController',['$rootScope','$modal', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modal, $scope, $window, $http, $location, $stateParams, $cookies) {
     
@@ -1770,7 +1732,6 @@ debugger;
     $scope.items = ['item1', 'item2', 'item3'];
     $scope.animationsEnabled = false;
     $scope.open = function (template,controller,reason,inventory_id ) {
-         debugger;
    $rootScope.reason=reason;
    $rootScope.inventory_id=inventory_id;
     var parentElem = '';
@@ -1783,32 +1744,17 @@ debugger;
       size: 'lg',
       resolve: {
         related: function () {
-             debugger;
-          return {contact_id: $scope.$parent.$parent.test}
+           return {contact_id: $scope.$parent.$parent.test}
         }
       }
     });
 
     modalInstance.result.then(function (selectedItem) {
-         debugger;
       $scope.test = {related_to:$scope.$parent.$parent.test};
     
     }, function () {
       
     });
-  };
- }]).controller('ModalInstanceCtrl',['APP','$rootScope','$modalInstance', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies','items', '$state', function(APP,$rootScope,$modalInstance, $scope, $window, $http, $location, $stateParams, $cookies,items, $state) {
- debugger;
-   $scope.api = APP.API;
-   $scope.items = items;
-   $scope.selected = {
-       item: $scope.items[0]
-   };
-   $scope.ok = function() {
-       $modalInstance.close($scope.selected.item);
-   };
-   $scope.cancel = function() {
-       $modalInstance.dismiss('cancel');
-   };
-}]);
+  }
+ }]);
      
