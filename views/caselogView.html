@@ -157,15 +157,26 @@
                                                     Notes:
                                                     <a  href="javascript:void(0)" title="Edit Notes" ng-click="addCaseId(caseLog.note,'notes')"><i class="glyph-icon tooltip-button  icon-pencil" title="Edit Notes" data-original-title=".icon-pencil"></i></a>
                                                     <br />
-                                                    <div class="col-sm-6">
+                                                    
                                                     <textarea id="note" ng-disabled="mydisabled" class="form-control">
                                                         {{caseLog.note}}
                                                     </textarea>
-                                                    </div>
+                                                   
                                                     <div class="col-sm-2">
                                                     <button type="submit" class="btn btn-block btn-blue-alt hide" id="notebtn" ng-click="saveCaseData('notes',caseLog.issue_id)">Submit</button>
                                                     
                                                 </div>
+                                                </div>
+                                            </div>
+                                                <div class="row">
+                                                    <div class="col-sm-12 form-group">
+                                                    Description
+                                                    
+                                                    <textarea id="note" ng-disabled="mydisabled" class="form-control" style="min-height: 150px;">
+                                                        {{caseLog.issue}}
+                                                    </textarea>
+                                                   
+                                                    
                                                 </div>
                                             </div>
                                         </div>

@@ -1214,6 +1214,28 @@ Team WizardofAMZ
     }
     public function customerIssue_post(){
      $postData=$this->post();
+     
+     if(isset($postData['note'])){
+      unset($postData['note']);
+     }
+     if(isset($postData['issue_id'])){
+      unset($postData['issue_id']);
+     }
+     if(isset($postData['issuse_status'])){
+      unset($postData['issuse_status']);
+     }
+     if(isset($postData['createdDate'])){
+      unset($postData['createdDate']);
+     }
+     if(isset($postData['caseId'])){
+      unset($postData['caseId']);
+     }
+     if(isset($postData['rembId'])){
+      unset($postData['rembId']);
+     }
+     if(isset($postData['total'])){
+      unset($postData['total']);
+     }
      $result=$this->user_model->customerIssue($postData);
      if($result){
          $message['error']= false;
@@ -1350,18 +1372,18 @@ Team WizardofAMZ
       $getData=$this->get();
       $this->set_response($this->user_model->draft($getData), REST_Controller::HTTP_CREATED);
     }
-    public function sendDraftCase_post(){
-     $postData=$this->post();
-     $data=$this->user_model->sendDraftCase($postData);
-     if($data){
-       $message['error']=false;
-       $message['message']="Your case submited";
-     }else{
-       $message['error']=true;
-       $message['message']="Your case not  submited";
-     }
-     $this->set_response($message, REST_Controller::HTTP_CREATED);
-    }
+//    public function sendDraftCase_post(){
+//     $postData=$this->post();
+//     $data=$this->user_model->sendDraftCase($postData);
+//     if($data){
+//       $message['error']=false;
+//       $message['message']="Your case submited";
+//     }else{
+//       $message['error']=true;
+//       $message['message']="Your case not  submited";
+//     }
+//     $this->set_response($message, REST_Controller::HTTP_CREATED);
+//    }
     public function submitedInventory_get(){
       $getData=$this->get();
       $this->set_response($this->user_model->submitedInventory($getData), REST_Controller::HTTP_CREATED);
@@ -1380,6 +1402,31 @@ Team WizardofAMZ
     }
     public function addinventoryIssue_post(){
      $postData=$this->post();
+     //print_r($postData); die;
+     if(isset($postData['issue_id'])){
+      unset($postData['issue_id']);
+     }
+     if(isset($postData['caseId'])){
+      unset($postData['caseId']);
+     }
+     if(isset($postData['rembId'])){
+      unset($postData['rembId']);
+     }
+     if(isset($postData['total'])){
+      unset($postData['total']);
+     }
+     if(isset($postData['note'])){
+      unset($postData['note']);
+     }
+     if(isset($postData['createdDate'])){
+      unset($postData['createdDate']);
+     }
+     if(isset($postData['modifyDate'])){
+      unset($postData['modifyDate']);
+     }
+     if(isset($postData['issuse_status'])){
+      unset($postData['issuse_status']);
+     }
      $data=$this->user_model->addinventoryIssue($postData);
      if(!empty($data)){
        $message['error']=false;
@@ -1573,6 +1620,33 @@ Team WizardofAMZ
      }else {
       $message['error']=true;
       $message['message']="These Inventory reason and Reimbursement reason does not match.";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+     
+    }
+    public function getDashboardData_get(){
+     $getData=$this->get();
+     $data=$this->user_model->getDashboardData($getData);
+     if(!empty($data)){
+       $message['error']=FALSE;
+       $message['message']="Dashboard Data";
+       $message['data']=$data;
+     }else{
+       $message['error']=true;
+       $message['message']="Dashboard Data not avilable";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function scheduleIssue_post(){
+     $postData=$this->post();
+     $data=$this->user_model->scheduleIssue($postData);
+     if(!empty($data)){
+       $message['error']=FALSE;
+       $message['message']="Your case save but it sent after some days";
+       $message['data']=$data;
+     }else{
+       $message['error']=true;
+       $message['message']="Your case not save";
      }
      $this->set_response($message, REST_Controller::HTTP_CREATED);
      

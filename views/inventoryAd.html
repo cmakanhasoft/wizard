@@ -18,32 +18,7 @@
 	  <h2>Inventory  Detail </h2>
 	 </div>
 	 <div class="row">
-	  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	   <div class="modal-dialog">
-		<div class="modal-content">
-		 <div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="closeModal">&times;</button>
-		  <h3>REIMBURSEMENT ID Detail</h3>
-		 </div>
-		 <div class="modal-body" >
-		 
-		
-                   
-                      </div>
-                </div>
-	   </div>
-	  </div>
-<!--<div id="myModal" class="modal hide fade in">
-    <div class="modal-header">
-        <a class="close" data-dismiss="modal">×</a>
-        <h3>Header</h3>
-    </div>
-    <div class="modal-body"></div>
-    <div class="modal-footer">
-        <input type="submit" class="btn btn-success" value="Save"/>
-    </div>
-</div>-->
-	  <div class="col-md-12">
+          <div class="col-md-12">
 	   <div class="panel">
 		<div class="panel-body">
 		 <div class="example-box-wrapper">
@@ -91,13 +66,12 @@
 				  <td>{{ person.msku}}</td>
 				  <td>{{ person.quantity}}</td>
                                   <td>
-<!--                                      <a href="#/skuhistory/{{ person.msku}}" title="History"><i class="glyph-icon tooltip-button icon-history" title="History" data-original-title=".icon-history"></i></a>&nbsp; &nbsp; <a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" ng-click="openRembPopup(person.inventory_id,person.reason)" ><i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"></i></a>  -->
-<a href="#/skuhistory/{{ person.msku}}" title="History"><i class="glyph-icon tooltip-button icon-history" title="History" data-original-title=".icon-history"></i></a>&nbsp; &nbsp;
+                                        <a href="#/skuhistory/{{ person.msku}}" title="History"><i class="glyph-icon tooltip-button icon-history" title="History" data-original-title=".icon-history"></i></a>&nbsp; &nbsp;
 
 
-<a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" >
-    <i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"  ng-controller="modalController" ng-click="open('editRembId.html', 'inventoryadCtrl', '')"></i>
-</a>
+                                        <a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" >
+                                            <i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"  ng-controller="modalController" ng-click="open('editRembId.html', 'editRembIdCtrl',person.reason,person.inventory_id)"></i>
+                                        </a>
 
                                   </td>				  
 				 </tr>

@@ -1,28 +1,29 @@
-<div id="page-content-wrapper">
+<div id="page-content-wrapper" >
  <div id="page-content">
   <div class="container">
    <div id="page-title">
-	<h2>Edit case
-		<a href="#/caseLog" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
-	</h2>
+	<h2>REIMBURSEMENT ID Detail</h2>
+        <button style="float: right;" type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">×</button>
    </div>
-   <div class="panel">
+   <div class="panel" >
 	<div class="panel-body">
             
 	 <div class="example-box-wrapper">
         <form role="form"  id="sku-validation">
 		   <div class="form-group">
-			<label for="sku">Reimbursement ID *:</label>
+			<label for="sku">Reimbursement ID *: {{test}}</label>
+                        
 			<div class="input-group input-group-lg">
 			 <input type="text" class="form-control" id="sku" name="sku" placeholder="Enter Reimbursement ID" ng-model="remb.rembId" required>
-			 <input type="text" class="form-control" id="inventory_id" name="inventory_id" value="">
-                         <input type="text" class="form-control" id="reason" name="reason" value="">
+			 <input type="text" class="form-control" id="inventory_id" name="inventory_id" ng-model="remb.inventory_id">
+                         <input type="text" class="form-control" id="reason" name="reason" ng-model="remb.reason">
 			</div>
 		   </div>
 		  
 		   <div class="form-group" id="issusediv">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="button" class="btn btn-primary" id="addPayment" ng-click="checkRembId('sku-validation')">Submit</button>			
+			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Close</button>
+			<button type="button" class="btn btn-primary" id="addPayment" ng-click="checkRembId('sku-validation')">Submit</button>	
+                        
                    </div>
                 <div class="form-group" id="pleasewait">
                 </div>
@@ -30,17 +31,17 @@
                     <b>The mentioned reimbursement ID is not yet found in our records. Usually, it takes a few days until the reimbursement is displayed in your records. Do you want to be notified after 7 days for this ID?
                     </b>
                     <div class="col-md-12" style="float:right;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">No</button>
                         <button type="button" class="btn btn-primary" id="addPayment" ng-click="saveTempRembid()">Yes</button>              </div>	
                  </div>
                  <div class="row" ng-if="inventoryData !='' &&   rembData !=''">
                         <div class="col-md-12" style="float:right;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Close</button>
                         <button type="button" class="btn btn-primary" id="assignRembId" ng-click="assignRembId()">Update</button>		</div>	
                   </div>
                   <div class="row" ng-if="inventoryData =='' &&   rembData !=''">
                         <div class="col-md-12" style="float:right;">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Close</button>
                         <button type="button" class="btn btn-primary" id="updateRembId" ng-click="updateRembId()">Update</button>		</div>	
                   </div>
 		  </form>

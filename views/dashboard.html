@@ -18,7 +18,7 @@
 		  <div class="form-group">
                 <label class="col-sm-3 control-label">Select User</label>
                 <div class="col-sm-6">
-                    <select class="form-control" ng-model="user.user_id"  name="user_id" id="user_id" required >
+                    <select class="form-control" ng-model="user.user_id" ng-disabled='dis'  name="user_id" id="user_id" required >
                         <option value="">-- Select User --</option>
                         <option value="{{u.user_id}}" ng-repeat="u in userList">{{u.firstName}}</option>
                         
@@ -28,7 +28,8 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label"></label>
                 <div class="col-sm-3">
-                     <button type="submit" class="btn btn-block btn-blue-alt" ng-click="changeUser('user-validation')">Submit</button>
+                     <button type="submit" class="btn btn-block btn-blue-alt hide" id='chnageuserbtn' ng-click="changeUser('user-validation')">Submit</button>
+                     <button type="submit" class="btn btn-block btn-blue-alt" id='chnagebtn' ng-click="change()">Change</button>
                 </div>
             </div>
 		  
@@ -42,19 +43,10 @@
     <div class="col-md-4">
         <div class="dashboard-box dashboard-box-chart bg-white content-box">
             <div class="content-wrapper">
-                <div class="header">
-                    $34,657
-                    <span>Total Earnings<b> in last</b> ten <b>quarters</b></span>
-                </div>
-                <div class="bs-label bg-green">+18%</div>
-                <div class="center-div sparkline-big-alt">1245,1450,1312,1121,986,1489</div>
-                <div class="row list-grade">
-                    <div class="col-md-2">January</div>
-                    <div class="col-md-2">February</div>
-                    <div class="col-md-2">March</div>
-                    <div class="col-md-2">April</div>
-                    <div class="col-md-2">May</div>
-                    <div class="col-md-2">June</div>
+                <div class="header bg-green" style="min-height: 100px;">
+                    <b style="padding: 5px;">${{remResolveData}}</b>
+                    
+                    <span>Total amount reimbursed till now from cases for the user</span>
                 </div>
             </div>
            
@@ -63,39 +55,26 @@
     <div class="col-md-4">
         <div class="dashboard-box dashboard-box-chart bg-white content-box">
             <div class="content-wrapper">
-                <div class="header">
-                    169
-                    <span>Total Subscriptions<b> in last</b> 6 days</span>
+                <div class="header bg-red" style="min-height: 100px;">
+                    <b style="padding: 5px;">
+                        {{countRemResolveddData}} / {{countRemSubmitedData}}
+                    </b>
+                    
+                    <span>Total number of cases won OUT of total number of cases submitted</span>
                 </div>
-                <div class="bs-label bg-red">-14%</div>
-                <div class="center-div sparkline-big-alt">21,41,31,50,18,41</div>
-                <div class="row list-grade">
-                    <div class="col-md-2">M</div>
-                    <div class="col-md-2">T</div>
-                    <div class="col-md-2">W</div>
-                    <div class="col-md-2">T</div>
-                    <div class="col-md-2">F</div>
-                    <div class="col-md-2">S</div>
-                </div>
+                
+                
             </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="dashboard-box dashboard-box-chart bg-white content-box">
             <div class="content-wrapper">
-                <div class="header">
-                    8960
-                    <span>Total Downloads<b> in last</b> 6 years</span>
-                </div>
-                <div class="bs-label bg-orange">~51%</div>
-                <div class="center-div sparkline-big-alt">2210,2310,2010,2310,2123,2350</div>
-                <div class="row list-grade">
-                    <div class="col-md-2">2009</div>
-                    <div class="col-md-2">2010</div>
-                    <div class="col-md-2">2011</div>
-                    <div class="col-md-2">2012</div>
-                    <div class="col-md-2">2013</div>
-                    <div class="col-md-2">2014</div>
+                <div class="header bg-orange" style="min-height: 100px;">
+                    <b style="padding: 5px;">
+                        {{inventoryResolveCount}} 
+                    </b>
+                    <span>Total number of items reimbursed</span>
                 </div>
             </div>
         </div>

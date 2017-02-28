@@ -71,9 +71,9 @@ class User_model extends CI_Model {
     
     public function inventoryDetail($data){
       $userId=$data['user_id'];
-       $DEQ6sql="select a.*,IFNULL(b.total,0) as total from (select i.msku,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND i.update_status='0' AND (i.rembId = '0' || i.rembId = '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND i.update_status='0' AND (i.rembId = '0' || i.rembId = '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC"; 
+       $DEQ6sql="select a.*,IFNULL(b.total,0) as total from (select i.msku,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND i.update_status='0' AND (i.inventory_status='0' || i.inventory_status='5') AND (i.rembId = '0' || i.rembId = '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND i.update_status='0' AND (i.inventory_status='0' || i.inventory_status='5') AND (i.rembId = '0' || i.rembId = '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC"; 
       $finalArray=  $this->db->query($DEQ6sql)->result_array();
-      $automatchsql="select a.*,IFNULL(b.total,0) as total from (select i.msku,i.rembId,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC"; 
+      $automatchsql="select a.*,IFNULL(b.total,0) as total from (select i.msku,i.rembId,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND (i.inventory_status='0' || i.inventory_status='5') AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND (i.inventory_status='0' || i.inventory_status='5') AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC"; 
       $automatchdata=  $this->db->query($automatchsql)->result_array();
       $res['result']=$finalArray;
       $res['automatchdata']=$automatchdata;
@@ -717,9 +717,9 @@ class User_model extends CI_Model {
      $this->db->where_in("orderId", $data);
      $this->db->update("customer_report",$cupdateData);
 
-     $pupdateDatas=array('porder_status'=>'2');
-     $this->db->where_in("amazonOrderId", $data);
-     $this->db->update("payment_reimburs",$pupdateDatas);
+//     $pupdateDatas=array('porder_status'=>'2');
+//     $this->db->where_in("amazonOrderId", $data);
+//     $this->db->update("payment_reimburs",$pupdateDatas);
 
 
      $pupdateData=array('oorderStatus'=>'2');
@@ -860,13 +860,8 @@ class User_model extends CI_Model {
      $extraWhere='';
      $columns = array(
                 array('db' => 'data_id', 'dt' => 0,'formatter' => function( $d, $row ){
-                $dis=false;
-               if($row['corder_status']== '0' || $row['oorderStatus'] == '0' || $row['orderStatus']== '0' || $row['porder_status']== '0'){
-                $dis=false;
-               }else {
-                $dis=true;
-               } 
-                $str='<input type="checkbox" ng-disabled="'.$dis.'" name="order_id" ng-model="reimeli.order_id['.$d.']"  data-orderRefundDays="'.$row['orderRefundDays'].'"  data-noreturn="'.$row['customerReturnId'].'" data-total="'.$row['total'].'" class="check" id='.$d.' ng-true-value='.$d.'  data-refundreturn="'.$row['refundreturn'].'" data-orderid="'.$row['order_id'].'"  data-orderDate="'.$row['order_date'].'" data-refundDate="'.$row['refund_date'].'" />';
+                
+                $str='<input type="checkbox"  name="order_id" ng-model="reimeli.order_id['.$d.']"  data-orderRefundDays="'.$row['orderRefundDays'].'"  data-noreturn="'.$row['customerReturnId'].'" data-total="'.$row['total'].'" class="check" id='.$d.' ng-true-value='.$d.'  data-refundreturn="'.$row['refundreturn'].'" data-orderid="'.$row['order_id'].'"  data-orderDate="'.$row['order_date'].'" data-refundDate="'.$row['refund_date'].'" />';
                 return $str;
                 }),
                array('db' => 'order_id', 'dt' => 1,'searchable'=>'g.order_id'),
@@ -885,11 +880,11 @@ class User_model extends CI_Model {
                 })
            );
           $order='ORDER BY g.order_id DESC';
-          $sql='select * from (select c.orderId as customerReturnId,c.corder_status, CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn, b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND dr.orderStatus="0" AND do.oorderStatus="0" AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31
+          $sql='select * from (select c.orderId as customerReturnId,c.corder_status, CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn, b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5") AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31
 
-UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id, dr.orderStatus, DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND dr.orderStatus="0" AND do.oorderStatus="0"  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31  ) as g $where $order $limit';
+UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id, dr.orderStatus, DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5" ) AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31  ) as g $where $order $limit';
           
-           $total_record ='select count(*) from (select  c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)asrefundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND dr.orderStatus="0" AND do.oorderStatus="0"  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31   UNION select c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)as refundreturn , b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select  dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.datetime as order_date,do.oorderStatus,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND dr.orderStatus="0" AND do.oorderStatus="0"  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31 AND c.user_id='.$data['user_id'].' ) as g';
+           $total_record ='select count(*) from (select  c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)asrefundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5")  AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31   UNION select c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)as refundreturn , b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select  dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.datetime as order_date,do.oorderStatus,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31 AND c.user_id='.$data['user_id'].' ) as g';
      $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere,$total_record);
 
    return $data;
@@ -1090,6 +1085,7 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
     return $result;
    }
    public function customerIssue($data){
+    
     if(!empty($data['user_id'])){
       $userData=$this->db->select('*')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
       
@@ -1103,7 +1099,7 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
     }
     unset($data['type']);
     $this->db->insert('customerissue',$data);
-     $issueId=$this->db->insert_id();
+    $issueId=$this->db->insert_id();
     if($issueId){
      $orderId=trim($data['order_id']);
      $oneOrederId=explode("|",$orderId);
@@ -1124,9 +1120,9 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
             $this->db->where_in("orderId", $trimmed_array);
             $this->db->update("customer_report",$cupdateData);
 
-            $pupdateDatas=array('porder_status'=>'1');
-            $this->db->where_in("amazonOrderId", $trimmed_array);
-            $this->db->update("payment_reimburs",$pupdateDatas);
+//            $pupdateDatas=array('porder_status'=>'1');
+//            $this->db->where_in("amazonOrderId", $trimmed_array);
+//            $this->db->update("payment_reimburs",$pupdateDatas);
 
 
             $pupdateData=array('oorderStatus'=>'1');
@@ -1151,9 +1147,9 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
          $this->db->where_in("orderId", $trimmed_array);
          $this->db->update("customer_report",$cupdateData);
 
-         $pupdateDatas=array('porder_status'=>'5');
-         $this->db->where_in("amazonOrderId", $trimmed_array);
-         $this->db->update("payment_reimburs",$pupdateDatas);
+//         $pupdateDatas=array('porder_status'=>'5');
+//         $this->db->where_in("amazonOrderId", $trimmed_array);
+//         $this->db->update("payment_reimburs",$pupdateDatas);
 
 
          $pupdateData=array('oorderStatus'=>'5');
@@ -1240,9 +1236,9 @@ $data_string = json_encode($data);
      $this->db->where_in("orderId", $trimmed_array);
      $this->db->update("customer_report",$cupdateData);
 
-     $pupdateDatas=array('porder_status'=>'2');
-     $this->db->where_in("amazonOrderId", $trimmed_array);
-     $this->db->update("payment_reimburs",$pupdateDatas);
+//     $pupdateDatas=array('porder_status'=>'2');
+//     $this->db->where_in("amazonOrderId", $trimmed_array);
+//     $this->db->update("payment_reimburs",$pupdateDatas);
 
 
      $pupdateData=array('oorderStatus'=>'2');
@@ -1265,9 +1261,9 @@ $data_string = json_encode($data);
       $this->db->where_in("orderId", $trimmed_array);
       $this->db->update("customer_report",$cupdateData);
 
-      $pupdateDatas=array('porder_status'=>$data['issuse_status']);
-      $this->db->where_in("amazonOrderId", $trimmed_array);
-      $this->db->update("payment_reimburs",$pupdateDatas);
+//      $pupdateDatas=array('porder_status'=>$data['issuse_status']);
+//      $this->db->where_in("amazonOrderId", $trimmed_array);
+//      $this->db->update("payment_reimburs",$pupdateDatas);
 
 
       $pupdateData=array('oorderStatus'=>$data['issuse_status']);
@@ -1320,15 +1316,11 @@ $data_string = json_encode($data);
      $primaryKey = 'customerissue.issue_id';
      $extraWhere='';
      $columns = array(
-         array('db' => 'caseId', 'dt' => 0,'formatter' => function( $d, $row ){
-              $str='<input type="checkbox"  name="issue_id" ng-model="inventory.issue_id['.$row['issue_id'].']" data-issue_id="'.$row['issue_id'].'" data-user_id="'.$row['user_id'].'" />';
-              return $str;
-       }),
-        array('db' => 'date', 'dt' => 1,'searchable'=>'customerissue.createdDate'),
-        array('db' => 'caseId', 'dt' => 2,'searchable'=>'caseId'),
-        array('db' => 'order_id', 'dt' =>3,'searchable'=>'order_id'),
+        array('db' => 'date', 'dt' => 0,'searchable'=>'customerissue.createdDate'),
+        array('db' => 'caseId', 'dt' =>1,'searchable'=>'caseId'),
+        array('db' => 'order_id', 'dt' =>2,'searchable'=>'order_id'),
         
-        array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
+        array('db' => 'caseId', 'dt' =>3,'formatter' => function( $d, $row ){
               $str ='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
               $str .='   <a  href="#/caselogEdit/'.$row['issue_id'].'" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
               return $str;
@@ -1347,54 +1339,54 @@ $data_string = json_encode($data);
    return $data;
     
    }
-   public function sendDraftCase($data){
-   
-    $issue_id=$data['issue_ids'];
-    $user_id=$data['user_ids'][0];
-    
-    $userData=$this->db->select('*')->from('user_email')->where('user_id',$user_id)->get()->result_array();
-    for($i=0;$i<count($issue_id);$i++){
-     $orderData=$this->db->select('*')->from('customerissue')->where('issue_id',$issue_id[$i])->get()->result_array();
-     $orderId=trim($orderData[0]['order_id']);
-     $oneOrederId=explode("|",$orderId);
-     
-      $path=$_SERVER["DOCUMENT_ROOT"]. '/js/contact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issue_id[$i];
-     $screperData= shell_exec('casperjs '.$path); 
-     $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/message_'.$issue_id[$i].'.txt';
-          if(file_exists($filesname)){
-//           $fileData=file_get_contents($filesname);
-//           if (preg_match('/orders/',$fileData)){
-            $updateData=array('orderStatus'=>'1');
-            $trimmed_array=array_map('trim',$oneOrederId);
-      
-            $this->db->where_in("order_id", $trimmed_array);
-            $this->db->update("data_range_report_refund",$updateData);
-            $cupdateData=array('corder_status'=>'1');
-            $this->db->where_in("orderId", $trimmed_array);
-            $this->db->update("customer_report",$cupdateData);
-
-            $pupdateDatas=array('porder_status'=>'1');
-            $this->db->where_in("amazonOrderId", $trimmed_array);
-            $this->db->update("payment_reimburs",$pupdateDatas);
-
-
-            $pupdateData=array('oorderStatus'=>'1');
-            $this->db->where_in("order_id", $trimmed_array);
-            $this->db->update("data_range_report_order",$pupdateData);
-            
-            $cupdateData=array('issuse_status'=>'1');
-            $this->db->where("issue_id", $issue_id[$i]);
-            $this->db->update("customerissue",$cupdateData);
-        
-             sleep(5);
-//           }
-//           else {
-//            return false;
-//           }
-     }
-    }
-    return true;
-   }
+//   public function sendDraftCase($data){
+//   
+//    $issue_id=$data['issue_ids'];
+//    $user_id=$data['user_ids'][0];
+//    
+//    $userData=$this->db->select('*')->from('user_email')->where('user_id',$user_id)->get()->result_array();
+//    for($i=0;$i<count($issue_id);$i++){
+//     $orderData=$this->db->select('*')->from('customerissue')->where('issue_id',$issue_id[$i])->get()->result_array();
+//     $orderId=trim($orderData[0]['order_id']);
+//     $oneOrederId=explode("|",$orderId);
+//     
+//      $path=$_SERVER["DOCUMENT_ROOT"]. '/js/contact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issue_id[$i];
+//     $screperData= shell_exec('casperjs '.$path); 
+//     $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/message_'.$issue_id[$i].'.txt';
+//          if(file_exists($filesname)){
+////           $fileData=file_get_contents($filesname);
+////           if (preg_match('/orders/',$fileData)){
+//            $updateData=array('orderStatus'=>'1');
+//            $trimmed_array=array_map('trim',$oneOrederId);
+//      
+//            $this->db->where_in("order_id", $trimmed_array);
+//            $this->db->update("data_range_report_refund",$updateData);
+//            $cupdateData=array('corder_status'=>'1');
+//            $this->db->where_in("orderId", $trimmed_array);
+//            $this->db->update("customer_report",$cupdateData);
+//
+//            $pupdateDatas=array('porder_status'=>'1');
+//            $this->db->where_in("amazonOrderId", $trimmed_array);
+//            $this->db->update("payment_reimburs",$pupdateDatas);
+//
+//
+//            $pupdateData=array('oorderStatus'=>'1');
+//            $this->db->where_in("order_id", $trimmed_array);
+//            $this->db->update("data_range_report_order",$pupdateData);
+//            
+//            $cupdateData=array('issuse_status'=>'1');
+//            $this->db->where("issue_id", $issue_id[$i]);
+//            $this->db->update("customerissue",$cupdateData);
+//        
+//             sleep(5);
+////           }
+////           else {
+////            return false;
+////           }
+//     }
+//    }
+//    return true;
+//   }
    public function submitedInventory($data){
      $table = 'inventoryissue';
      $primaryKey = 'inventoryissue.issue_id';
@@ -1487,15 +1479,11 @@ $data_string = json_encode($data);
      $primaryKey = 'inventoryissue.issue_id';
      $extraWhere='';
      $columns = array(
-         array('db' => 'issue_id', 'dt' => 0,'formatter' => function( $d, $row ){
-              $str='<input type="checkbox"  name="issue_id" ng-model="inventory.issue_id['.$row['issue_id'].']" data-issue_id="'.$row['issue_id'].'" data-user_id="'.$row['user_id'].'" />';
-          return $str;
-          }),
-        array('db' => 'date', 'dt' => 1,'searchable'=>'inventoryissue.createdDate'),
-        array('db' => 'caseId', 'dt' =>2,'searchable'=>'caseId'),
-        array('db' => 'msku', 'dt' =>3,'searchable'=>'msku'),
+        array('db' => 'date', 'dt' => 0,'searchable'=>'inventoryissue.createdDate'),
+        array('db' => 'caseId', 'dt' =>1,'searchable'=>'caseId'),
+        array('db' => 'msku', 'dt' =>2,'searchable'=>'msku'),
         
-        array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
+        array('db' => 'caseId', 'dt' =>3,'formatter' => function( $d, $row ){
               //$str='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
               $str ='<a  href="#/inventorycaseEdit/'.$row['issue_id'].'" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
               return $str;
@@ -1804,6 +1792,33 @@ $data_string = json_encode($data);
      }else {
       return FALSE;
      }
+    }
+    public function getDashboardData($data)
+    {
+     $result=[];
+    $remResolveData= $this->db->select('sum(CASE WHEN total<0 THEN total * (-1) ELSE total END ) as total')->from('data_range_report_refund')->where('user_id',$data['user_id'])->where('orderStatus','2')->get()->result_array();
+    
+    $countRemSubmitedData= $this->db->select('count(data_id) as totalsubmitedCase')->from('data_range_report_refund')->where('user_id',$data['user_id'])->where('orderStatus','1')->get()->result_array();
+    
+    $countRemResolveddData= $this->db->select('count(data_id) as totalsubmitedCase')->from('data_range_report_refund')->where('user_id',$data['user_id'])->where('orderStatus','2')->get()->result_array();
+    
+    
+    $result['remResolveData']=$remResolveData[0]['total'];
+    $result['countRemSubmitedData']=$countRemSubmitedData[0]['totalsubmitedCase'];
+    $result['countRemResolveddData']=$countRemResolveddData[0]['totalsubmitedCase'];
+  
+    
+    
+    $inventoryResolveData= "select IFNULL(ROUND(sum(IFNULL(b.total,0)),2),0.00) as total from (select i.msku,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where  i.user_id=".$data['user_id']." AND i.inventory_status='2' ) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where  (i.user_id=".$data['user_id']." AND i.inventory_status='2' ) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC";
+    $inventoryResolveCount= $this->db->query($inventoryResolveData)->result_array();
+    $result['inventoryResolveCount']=$inventoryResolveCount[0]['total'];
+    return $result;
+    }
+    public function scheduleIssue($data){
+     $data['createdDate']=date('Y-m-d H:i:s');
+     $data['issuse_status']='0';
+     $this->db->insert('customerissue',$data);
+     return $this->db->insert_id();
     }
 }
 

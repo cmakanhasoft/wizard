@@ -678,25 +678,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     
                     
           }
-          $('body').on('hidden.bs.modal', '.modal', function (e) {
-               $("#rembModal").click(function(ev) {
-                    e.preventDefault();
-                    var target = $(this).attr("href");
-
-                    // load the url and show modal on success
-                    $("#rembModal .modal-body").load(target, function() { 
-                         $("#rembModal").modal("show"); 
-                    });
-               });
-          });
-          
-        // $('body').on('hidden.bs.modal', '.modal', function (e) {
-             //  $(this).removeData('bs.modal');
-           //    $(this).location.reload(true);
-                       //$(e.target).removeData("bs.modal").find(".modal-content").empty();
-              //$(this).find("input,textarea,select").val('').end();
-            //$(this).find("#errorMessage").html('').end();
-          //     });
+         
           $scope.addIssue = function(frm_id) {
                if ($("#" + frm_id).valid()) {
                     debugger;
@@ -704,107 +686,8 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                      $('#issueModal').modal('hide');
                 }
           }
-          $scope.openRembPopup=function(inventory_id,reason){
-              
-              var target = '#/editRembId/'+inventory_id+'/'+reason;
-
-               // load the url and show modal on success
-               $("#myModal .modal-body").load(target, function() { 
-                   $('#myModal').modal('toggle');
-               });
-//               var target = '#/editRembId/'+inventory_id+'/'+reason;
-//
-//               // load the url and show modal on success
-//               $("#myModal .modal-body").load(target, function() { 
-//                    
-//               });
-//               $('#myModal').modal('toggle');
-//               $('#inventory_id').val(inventory_id);
-//               $('#reason').val(reason);
-          }
           
-          $scope.assignRembId=function(){
-               $scope.remb.inventory_id=$('#inventory_id').val();
-               $scope.remb.reason=$('#reason').val();
-               $http({
-                    url: path + "user/assignRembId",
-                    method: "POST",
-                    data: {'updateRem': $scope.remb,'inventoryData':$scope.inventoryData,'rembData':$scope.rembData},
-                }).success(function(response) {
-                         debugger;
-                         if(response.error==false){
-                              $('#rembModal').modal('hide');
-                                show_notification('Success', response.message, '#/inventoryad', 'yes');
-                         }else {
-                              show_notification('Error' ,response.message,'','no');
-                         }
-               });
-          }
-          $scope.updateRembId=function(){
-               $scope.remb.inventory_id=$('#inventory_id').val();
-               $scope.remb.reason=$('#reason').val();
-               $http({
-                    url: path + "user/updateRembId",
-                    method: "POST",
-                    data: {'updateRem': $scope.remb,'rembData':$scope.rembData},
-                }).success(function(response) {
-                         debugger;
-                         if(response.error==false){
-                              $('#rembModal').modal('hide');
-                                show_notification('Success', response.message, '#/inventoryad', 'yes');
-                         }else {
-                              show_notification('Error' ,response.message,'','no');
-                         }
-               });
-          }
-          $scope.saveTempRembid=function(){
-               debugger;
-               $('#rembModal').modal('hide');
-                   $scope.remb.user_id=$rootScope.userdata.user_id;
-                   $scope.remb.inventory_id=$('#inventory_id').val();
-                   
-                   $http({
-                    url: path + "user/saveTempRembid",
-                    method: "POST",
-                    data: $scope.remb,
-                }).success(function(response) {
-                     debugger;
-                     location.reload();
-               });
-              
-          }
-          $scope.checkRembId=function(frm_id){
-               debugger;
-               if ($('#' + frm_id).valid()) {
-                   $scope.remb.user_id=$rootScope.userdata.user_id;
-                   $('#issusediv').addClass('hide');
-                   $('#pleasewait').html('Please Wait...');
-                   $http({
-                    url: path + "user/checkRembId",
-                    method: "POST",
-                    data: $scope.remb,
-                }).success(function(response) {
-                     $('#pleasewait').html('');
-                     debugger;
-                         $scope.inventoryData=response.data.inventoryData;
-                         $scope.rembData=response.data.rembData;
-                         if($scope.rembData !='' &&  $scope.inventoryData!='' && $scope.inventoryData != undefined  &&  $scope.rembData != undefined){
-                              $scope.temprembidStatus=false;
-                         }else if($scope.rembData !='' &&  $scope.rembData != undefined && ($scope.inventoryData =='' || $scope.inventoryData == undefined)) {
-                              $scope.temprembidStatus=false;
-                         } else if(($scope.inventoryData =='' || $scope.inventoryData == undefined) && ($scope.rembData =='' || $scope.rembData == undefined) ){
-                               $scope.temprembidStatus=true;
-                         } 
-               });
-              }
-          }
-          $scope.temprembidStatus=false;
-          if($scope.inventoryData == undefined || $scope.inventoryData == ''){
-               $scope.inventoryData='';
-          }
-          if($scope.rembData == undefined || $scope.rembData == ''){
-               $scope.rembData='';
-          }
+          
            $http({
                method: "GET",
                url: path + 'user/inventoryDetail?user_id=' + $rootScope.userdata.user_id + '&role_id=' + $rootScope.userdata.role_id + '&created_by=' + $rootScope.userdata.created_by,
@@ -829,9 +712,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                  var totalPrice=total.toFixed(2);
                  
                     $scope.totalAmount='Total amount ::  '+'$'+totalPrice;
-               
-                 console.log(totalPrice);
-               
          } 
          
           $scope.globalFilter1 = function() {
@@ -840,6 +720,8 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
            $scope.globalFilter2 = function() {
                $scope.quoteDatatable2.fnFilter($scope.searchresolved);
           };
+          
+          $scope.test='123';
      }]).controller('frontCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
           {
@@ -872,9 +754,18 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $scope.user={};
                  $scope.user.user_id=$rootScope.userdata.user_id;
           }
+          $scope.dis=true;
+          $scope.change=function(){
+               $scope.dis=false;
+               $('#chnageuserbtn').removeClass('hide');
+               $('#chnagebtn').addClass('hide');
+          }
           $scope.changeUser=function(){ 
+               $scope.dis=true;
                $rootScope.userdata.user_id =$scope.user.user_id;
                $cookies.put('userdata', JSON.stringify($rootScope.userdata));
+               $('#chnageuserbtn').addClass('hide');
+               $('#chnagebtn').removeClass('hide');
                 sessionStorage.setItem("userdata", JSON.stringify($rootScope.userdata));
                show_notification('Success', 'You have successfully changed the user. Go to Returns Manager to view data', '', 'no');
           }
@@ -886,12 +777,27 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
    
                     if (response.error == false) {
                          $scope.userList=response.data;
-                         
-                         
                     } else {
                          //alert('token not get');
                      }
                });
+                  $http({
+                    url: path + "user/getDashboardData?user_id="+$rootScope.userdata.user_id,
+                    method: "GET"
+               }).success(function(response) {
+                    debugger;
+                    if (response.error == false) {
+                         $scope.countRemResolveddData=response.data.countRemResolveddData;
+                         $scope.countRemSubmitedData=response.data.countRemSubmitedData;
+                         
+                         $scope.inventoryResolveCount=response.data.inventoryResolveCount;
+                         $scope.remResolveData=response.data.remResolveData;
+                    } else {
+                         //alert('token not get');
+                     }
+               });
+               
+               
 //          setTimeout(function() {
 //               body_sizer();
 //          }, 100)
@@ -1170,8 +1076,38 @@ debugger;
                     }
                });
               }
-             
+          }
+          $scope.scheduleIssue=function(frm_id){
+                if ($('#' + frm_id).valid()) {
+                   console.log($scope.reimeli);
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   $http({
+                         url: path + "user/scheduleIssue",
+                         method: "POST",
+                         data: $scope.reimeli,
+                    }).success(function(response) {
+                         debugger;
+                        if (response.error == false) {
+                             show_notification('Success', response.message, '#/refundManager', 'yes');
+                         } else {
+                             show_notification('Error', response.message, '', 'no');
+                        }
+                   });
+              }
+               
+          }
+         $scope.setTime=function(){
+              $('#timeDiv').removeClass('hide');
+              $('#sedulSubmitbtn').removeClass('hide');
+              $('#submitbtn').addClass('hide');
          }
+         $scope.hidetime=function(){
+              $('#timeDiv').addClass('hide');
+               $('#submitbtn').removeClass('hide');
+              $('#sedulSubmitbtn').addClass('hide');
+         }
+         
            $scope.globalFilter = function() {
                $scope.quoteDatatable.fnFilter($scope.search_orderId);
           };
@@ -1345,40 +1281,40 @@ debugger;
           $scope.sentReplay=function(){
                $('#replyModal').modal('toggle');
           }
-          $scope.addDraftcustomerIssue = function() {
-               debugger;
-                    if($scope.inventory==undefined){
-                    $scope.inventory={};
-                  } 
-                  var issue_id=[];
-                  var user_id=[];
-                   $(':checkbox:checked').each(function(i){
-                         issue_id[i] = $(this).attr("data-issue_id");
-                         user_id[i] = $(this).attr("data-user_id");
-                      });
-                      $scope.inventory.issue_ids=issue_id;
-                      $scope.inventory.user_ids=user_id;
-                      if(Object.keys(issue_id).length==0){
-                     show_notification('Error' ,"Please select at least one checkbox" ,'','no');
-
-                }else if(Object.keys(issue_id).length>3){
-                      show_notification('Error' ,"You can select only 3 order." ,'','no');
-                }else  {
-                         $http({
-                        url: path + "user/sendDraftCase",
-                        method: "POST",
-                        data:$scope.inventory
-                   }).success(function(response) {
-                        debugger;
-                             if (response.error == false) {
-                                  show_notification('Success', response.message, '#/caseLog', 'yes');
-                             } else {
-                                  show_notification('Error', response.message, '', 'no');
-                             }
-                   });
-                }
-            
-           }
+//          $scope.addDraftcustomerIssue = function() {
+//               debugger;
+//                    if($scope.inventory==undefined){
+//                    $scope.inventory={};
+//                  } 
+//                  var issue_id=[];
+//                  var user_id=[];
+//                   $(':checkbox:checked').each(function(i){
+//                         issue_id[i] = $(this).attr("data-issue_id");
+//                         user_id[i] = $(this).attr("data-user_id");
+//                      });
+//                      $scope.inventory.issue_ids=issue_id;
+//                      $scope.inventory.user_ids=user_id;
+//                      if(Object.keys(issue_id).length==0){
+//                     show_notification('Error' ,"Please select at least one checkbox" ,'','no');
+//
+//                }else if(Object.keys(issue_id).length>3){
+//                      show_notification('Error' ,"You can select only 3 order." ,'','no');
+//                }else  {
+//                         $http({
+//                        url: path + "user/sendDraftCase",
+//                        method: "POST",
+//                        data:$scope.inventory
+//                   }).success(function(response) {
+//                        debugger;
+//                             if (response.error == false) {
+//                                  show_notification('Success', response.message, '#/caseLog', 'yes');
+//                             } else {
+//                                  show_notification('Error', response.message, '', 'no');
+//                             }
+//                   });
+//                }
+//            
+//           }
           $scope.mydisabled=true;
             $scope.addCaseId=function(id,type){
                  if(type=='case'){
@@ -1593,6 +1529,28 @@ debugger;
                     });
                }
           }
+          $scope.draftCaseSubmit=function(frm_id){
+                    if ($('#' + frm_id).valid()) {
+                         $scope.caseLogData.user_id=$rootScope.userdata.user_id;
+                         $scope.caseLogData.type='submit';
+                         console.log($scope.caseLogData);
+                         $('#issusediv').addClass('hide');
+                         $('#pleasewait').html('Please Wait...');
+
+                         $http({
+                          url: path + "user/customerIssue",
+                          method: "POST",
+                          data: $scope.caseLogData,
+                      }).success(function(response) {
+                           debugger;
+                          if (response.error == false) {
+                               show_notification('Success', response.message, '#/caseLog', 'yes');
+                           } else {
+                               show_notification('Error', response.message, '', 'no');
+                          }
+                     });
+                    }
+          }
           
  }]).controller('inventoryCaseLogCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
@@ -1673,6 +1631,28 @@ debugger;
                     });
                }
           }
+           $scope.draftInventoryCaseSubmit=function(frm_id){
+               if ($('#' + frm_id).valid()) {
+                   $scope.inventoryCaseData.user_id=$rootScope.userdata.user_id;
+                   $scope.inventoryCaseData.type='submited';
+                   console.log($scope.inventoryCaseData);
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   
+                   $http({
+                         url: path + "user/addinventoryIssue",
+                         method: "POST",
+                         data: $scope.inventoryCaseData,
+                     }).success(function(response){
+                         debugger;
+                        if (response.error == false) {
+                             show_notification('Success', response.message, '#/inventoryCaseLog', 'yes');
+                         } else {
+                             show_notification('Error', response.message, '', 'no');
+                        }
+                   });
+              }
+          }
           
 }]).controller('skuhistoryCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
@@ -1682,74 +1662,153 @@ debugger;
           if($stateParams.sku){
                $rootScope.sku=$stateParams.sku;
           }
- }]).controller('editRembIdCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+ }]).controller('editRembIdCtrl', ['$rootScope','$modalInstance', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modalInstance, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
           }
+          debugger;
+         console.log($rootScope.reason);
+          if($scope.remb==undefined){
+                    $scope.remb={};
+               }
+           $scope.remb.inventory_id=$rootScope.inventory_id;
+            $scope.remb.reason=$rootScope.reason;
+          $scope.temprembidStatus=false;
+          if($scope.inventoryData == undefined || $scope.inventoryData == ''){
+               $scope.inventoryData='';
+          }
+          if($scope.rembData == undefined || $scope.rembData == ''){
+               $scope.rembData='';
+          }
+          
+          $scope.checkRembId=function(frm_id){
+               debugger;
+               if ($('#' + frm_id).valid()) {
+                   $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   $http({
+                    url: path + "user/checkRembId",
+                    method: "POST",
+                    data: $scope.remb,
+                }).success(function(response) {
+                     $('#pleasewait').html('');
+                     debugger;
+                         $scope.inventoryData=response.data.inventoryData;
+                         $scope.rembData=response.data.rembData;
+                         if($scope.rembData !='' &&  $scope.inventoryData!='' && $scope.inventoryData != undefined  &&  $scope.rembData != undefined){
+                              $scope.temprembidStatus=false;
+                         }else if($scope.rembData !='' &&  $scope.rembData != undefined && ($scope.inventoryData =='' || $scope.inventoryData == undefined)) {
+                              $scope.temprembidStatus=false;
+                         } else if(($scope.inventoryData =='' || $scope.inventoryData == undefined) && ($scope.rembData =='' || $scope.rembData == undefined) ){
+                               $scope.temprembidStatus=true;
+                         } 
+               });
+              }
+          }
+          
+           $scope.saveTempRembid=function(){
+               debugger;
+               $('#rembModal').modal('hide');
+                   $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $scope.remb.inventory_id=$('#inventory_id').val();
+                   
+                   $http({
+                    url: path + "user/saveTempRembid",
+                    method: "POST",
+                    data: $scope.remb,
+                }).success(function(response) {
+                     debugger;
+                     location.reload();
+               });
+              
+          }
+          $scope.assignRembId=function(){
+               $scope.remb.inventory_id=$('#inventory_id').val();
+               $scope.remb.reason=$('#reason').val();
+               $http({
+                    url: path + "user/assignRembId",
+                    method: "POST",
+                    data: {'updateRem': $scope.remb,'inventoryData':$scope.inventoryData,'rembData':$scope.rembData},
+                }).success(function(response) {
+                         debugger;
+                         if(response.error==false){
+                              $('#rembModal').modal('hide');
+                                show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         }else {
+                              show_notification('Error' ,response.message,'','no');
+                         }
+               });
+          }
+          $scope.updateRembId=function(){
+               $scope.remb.inventory_id=$('#inventory_id').val();
+               $scope.remb.reason=$('#reason').val();
+               $http({
+                    url: path + "user/updateRembId",
+                    method: "POST",
+                    data: {'updateRem': $scope.remb,'rembData':$scope.rembData},
+                }).success(function(response) {
+                         debugger;
+                         if(response.error==false){
+                              $('#rembModal').modal('hide');
+                                show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         }else {
+                              show_notification('Error' ,response.message,'','no');
+                         }
+               });
+          }
+           $scope.cancel = function() {
+                debugger;
+                $modalInstance.dismiss('cancel');
+   };
+          
 }]).controller('modalController',['$rootScope','$modal', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modal, $scope, $window, $http, $location, $stateParams, $cookies) {
+    
     var __email = $("div.gb_xb").text();if(!__email){__email = $("div.gb_wb").text();}
-   // $scope.api = APP.API;
-    //$scope.items = ['item1', 'item2', 'item3'];
-    //$scope.animationsEnabled = false;
-    //    if ($modalInstance) {
-    //        $modalInstance.dismiss('cancel');
-    //    }
-    $scope.open = function(template, controller, size, type) {
-      debugger;
-        
-        var modalInstance = $modal.open({
-            templateUrl: 'http://103.239.146.250:898/amazon_local/#/editRembId/1/1',
-            controller: controller,
-            size: size,
-            backdrop: false,
-            keyboard: true,
-            resolve: {
-//                related: function() {
-//                    //debugger;
-//            
-//                    // console.log(this);
-//                    //  console.log($scope.$parent);
-//                    //  //debugger;
-//                    if ($scope.$parent.relatedinfo && $scope.$parent.title == "Contact") {
-//                        var firstname = '';
-//                        if (typeof $scope.$parent.data !== "undefined") {
-//                            firstname = $scope.$parent.data.first_name;
-//                        }
-//                        return {related_to: $scope.$parent.contactID, related_name: firstname, 'related_type': 1}
-//                    } else if ($scope.$parent.relatedinfo && $scope.$parent.title == "Company") {
-//                        var comapny_name = "";
-//                        if (typeof $scope.$parent.data !== "undefined") {
-//                            comapny_name = $scope.$parent.data.company_name;
-//                        }
-//                        return {related_to: $scope.$parent.companyID, related_name: comapny_name, 'related_type': 2}
-//                    } else if ($scope.$parent.opportunity && $scope.$parent.title == "Opportunities") {
-//                        return {related_to: $scope.$parent.opportunity.related_to, related_name: $scope.$parent.opportunity.related_name, 'related_type': $scope.$parent.opportunity.related_type, 'is_opportunity': $scope.$parent.opportunity.opportunity_id}
-//                    }
-//                    $(".modal-dialog").draggable({handle: ".modal-header"});
-//                },
-                open: function() {
-                    setTimeout(function() {
-                         $('#myModal').modal('show');
-                       // $(".modal-dialog").draggable({handle: ".modal-header"});
-//                        if(template == "contact-create.html"){
-//                            var PreData = JSON.parse(localStorage["ArcExt."+__email+"PreData"]);
-//                            $("div.modal-dialog").find("select#type").val(PreData.type).trigger("change");
-//                            $("div.modal-dialog").find("input[name=first_name]").val(PreData.name).trigger("input");
-//                            $("div.modal-dialog").find("input[name=email1]").val(PreData.email).trigger("input");
-//                            localStorage["ArcExt."+__email+"createType"]="{}";
-//                            form.email1.$error=false;
-//                        }
-                    }, 300);
-                }
-            }
-        });
-        //
-        modalInstance.result.then(function(selectedItem) {
-            $scope.selected = {related_to: $scope.$parent.contactID, related_name: $scope.$parent.data.first_name, 'related_type': 1};
-        }, function() {
-        
-        });
-    };
+
+    $scope.items = ['item1', 'item2', 'item3'];
+    $scope.animationsEnabled = false;
+    $scope.open = function (template,controller,reason,inventory_id ) {
+         debugger;
+   $rootScope.reason=reason;
+   $rootScope.inventory_id=inventory_id;
+    var parentElem = '';
+    var modalInstance = $modal.open({
+      animation: $scope.animationsEnabled,
+      ariaLabelledBy: 'modal-title',
+      ariaDescribedBy: 'modal-body',
+      templateUrl: 'views/'+template,
+      controller: controller,
+      size: 'lg',
+      resolve: {
+        related: function () {
+             debugger;
+          return {contact_id: $scope.$parent.$parent.test}
+        }
+      }
+    });
+
+    modalInstance.result.then(function (selectedItem) {
+         debugger;
+      $scope.test = {related_to:$scope.$parent.$parent.test};
+    
+    }, function () {
+      
+    });
+  };
+ }]).controller('ModalInstanceCtrl',['APP','$rootScope','$modalInstance', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies','items', '$state', function(APP,$rootScope,$modalInstance, $scope, $window, $http, $location, $stateParams, $cookies,items, $state) {
+ debugger;
+   $scope.api = APP.API;
+   $scope.items = items;
+   $scope.selected = {
+       item: $scope.items[0]
+   };
+   $scope.ok = function() {
+       $modalInstance.close($scope.selected.item);
+   };
+   $scope.cancel = function() {
+       $modalInstance.dismiss('cancel');
+   };
 }]);
      

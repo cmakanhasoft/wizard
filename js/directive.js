@@ -387,3 +387,18 @@ app.directive('fileUploaders',function () {
         }
     }
 });
+
+app.directive('dateTimePicker',function () {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+            elem.datetimepicker({
+               format: "dd-mm-yyyy hh:ii",
+                autoclose: true,
+                todayBtn: true,
+                startDate: new Date(),
+                minuteStep: 10
+            });
+        }
+    }
+});
