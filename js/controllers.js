@@ -1637,7 +1637,8 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     $scope.remb={};
                }
            $scope.remb.inventory_id=$rootScope.inventory_id;
-            $scope.remb.reason=$rootScope.reason;
+           $scope.remb.reason=$rootScope.reason;
+           $scope.remb.temprembid=$rootScope.temprembid;
           $scope.temprembidStatus=false;
           if($scope.inventoryData == undefined || $scope.inventoryData == ''){
                $scope.inventoryData='';
@@ -1671,7 +1672,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           }
           
            $scope.saveTempRembid=function(){
-               $('#rembModal').modal('hide');
+                    $modalInstance.dismiss('cancel');
                    $scope.remb.user_id=$rootScope.userdata.user_id;
                    $scope.remb.inventory_id=$rootScope.inventory_id;
                    
@@ -1725,15 +1726,118 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                 $modalInstance.dismiss('cancel');
           }
           
-}]).controller('modalController',['$rootScope','$modal', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modal, $scope, $window, $http, $location, $stateParams, $cookies) {
+}]).controller('autoeditRembIdCtrl', ['$rootScope','$modalInstance', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modalInstance, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          if($scope.remb==undefined){
+                    $scope.remb={};
+               }
+               
+               debugger;
+           $scope.remb.inventory_id=$rootScope.inventory_id;
+           $scope.remb.reason=$rootScope.reason;
+           $scope.remb.temprembid=$rootScope.temprembid;
+          $scope.temprembidStatus=false;
+          if($scope.inventoryData == undefined || $scope.inventoryData == ''){
+               $scope.inventoryData='';
+          }
+          if($scope.rembData == undefined || $scope.rembData == ''){
+               $scope.rembData='';
+          }
+          
+          $scope.cancel = function() {
+                $modalInstance.dismiss('cancel');
+          }
+          
+          $scope.autocheckRembId=function(frm_id){
+               if ($('#' + frm_id).valid()) {
+                   $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   $http({
+                    url: path + "user/checkRembId",
+                    method: "POST",
+                    data: $scope.remb,
+                }).success(function(response) {
+                     debugger;
+                     $('#pleasewait').html('');
+                         $scope.inventoryData=response.data.inventoryData;
+                         $scope.rembData=response.data.rembData;
+                         if($scope.rembData !='' &&  $scope.inventoryData!='' && $scope.inventoryData != undefined  &&  $scope.rembData != undefined){
+                              $scope.temprembidStatus=false;
+                         }else if($scope.rembData !='' &&  $scope.rembData != undefined && ($scope.inventoryData =='' || $scope.inventoryData == undefined)) {
+                              $scope.temprembidStatus=false;
+                         } else if(($scope.inventoryData =='' || $scope.inventoryData == undefined) && ($scope.rembData =='' || $scope.rembData == undefined) ){
+                               $scope.temprembidStatus=true;
+                         } 
+               });
+              }
+          }
+          $scope.autoUpdateRembId=function(){
+               $scope.remb.user_id=$rootScope.userdata.user_id;
+               $scope.remb.inventory_id=$rootScope.inventory_id;
+               $http({
+                    url: path + "user/autoUpdateRembId",
+                    method: "POST",
+                    data: {'updateRem': $scope.remb,'rembData':$scope.rembData},
+                }).success(function(response) {
+                         if(response.error==false){
+                              $('#rembModal').modal('hide');
+                                show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         }else {
+                              show_notification('Error' ,response.message,'','no');
+                         }
+               });
+          }
+          $scope.autoAssignRembId=function(){
+               $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $scope.remb.inventory_id=$rootScope.inventory_id;
+               $http({
+                    url: path + "user/autoAssignRembId",
+                    method: "POST",
+                    data: {'updateRem': $scope.remb,'inventoryData':$scope.inventoryData,'rembData':$scope.rembData},
+                }).success(function(response) {
+                         if(response.error==false){
+                              $('#rembModal').modal('hide');
+                                show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         }else {
+                              show_notification('Error' ,response.message,'','no');
+                         }
+               });
+          }
+          $scope.autoSaveTempRembid=function(){
+                    $modalInstance.dismiss('cancel');
+                   $scope.remb.user_id=$rootScope.userdata.user_id;
+                   $scope.remb.inventory_id=$rootScope.inventory_id;
+                   
+                   $http({
+                    url: path + "user/autoSaveTempRembid",
+                    method: "POST",
+                    data: $scope.remb,
+                }).success(function(response) {
+                     debugger;
+                     if(response.error==false){
+                         location.reload();
+                    }else {
+                         show_notification('Error' ,response.message,'','no');
+                    }
+               });
+              
+          }
+          
+          
+ }]).controller('modalController',['$rootScope','$modal', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope,$modal, $scope, $window, $http, $location, $stateParams, $cookies) {
     
     var __email = $("div.gb_xb").text();if(!__email){__email = $("div.gb_wb").text();}
 
     $scope.items = ['item1', 'item2', 'item3'];
     $scope.animationsEnabled = false;
-    $scope.open = function (template,controller,reason,inventory_id ) {
+    $scope.open = function (template,controller,reason,inventory_id ,temprembid) {
    $rootScope.reason=reason;
    $rootScope.inventory_id=inventory_id;
+   $rootScope.temprembid=temprembid;
     var parentElem = '';
     var modalInstance = $modal.open({
       animation: $scope.animationsEnabled,
@@ -1756,5 +1860,23 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
       
     });
   }
- }]);
+ }]).controller('inventoryissueCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+           if($stateParams.issueid){
+               $http({
+                    url: path + "user/getInventoryissue?issue_id="+$stateParams.issueid,
+                    method: "GET",
+                }).success(function(response) {
+                     if (response.error == false) {
+                         $scope.inventory = response.data[0];
+                         $scope.desvc=$scope.inventory.issue;
+                     } else {
+                         show_notification('Error', response.message, '', 'no');
+                    }
+               });
+          }
+  }]);
      

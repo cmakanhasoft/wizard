@@ -253,7 +253,7 @@
       }).state('/inventoryView/:issueid ', {
         url: '/inventoryView/:issueid',
         templateUrl: 'views/inventoryView.html',
-        controller: 'inventoryadCtrl',
+        controller: 'inventoryissueCtrl',
         headeruse: 'forguest',
         leftuse: 'forsetting',
         leftactivetab: 'inventoryad',

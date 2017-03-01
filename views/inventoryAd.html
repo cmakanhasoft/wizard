@@ -66,13 +66,8 @@
 				  <td>{{ person.msku}}</td>
 				  <td>{{ person.quantity}}</td>
                                   <td>
-                                        <a href="#/skuhistory/{{ person.msku}}" title="History"><i class="glyph-icon tooltip-button icon-history" title="History" data-original-title=".icon-history"></i></a>&nbsp; &nbsp;
-
-
-                                        <a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" >
-                                            <i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"  ng-controller="modalController" ng-click="open('editRembId.html', 'editRembIdCtrl',person.reason,person.inventory_id)"></i>
-                                        </a>
-
+                                        <a href="#/skuhistory/{{ person.msku}}" title="History"><i class="glyph-icon tooltip-button icon-history" title="History" data-original-title=".icon-history"></i></a>&nbsp;<a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" ><i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"  ng-controller="modalController" ng-click="open('editrembId.html', 'editRembIdCtrl',person.reason,person.inventory_id,person.temprembid)"></i></a>&nbsp;&nbsp;<i style="font-size: 15px; cursor: pointer;" ng-if="person.temprembid !='' && person.temprembid != null " class="glyph-icon tooltip-button icon-question-circle" title="ReimbusmentId= {{person.temprembid}}" data-original-title=".icon-question-circle"></i>
+        
                                   </td>				  
 				 </tr>
 				</tbody>
@@ -132,6 +127,7 @@
                                     <th>MERCHANT SKU</th>
                                     <th>QUANTITY</th>
                                     <th>Reimbursement ID</th>
+                                    <th>Action</th>
                                     
 				 </tr>
 				</thead>
@@ -147,11 +143,13 @@
 				  <td ng-if="p.reason == 'O'">Transfer to holding account </td>
 				  <td ng-if="p.reason == 'M'">Inventory misplaced </td>
 				  <td ng-if="p.reason == 'F'">Inventory found </td>
-				  <td>{{ p.transactionId }}</td>
-				  <td>{{ p.msku}}</td>
-				  <td>{{ p.quantity}}</td>
-				  <td>{{ p.rembId}}</td>
-				  
+				  <td>{{p.transactionId }}</td>
+				  <td>{{p.msku}}</td>
+				  <td>{{p.quantity}}</td>
+				  <td>{{p.rembId}}</td>
+                                  <td>
+                                      <a href="javascript:void(0)" title="ADD REIMBURSEMENT ID" ><i class="glyph-icon tooltip-button icon-pencil" title="ADD REIMBURSEMENT ID" data-original-title=".icon-pencil"  ng-controller="modalController" ng-click="open('autoeditrembId.html', 'autoeditRembIdCtrl',p.reason,p.inventory_id,p.temprembid)"></i></a>
+                                  </td>
 				 </tr>
 				</tbody>
 			   </table>

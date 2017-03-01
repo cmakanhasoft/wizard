@@ -71,9 +71,9 @@ class User_model extends CI_Model {
     
     public function inventoryDetail($data){
       $userId=$data['user_id'];
-       $DEQ6sql="select a.*,IFNULL(b.total,0) as total from (select i.msku,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND i.update_status='0' AND (i.inventory_status='0' || i.inventory_status='5') AND (i.rembId = '0' || i.rembId = '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND i.update_status='0' AND (i.inventory_status='0' || i.inventory_status='5') AND (i.rembId = '0' || i.rembId = '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC"; 
+       $DEQ6sql="select t.rembId as temprembid ,a.*,IFNULL(b.total,0) as total from (select i.msku,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND i.update_status='0' AND (i.inventory_status='0' || i.inventory_status='5') AND (i.rembId = '0' || i.rembId = '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND i.update_status='0' AND (i.inventory_status='0' || i.inventory_status='5') AND (i.rembId = '0' || i.rembId = '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku left join temprembid as t on t.inventory_id=a.inventory_id order by a.date DESC"; 
       $finalArray=  $this->db->query($DEQ6sql)->result_array();
-      $automatchsql="select a.*,IFNULL(b.total,0) as total from (select i.msku,i.rembId,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND (i.inventory_status='0' || i.inventory_status='5') AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND (i.inventory_status='0' || i.inventory_status='5') AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku order by a.date DESC"; 
+      $automatchsql="select t.rembId as temprembid ,a.*,IFNULL(b.total,0) as total from (select i.msku,i.rembId,i.transactionId,CASE WHEN i.quantity<0 THEN i.quantity * (-1) ELSE i.quantity END AS quantity,i.date,i.reason,i.inventory_id from inventory_adjustments as i where i.reason in ('D','E','Q','6','M') AND i.user_id=".$userId." AND (i.inventory_status='0' || i.inventory_status='5') AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) as a left join (select data_range_report_order.product_sales as total,data_range_report_order.sku,data_range_report_order.datetime from data_range_report_order where data_range_report_order.data_id in (select max(data_range_report_order.data_id) from data_range_report_order where data_range_report_order.product_sales!=0 AND data_range_report_order.product_sales >0 AND  data_range_report_order.sku in (select i.msku FROM inventory_adjustments as i where (i.reason in('D','E','Q','6')) AND (i.user_id=".$userId." AND (i.inventory_status='0' || i.inventory_status='5') AND i.update_status='1' AND (i.rembId != '0' || i.rembId != '' )) group by i.msku ) group by data_range_report_order.sku)) as b on a.msku=b.sku left join temprembid as t on t.inventory_id=a.inventory_id order by a.date DESC"; 
       $automatchdata=  $this->db->query($automatchsql)->result_array();
       $res['result']=$finalArray;
       $res['automatchdata']=$automatchdata;
@@ -885,9 +885,9 @@ class User_model extends CI_Model {
           $order='';
           $sql='select * from (select c.orderId as customerReturnId,c.corder_status, CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn, b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5") AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31
 
-UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id, dr.orderStatus, DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5" ) AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31  ) as g ORDER BY g.order_date DESC $where  $limit';
+UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id, dr.orderStatus, DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5" ) AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31  ) as g where g.total !=0.00 ORDER BY g.order_date DESC $where  $limit';
           
-           $total_record ='select count(*) from (select  c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)asrefundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5")  AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31   UNION select c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)as refundreturn , b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select  dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.datetime as order_date,do.oorderStatus,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31 AND c.user_id='.$data['user_id'].' ) as g';
+           $total_record ='select count(*) from (select  c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)asrefundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5")  AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31   UNION select c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)as refundreturn , b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select  dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.datetime as order_date,do.oorderStatus,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31 AND c.user_id='.$data['user_id'].' ) as g where g.total !=0.00';
      $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere,$total_record);
 
    return $data;
@@ -1108,7 +1108,7 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
      $oneOrederId=explode("|",$orderId);
     // $finalOrderId=trim($oneOrederId[0]);
      if($type=='submit'){
-     $path=$_SERVER["DOCUMENT_ROOT"]. '/js/contact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issueId;
+     //$path=$_SERVER["DOCUMENT_ROOT"]. '/js/contact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issueId;
      $screperData= shell_exec('casperjs '.$path); 
      $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/message_'.$issueId.'.txt';
           if(file_exists($filesname)){
@@ -1520,7 +1520,7 @@ $data_string = json_encode($data);
      $oneOrederId=explode("|",$orderId);
     // $finalOrderId=trim($oneOrederId[0]);
      if($type=='submit'){
-     $path=$_SERVER["DOCUMENT_ROOT"]. '/js/inventoryContact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issueId;
+     //$path=$_SERVER["DOCUMENT_ROOT"]. '/js/inventoryContact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issueId;
      $screperData= shell_exec('casperjs '.$path); 
      $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/inmessage_'.$issueId.'.txt';
           if(file_exists($filesname)){
@@ -1733,9 +1733,19 @@ $data_string = json_encode($data);
       return $data;
     }
     public function checkRembId($data){
+     
      $result=[];
-     $inventoryData=$this->db->select('*')->from('inventory_adjustments')->where('rembId',$data['rembId'])->where('user_id',$data['user_id'])->get()->result_array();
-     $rembData=$this->db->select('*')->from('payment_reimburs')->where('remId',$data['rembId'])->where('user_id',$data['user_id'])->get()->result_array();
+     $inventoryData=$this->db->select('*')->from('inventory_adjustments')->where('rembId',$data['rembId'])->where('user_id',$data['user_id'])->where('reason',$data['reason'])->get()->result_array();
+     
+     if($data['reason']=='E' || $data['reason']=='Q' || $data['reason']=='D'){
+      $reason='Damaged_warehouse';
+     }else if($data['reason']=='6'){
+      $reason='Damaged_inbound';
+     }else if($data['reason']=='M'){
+      $reason='Lost_warehouse';
+     }
+     
+     $rembData=$this->db->select('*')->from('payment_reimburs')->where('remId',$data['rembId'])->where('reason',$reason)->where('user_id',$data['user_id'])->get()->result_array();
      $result['inventoryData']=$inventoryData;
      $result['rembData']=$rembData;
      return $result;
@@ -1767,9 +1777,17 @@ $data_string = json_encode($data);
      
     }
     public function saveTempRembid($data){
-     $data['createdDate']=date('Y-m-d H:i:s');
-     $this->db->insert('temprembid',$data);
-     return $this->db->insert_id();
+     $temdata=$this->db->select('*')->from('temprembid')->where('inventory_id',$data['inventory_id'])->get()->result_array();
+     if(!empty($temdata)){
+      $updateTempdata=array('rembId'=>$data['rembId']);
+      $this->db->where('inventory_id',$data['inventory_id']);
+      $this->db->update('temprembid',$updateTempdata);
+      return true;
+     }else {
+      $data['createdDate']=date('Y-m-d H:i:s');
+      $this->db->insert('temprembid',$data);
+      return $this->db->insert_id();
+     }
     }
     public function updateRembId($data){
       if($data['updateRem']['reason']=='E' || $data['updateRem']['reason']=='Q' || $data['updateRem']['reason']=='D'){
@@ -1827,7 +1845,7 @@ $data_string = json_encode($data);
     $datadate=$this->db->select('customer_execution_time')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
      
      if(!empty($datadate[0]['customer_execution_time']) && $datadate[0]['customer_execution_time'] !='0000-00-00 00:00:00' && $datadate[0]['customer_execution_time'] != null){
-      $days_ago = date('Y-m-d', strtotime('-5 days', strtotime($datadate[0]['customer_execution_time'])));
+      $days_ago = date('Y-m-d', strtotime('-4 days', strtotime($datadate[0]['customer_execution_time'])));
       $result['lastUpdatedDataDate']=$days_ago;
      }else {
       $result['lastUpdatedDataDate']='Date not available';
@@ -1840,6 +1858,120 @@ $data_string = json_encode($data);
      $data['issuse_status']='0';
      $this->db->insert('customerissue',$data);
      return $this->db->insert_id();
+    }
+    public function updateTempRembId(){
+     $temprembData= $this->db->select('*')->from('temprembid')->get()->result_array();
+     if(count($temprembData)>0){
+       for($i=0;$i<count($temprembData); $i++){
+          $inventoryadData=$this->db->select('rembId')->from('inventory_adjustments')->where('inventory_id',$temprembData[$i]['inventory_id'])->where('user_id',$temprembData[$i]['user_id'])->get()->result_array();
+          
+          if($inventoryadData[0]['rembId'] !='' && $inventoryadData[0]['rembId'] !=0 && $inventoryadData[0]['rembId']!= null ){
+           $this->db->where('id', $temprembData[$i]['id']);
+           $this->db->delete('temprembid'); 
+           return true;
+          }else {
+          if($temprembData[$i]['reason']=='E' || $temprembData[$i]['reason']=='Q' || $temprembData[$i]['reason']=='D')          {
+           $reson='Damaged_warehouse';
+          }else if($temprembData[$i]['reason']=='6'){
+            $reson='Damaged_inbound';
+          }else if($temprembData[$i]['reason']=='M'){
+            $reson='Lost_warehouse';
+          }
+          
+          $rembData=$this->db->select('*')->from('payment_reimburs')->where('remId',$temprembData[$i]['rembId'])->where('update_status','0')->where('reason',$reson)->where('user_id',$temprembData[$i]['user_id'])->get()->result_array();
+         
+          if(!empty($rembData)){
+           $updatearray=array('rembId'=>$temprembData[$i]['rembId'],'update_status'=>'1');
+           $this->db->where('inventory_id',$temprembData[$i]['inventory_id']);
+           $this->db->update('inventory_adjustments',$updatearray);
+           
+           $updateremdata=array('update_status'=>'1');
+           $this->db->where('payment_reimbur_id',$rembData[0]['payment_reimbur_id']);
+           $this->db->update('payment_reimburs',$updateremdata);
+           
+           $this->db->where('id', $temprembData[$i]['id']);
+           $this->db->delete('temprembid'); 
+           return true;
+          }else {
+           return true;
+          }
+          }
+       }
+     }else{
+      return false;
+     }
+    }
+    public function autoAssignRembId($data){
+     if($data['updateRem']['reason']=='E' || $data['updateRem']['reason']=='Q' || $data['updateRem']['reason']=='D'){
+      $reson='Damaged_warehouse';
+     }else if($data['updateRem']['reason']=='6'){
+      $reson='Damaged_inbound';
+     }else if($data['updateRem']['reason']=='M'){
+      $reson='Lost_warehouse';
+     }
+     if(!empty($data['inventoryData'])){
+      $updateoldremdData=array('update_status'=>'0','modifyDate'=>'Y-m-d H:i:s');
+      $this->db->where('remId',$data['inventoryData'][0]['rembId']);
+      $this->db->update('payment_reimburs',$updateoldremdData);
+      $updatedInventoryData=array('rembId'=>$data['updateRem']['rembId'],'modifyDate'=>date('Y-m-d H:i:s'));
+      $this->db->where('inventory_id',$data['updateRem']['inventory_id']);
+      $this->db->update('inventory_adjustments',$updatedInventoryData);
+      
+      $newRembDataarray=array('update_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+      $this->db->where('remId',$data['updateRem']['rembId']);
+      $this->db->update('payment_reimburs',$newRembDataarray);
+      return true;
+     }else {
+      return false;
+     }
+    }
+    public function autoUpdateRembId($data){
+     $invetoryoldData=$this->db->select('rembId,inventory_id')->from('inventory_adjustments')->where('inventory_id',$data['updateRem']['inventory_id'])->get()->result_array();
+     if(!empty($invetoryoldData)){
+      $updateOldRembId=array('update_status'=>'0','modifyDate'=>date('Y-m-d H:i:s'));
+      $this->db->where('remId',$invetoryoldData[0]['rembId']);
+      $this->db->update('payment_reimburs',$updateOldRembId);
+     }
+     
+     $updatenewRemb=array('rembId'=>$data['updateRem']['rembId'],'update_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+     $this->db->where('inventory_id',$data['updateRem']['inventory_id']);
+     $this->db->update('inventory_adjustments',$updatenewRemb);
+     
+     $updatenewRembPayment=array('update_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+     $this->db->where('remId',$data['updateRem']['rembId']);
+     $this->db->update('payment_reimburs',$updatenewRembPayment);
+     return true;
+    }
+    public function autoSaveTempRembid($data){
+     $getinventoryData=$this->db->select('rembId')->from('inventory_adjustments')->where('inventory_id',$data['inventory_id'])->where('rembId !=0')->where('rembId != "" ') ->where('rembId != "null" ')->get()->result_array();
+    
+     if(!empty($getinventoryData)){
+      $updateoldRem=array('update_status'=>'0','modifyDate'=>date('y-m-d H:i:s'));
+      $this->db->where('remId',$getinventoryData[0]['rembId']);
+      $this->db->update('payment_reimburs',$updateoldRem);
+      
+     }
+     
+     $updateinventoryData=array('rembId'=>'','update_status'=>'0','modifyDate'=>date('Y-m-d H:i:s'));
+     $this->db->where('inventory_id',$data['inventory_id']);
+     $this->db->update('inventory_adjustments',$updateinventoryData);
+     
+     
+     $temdata=$this->db->select('*')->from('temprembid')->where('inventory_id',$data['inventory_id'])->get()->result_array();
+     if(!empty($temdata)){
+      $updateTempdata=array('rembId'=>$data['rembId']);
+      $this->db->where('inventory_id',$data['inventory_id']);
+      $this->db->update('temprembid',$updateTempdata);
+     
+     }else {
+     if(!empty($data['temprembid'])){
+     }else {
+      unset($data['temprembid']);
+     }
+      $data['createdDate']=date('Y-m-d H:i:s');
+      $this->db->insert('temprembid',$data);
+      return $this->db->insert_id();
+     }
     }
     
 }

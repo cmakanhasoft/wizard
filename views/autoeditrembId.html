@@ -16,13 +16,13 @@
 			<div class="input-group input-group-lg">
 			 <input type="text" class="form-control" id="sku" name="sku" placeholder="Enter Reimbursement ID" ng-model="remb.rembId" required>
 			 <input type="hidden" class="form-control" id="inventory_id" name="inventory_id" ng-model="remb.inventory_id">
-                         <input type="hidden" class="form-control" id="reason" name="reason" ng-model="remb.reason">
+        <input type="hidden" class="form-control" id="reason" name="reason" ng-model="remb.reason">
 			</div>
 		   </div>
 		  
 		   <div class="form-group" id="issusediv">
 			<button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Close</button>
-			<button type="button" class="btn btn-primary" id="addPayment" ng-click="checkRembId('sku-validation')">Submit</button>	
+			<button type="button" class="btn btn-primary" id="addPayment" ng-click="autocheckRembId('sku-validation')">Submit</button>	
                         
                    </div>
                 <div class="form-group" id="pleasewait">
@@ -32,17 +32,17 @@
                     </b>
                     <div class="col-md-12" style="float:right;">
                         <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">No</button>
-                        <button type="button" class="btn btn-primary" id="addPayment" ng-click="saveTempRembid()">Yes</button>              </div>	
+                        <button type="button" class="btn btn-primary" id="addPayment" ng-click="autoSaveTempRembid()">Yes</button>              </div>	
                  </div>
                  <div class="row" ng-if="inventoryData !='' &&   rembData !=''">
                         <div class="col-md-12" style="float:right;">
                         <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Close</button>
-                        <button type="button" class="btn btn-primary" id="assignRembId" ng-click="assignRembId()">Update</button>		</div>	
+                        <button type="button" class="btn btn-primary" id="assignRembId" ng-click="autoAssignRembId()">Update</button>		</div>	
                   </div>
                   <div class="row" ng-if="inventoryData =='' &&   rembData !=''">
                         <div class="col-md-12" style="float:right;">
                         <button type="button" class="btn btn-default" data-dismiss="modal" aria-hidden="true" ng-click="cancel()">Close</button>
-                        <button type="button" class="btn btn-primary" id="updateRembId" ng-click="updateRembId()">Update</button>		</div>	
+                        <button type="button" class="btn btn-primary" id="updateRembId" ng-click="autoUpdateRembId()">Update</button>		</div>	
                   </div>
         </form>
 		  <div class="row" ng-if="rembData !=''">

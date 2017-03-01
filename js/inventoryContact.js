@@ -155,7 +155,8 @@ casper.then(function() {
           $('#subject_fba_issues').val(finalreason);
           $('#fba_issues_info').html(lastissue);
           $('#asin_fba_issues').val(finalmsku_id);
-         // $('#missing_inventory_submit-announce').click();
+          $('#replyTo').val('joelk@wizardofamz.com');
+          $('#missing_inventory_submit-announce').click();
      }, reason, issues, msku);
 
 });
@@ -166,14 +167,14 @@ casper.then(function() {
      });
 });
 
-//casper.then(function() {
-//     var message = this.evaluate(function() {
-//          var message = $('div.a-container.scu-page-container').find('h1').html();
-//          return message;
-//     });
-//     fs.write('inmessage_' + issueId + '.txt', message, 644);
-//
-//});
+casper.then(function() {
+     var message = this.evaluate(function() {
+          var message = $('#caseIDText').html();
+          return message;
+     });
+     fs.write('inmessage_' + issueId + '.txt', message, 644);
+
+});
 
 
 casper.on("page.error", function(msg, trace) {

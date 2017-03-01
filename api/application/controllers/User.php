@@ -1652,5 +1652,54 @@ Team WizardofAMZ
      $this->set_response($message, REST_Controller::HTTP_CREATED);
      
     }
+    public function updateTempRembId_get(){
+      $temprembData=$this->user_model->updateTempRembId();
+      if($temprembData){
+        $message['error']=false;
+        $message['message']="Remb id updated";
+      }else {
+        $message['error']=true;
+        $message['message']="Remb id not updated";
+      }
+       $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function autoAssignRembId_post(){
+     $postData=$this->post();
+     $data=$this->user_model->autoAssignRembId($postData);
+     if($data){
+      $message['error']=false;
+      $message['message']="Reimbursement id updated";
+     }else {
+      $message['error']=true;
+      $message['message']="Inventory data not available";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function autoUpdateRembId_post(){
+     $postData=$this->post();
+     $data=$this->user_model->autoUpdateRembId($postData);
+     if($data){
+      $message['error']=false;
+      $message['message']="Reimbursement id updated";
+     }else {
+      $message['error']=true;
+      $message['message']="These Inventory reason and Reimbursement reason does not match.";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+     
+    }
+    public function autoSaveTempRembid_post(){
+     $postData=$this->post();
+     
+     $data=$this->user_model->autoSaveTempRembid($postData);
+     if($data){
+      $message['error']=false;
+      $message['message']="Reimbursement id inserted in teamp table";
+    }else {
+      $message['error']=true;
+      $message['message']="Some error";
+    }
+    $this->set_response($message, REST_Controller::HTTP_CREATED);       
+    }
     
 }
