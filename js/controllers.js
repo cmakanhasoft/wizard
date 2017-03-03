@@ -2,7 +2,7 @@ var path = 'api/index.php/';
 app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           //----check password
 
-          $scope.confrmp = function() {
+          $scope.confrmp = function(){
                var pass = $('#password').val();
                var cpass = $('#cpassword').val();
                if (cpass != pass) {
@@ -641,7 +641,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                              msg +='On '+a[j]['orderDate']+' $'+a[j]['total']+' units of SKU '+a[j]['msku']+' were reported as '+issueReson+'. Please reimburse in full.';
                              msg +='\n';
                              summery+='\n';
-                             summery+='SKU: '+a[j]['msku']+' - Please reimburse $'+(a[j]['total'])+' - Reason:'+issueReson;
+                             summery+='SKU: '+a[j]['msku']+' - Please reimburse - Reason:'+issueReson;
                              summery+='';
                              
                         }
@@ -1059,7 +1059,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     if (response.error == false) {
                          show_notification('Success', response.message, '#/refundManager', 'yes');
                      } else {
-                         show_notification('Error', response.message, '', 'no');
+                         show_notification('Error', response.message, '#/refundManager', 'Yes');
                     }
                });
               }
@@ -1913,6 +1913,53 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           }
           $scope.clearAuditData=function(){
              window.location.reload();
+          }
+          
+}]).controller('addauditCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          if($stateParams.damaged){
+               debugger;
+               if($scope.auditcase== undefined){
+                    $scope.auditcase={};
+               }
+               $scope.auditcase.contactReason='Other FBA issue';
+                   var issue ='Hello,';
+                   issue +='\n';
+                   issue +='\n';
+                   issue +='We are reconciling our inventory for the last 6 months using the inventory reconciliation report in seller central.';
+                   issue +='\n';
+                   issue +='\n';
+                   issue +='With regard to SKU '+$stateParams.sku+'. Were we credited for the '+$stateParams.damaged+' damaged units? Were we credited for the '+$stateParams.destroyed+' destroyed units? Were we credited for the '+$stateParams.lost+' lost units?';
+                   issue +='\n';
+                   issue +='\n';
+                   issue +='Thanks,';
+                   $scope.auditcase.msku=$stateParams.sku;
+                   $scope.auditcase.issue=issue;
+                   $scope.auditcase.mail_id=$rootScope.userdata.email;
+          }
+          
+           $scope.addAuditIssue=function(frm_id,type){
+               if ($('#' + frm_id).valid()) {
+                   $scope.auditcase.user_id=$rootScope.userdata.user_id;
+                   $scope.auditcase.type=type;
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   
+                   $http({
+                         url: path + "user/addinventoryIssue",
+                         method: "POST",
+                         data: $scope.auditcase,
+                     }).success(function(response){
+                         if (response.error == false) {
+                             show_notification('Success', response.message, '#/inventoryad', 'yes');
+                         } else {
+                             show_notification('Error', response.message, '', 'no');
+                        }
+                   });
+              }
           }
 }]);
      

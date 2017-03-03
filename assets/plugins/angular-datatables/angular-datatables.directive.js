@@ -282,11 +282,8 @@
         };
     }).
     directive('dtRows', function ($rootScope, DT_LAST_ROW_KEY) {
-         return {
+        return {
             restrict: 'A',
-            LengthChange: false,
-            Paginate:false,
-            
             link: function($scope) {
                 if ($scope.$last === true) {
                     $rootScope.$broadcast(DT_LAST_ROW_KEY);

@@ -1102,7 +1102,6 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
     }
     unset($data['type']);
     if(isset($data['issue_id']) && !empty($data['issue_id']))  {
-      $type='submit';
       $issueId=$data['issue_id'];
       $updatecustomerissue=array('issuse_status'=>'1');
       $this->db->where('issue_id',$issueId);
@@ -1121,8 +1120,12 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
      $screperData= shell_exec('casperjs '.$path); 
      $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/message_'.$issueId.'.txt';
           if(file_exists($filesname)){
-//           $fileData=file_get_contents($filesname);
-//           if (preg_match('/orders/',$fileData)){
+           $fileData=file_get_contents($filesname);
+           if(!empty($fileData)){
+           $updatecustomerissue=array('caseId'=>$fileData,'issuse_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+           $this->db->where('issue_id',$issueId);
+           $this->db->update('customerissue',$updatecustomerissue);
+
             $updateData=array('orderStatus'=>'1');
             $trimmed_array=array_map('trim',$oneOrederId);
       
@@ -1140,12 +1143,12 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
             $pupdateData=array('oorderStatus'=>'1');
             $this->db->where_in("order_id", $trimmed_array);
             $this->db->update("data_range_report_order",$pupdateData);
-        
+            unlink($filesname);
              return true;
-//           }
-//           else {
-//            return false;
-//           }
+           }else {
+            return false;
+           }
+
      }else {
          return false;
       }
@@ -1530,25 +1533,32 @@ $data_string = json_encode($data);
     $this->db->insert('inventoryissue',$data);
     $issueId= $this->db->insert_id();
     if($issueId){
-     $orderId=trim($data['transactionId']);
-     $oneOrederId=explode("|",$orderId);
-    // $finalOrderId=trim($oneOrederId[0]);
+     if(isset($data['transactionId']) && !empty($data['transactionId'])){
+       $orderId=trim($data['transactionId']);
+       $oneOrederId=explode("|",$orderId);
+     }
+     // $finalOrderId=trim($oneOrederId[0]);
      if($type=='submit'){
      //$path=$_SERVER["DOCUMENT_ROOT"]. '/js/inventoryContact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issueId;
      $screperData= shell_exec('casperjs '.$path); 
      $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/inmessage_'.$issueId.'.txt';
           if(file_exists($filesname)){
            $fileData=file_get_contents($filesname);
+           if(!empty($fileData)){
            $updateinventoryissue=array('caseId'=>$fileData,'issuse_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
            $this->db->where('issue_id',$issueId);
            $this->db->update('inventoryissue',$updateinventoryissue);
-          
-            $updateData=array('inventory_status'=>'1');
-            $trimmed_array=array_map('trim',$oneOrederId);
-      
-            $this->db->where_in("transactionId", $trimmed_array);
-            $this->db->update("inventory_adjustments",$updateData);
+          if(isset($data['transactionId']) && !empty($data['transactionId'])){
+             $updateData=array('inventory_status'=>'1');
+             $trimmed_array=array_map('trim',$oneOrederId);
+
+             $this->db->where_in("transactionId", $trimmed_array);
+             $this->db->update("inventory_adjustments",$updateData);
+          }
              return true;
+           }else {
+            return false;
+           }
 
      }else{
          return false;
@@ -2033,7 +2043,7 @@ $data_string = json_encode($data);
    }
    public function getAuditData($data){
     
-     $sql="select a.msku,IFNULL(b.Damaged,0) as Damaged,IFNULL(c.Destroyed,0) as Destroyed,IFNULL(d.Lost,0) as Lost,IFNULL(e.Reimbursed_d,0) as Reimbursed_d,IFNULL(f.Reimbursed_l,0) as Reimbursed_l  from (select i.msku from inventory_adjustments as i WHERE i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as a left join (select sum(i.quantity) as Damaged,i.msku from inventory_adjustments as i where i.reason in ('6','E','Q') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as b on a.msku=b.msku left join ( select sum(i.quantity) as Destroyed,i.msku from inventory_adjustments as i where i.reason in ('D') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as c on c.msku=a.msku left join (select i.msku,sum(i.quantity) as Lost from inventory_adjustments as i where i.reason in ('M','F') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as d on d.msku=a.msku left join (select p.msku,sum(p.quantityCase) as Reimbursed_d from payment_reimburs as p where p.user_id=".$data['user_id']." AND p.reason='Damaged_Warehouse' AND p.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY p.msku) as e on e.msku=a.msku left join (select p.msku,sum(p.quantityCase) as Reimbursed_l from payment_reimburs as p where p.user_id=".$data['user_id']." AND p.reason='Lost_Warehouse' AND p.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY p.msku) as f on f.msku=a.msku";
+     $sql="select a.msku,IFNULL(b.Damaged,0) as Damaged,IFNULL(c.Destroyed,0) as Destroyed,IFNULL(d.Lost,0) as Lost,IFNULL(e.Reimbursed_d,0) as Reimbursed_d,IFNULL(f.Reimbursed_l,0) as Reimbursed_l  from (select i.msku from inventory_adjustments as i WHERE  i.inventory_status='0' AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as a left join (select sum(i.quantity) as Damaged,i.msku from inventory_adjustments as i where i.inventory_status='0' AND i.reason in ('6','E','Q') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as b on a.msku=b.msku left join ( select sum(i.quantity) as Destroyed,i.msku from inventory_adjustments as i where i.inventory_status='0' AND i.reason in ('D') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as c on c.msku=a.msku left join (select i.msku,sum(i.quantity) as Lost from inventory_adjustments as i where i.inventory_status='0' AND i.reason in ('M','F') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as d on d.msku=a.msku left join (select p.msku,sum(p.quantityCase) as Reimbursed_d from payment_reimburs as p where  p.user_id=".$data['user_id']." AND p.reason='Damaged_Warehouse' AND p.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY p.msku) as e on e.msku=a.msku left join (select p.msku,sum(p.quantityCase) as Reimbursed_l from payment_reimburs as p where p.user_id=".$data['user_id']." AND p.reason='Lost_Warehouse' AND p.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY p.msku) as f on f.msku=a.msku";
     return $this->db->query($sql)->result_array();
    }
     

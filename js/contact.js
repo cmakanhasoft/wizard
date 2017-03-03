@@ -124,7 +124,12 @@ casper.then(function() {
      });
 });
 casper.then(function() {
-     this.mouse.click("#order_list1_container");
+     this.evaluate(function(order_id) {
+          var a=order_id.replace(/"/g,"");
+          var searchorderid=a.split("|");
+          var finalsearchorderId=searchorderid[0].trim();
+          $("#order_id").val(finalsearchorderId);
+     }, order_id);
      this.wait(2000, function() {
           this.capture('form2.png');
      });
@@ -171,7 +176,7 @@ casper.then(function() {
 
 casper.then(function() {
      var message = this.evaluate(function() {
-          var message = $('div.a-container.scu-page-container').find('h1').html();
+          var message = $('#caseIDText').html();
           return message;
      });
      fs.write('message_' + issueId + '.txt', message, 644);

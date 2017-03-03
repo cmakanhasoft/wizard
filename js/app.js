@@ -438,8 +438,8 @@
         }
       }).state('/auditcase/:damaged/:destroyed/:lost/:sku', {
         url: '/auditcase/:damaged/:destroyed/:lost/:sku',
-        templateUrl: 'views/audit.html',
-        controller: 'auditCtrl',
+        templateUrl: 'views/addauditcase.html',
+        controller: 'addauditCtrl',
         headeruse: 'forguest',
         leftuse: 'forsetting',
         leftactivetab: 'audit',
