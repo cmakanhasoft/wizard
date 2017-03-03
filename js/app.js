@@ -411,8 +411,7 @@
             requiredPermissions:['1','2','3','4','5']
           }
         }
-        
-      }).state('/editRembId/:inventory_id/:reason ', {
+       }).state('/editRembId/:inventory_id/:reason ', {
         url: '/editRembId/:inventory_id/:reason',
         templateUrl: 'views/editRembId.html',
         controller: 'editRembIdCtrl',
@@ -422,6 +421,32 @@
         data: {
           access: {
             requiredPermissions:['1','2','3','4','5']
+          }
+        }
+      }).state('/audit ', {
+        url: '/audit',
+        templateUrl: 'views/audit.html',
+        controller: 'auditCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'audit',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2']
+          }
+        }
+      }).state('/auditcase/:damaged/:destroyed/:lost/:sku', {
+        url: '/auditcase/:damaged/:destroyed/:lost/:sku',
+        templateUrl: 'views/audit.html',
+        controller: 'auditCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'audit',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2']
           }
         }
       })

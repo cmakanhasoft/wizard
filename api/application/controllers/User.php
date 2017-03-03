@@ -1214,28 +1214,6 @@ Team WizardofAMZ
     }
     public function customerIssue_post(){
      $postData=$this->post();
-     
-     if(isset($postData['note'])){
-      unset($postData['note']);
-     }
-     if(isset($postData['issue_id'])){
-      unset($postData['issue_id']);
-     }
-     if(isset($postData['issuse_status'])){
-      unset($postData['issuse_status']);
-     }
-     if(isset($postData['createdDate'])){
-      unset($postData['createdDate']);
-     }
-     if(isset($postData['caseId'])){
-      unset($postData['caseId']);
-     }
-     if(isset($postData['rembId'])){
-      unset($postData['rembId']);
-     }
-     if(isset($postData['total'])){
-      unset($postData['total']);
-     }
      $result=$this->user_model->customerIssue($postData);
      if($result){
          $message['error']= false;
@@ -1372,6 +1350,11 @@ Team WizardofAMZ
       $getData=$this->get();
       $this->set_response($this->user_model->draft($getData), REST_Controller::HTTP_CREATED);
     }
+    public function pending_get(){
+      $getData=$this->get();
+      $this->set_response($this->user_model->pending($getData), REST_Controller::HTTP_CREATED);
+    }
+    
 //    public function sendDraftCase_post(){
 //     $postData=$this->post();
 //     $data=$this->user_model->sendDraftCase($postData);
@@ -1700,6 +1683,24 @@ Team WizardofAMZ
       $message['message']="Some error";
     }
     $this->set_response($message, REST_Controller::HTTP_CREATED);       
+    }
+    public function getAuditData_post(){
+     $postData=$this->post();
+     $data=$this->user_model->getAuditData($postData);
+     if(!empty($data)){
+      $message['error']=false;
+      $message['data']=$data;
+      $message['message']="Audit data";
+    }else {
+      $message['error']=true;
+      $message['message']="Audit data not avilable";
+    }
+    $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function clearAudit_get(){
+     $message['error']=true;
+     $message['data']="";
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
     
 }

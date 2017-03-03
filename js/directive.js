@@ -402,3 +402,38 @@ app.directive('dateTimePicker',function () {
         }
     }
 });
+app.directive('dt1',function () {
+        debugger;
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+          
+           elem.datepicker({
+            dateFormat: "yy-mm-dd",
+            //minDate: 0,
+            onSelect: function (date) {
+               var dt2 = $('#toDate');
+                var startDate = $(this).datepicker('getDate');
+                var minDate = $(this).datepicker('getDate');
+                console.log(minDate);
+                dt2.datepicker('setDate', minDate);
+                //startDate.setDate(startDate.getDate() + 30);
+                //sets dt2 maxDate to the last day of 30 days window
+               //dt2.datepicker('option', 'maxDate', startDate);
+                dt2.datepicker('option', 'minDate', minDate);
+                //$(this).datepicker('option', 'minDate', minDate);
+            }
+        });
+        }
+    }
+});
+ app.directive('dt2',function () {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+            elem.datepicker({
+            dateFormat: "yy-mm-dd"
+        });
+        }
+    }
+});

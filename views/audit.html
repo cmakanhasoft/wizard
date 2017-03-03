@@ -1,0 +1,68 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+    <div id="page-title">
+	    <h2>Case Log</h2>
+    </div>
+   <div class="row">
+  	<div class="col-md-12">
+  	 <div class="panel">
+  	  <div class="panel-body">
+  	    <div class="example-box-wrapper">
+          <div class="row">
+              <div class="col-lg-12">
+                  <form role="form"  id="date-validation" >
+                  <div class="col-lg-3">
+                    <input type="text"  dt1 class="form-control" id="fromDate" name="fromDate" placeholder="Enter From date"  required>
+                  </div>
+                  <div class="col-lg-3">
+                    <input type="text" dt2 class="form-control" id="toDate" name="toDate" placeholder="Enter To date"  required>  
+                  </div>
+                  <div class="col-lg-2">
+                      <button type="submit" class="btn btn-block btn-blue-alt" ng-click="getAuditData('date-validation')">Submit</button>
+                  </div>
+                <div class="col-lg-2">
+                      <button type="button" class="btn btn-block btn-blue-alt" ng-click="clearAuditData()">Clear</button>
+                  </div>
+                </form>
+              </div>
+          </div>
+                <br /><br />
+            <div class="row">
+                 <table datatable="ng" class="table table-bordered table-striped table-condensed" ng-if="auditData!='' && auditData != '-'">
+				<thead>
+				 <tr>
+                                    <th>SKU</th>
+                                    <th>Damaged</th>
+                                    <th>Destroyed</th> 
+                                    <th>Lost</th>
+                                    <th>Reimbursed Damaged</th>
+                                    <th>Reimbursed Lost</th>
+                                    <th>Action</th>
+				 </tr>
+				</thead>
+				<tbody>
+				 <tr dt-rows ng-repeat="a in auditData">
+                                  <td>{{a.msku}}</td> 
+				  <td>{{a.Damaged }}</td>
+				  <td>{{a.Destroyed}}</td>
+				  <td>{{a.Lost}}</td>
+				  <td>{{a.Reimbursed_d}}</td>
+				  <td>{{a.Reimbursed_l}}</td>
+                                  <td>
+                                      <a class="btn btn-border btn-alt border-primary font-primary" href="#/auditcase/{{a.Damaged }}/{{a.Destroyed}}/{{a.Lost}}/{{a.msku}}" ng-click="openIssue()" title="Add issue"><span>Submit Case</span></a>  
+                                  </td>				  
+				 </tr>
+				</tbody>
+			   </table>
+            </div>
+        
+        </div>
+  	   </div>
+  	  </div>
+  	 </div>
+	</div>
+ </div>
+  </div>
+ </div>
+

@@ -174,10 +174,26 @@
             <span>Case Log</span>
         </a>
     </li>
-    <li ng-if="leftactivetab == 'caseLog'" access="1,2,3,4,5">
-        <a href="#/caseLog" title="Case Log" style="color: #1c82e1;">
+    
+    
+     <li ng-if="leftactivetab == 'inventoryad'" access="1,2">
+        <a href="#/inventoryad" title="Inventory Adjustments" style="color: #1c82e1;">
             <i class="glyph-icon icon-linecons-paper-plane"></i>
-            <span>Case Log</span>
+            <span>Inventory Detail</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab != 'audit'" access="1,2,3,4,5">
+        <a href="#/audit" title="audit" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit</span>
+        </a>
+    </li>
+    
+    
+    <li ng-if="leftactivetab == 'audit'" access="1,2,3,4,5">
+        <a href="#/audit" title="audit" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit</span>
         </a>
     </li>
     

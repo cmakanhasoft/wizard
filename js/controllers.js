@@ -650,7 +650,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                                $rootScope.inventory={};
                           }
                           $rootScope.inventory.issue= 'Hello \n'+msg  +  '\n In Summary:' + summery+'\n\nThanks, \n';;
-                          $rootScope.inventory.mail_id= 'test@gmail.xom';
+                          $rootScope.inventory.mail_id= $rootScope.userdata.email;
                           $rootScope.inventory.msku= msku;
                           $rootScope.inventory.transactionId= transactionId;
                           $rootScope.inventory.contactReason='Other FBA issue ';
@@ -1066,6 +1066,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           }
           $scope.scheduleIssue=function(frm_id){
                 if ($('#' + frm_id).valid()) {
+                   $scope.reimeli.user_id=$rootScope.userdata.user_id;
                    $('#issusediv').addClass('hide');
                    $('#pleasewait').html('Please Wait...');
                    $http({
@@ -1508,7 +1509,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          $scope.caseLogData.type='submit';
                          $('#issusediv').addClass('hide');
                          $('#pleasewait').html('Please Wait...');
-
+                         console.log($scope.caseLogData); 
                          $http({
                           url: path + "user/customerIssue",
                           method: "POST",
@@ -1878,5 +1879,40 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     }
                });
           }
-  }]);
+  }]).controller('auditCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          debugger;
+          if($scope.audit==undefined){
+               $scope.audit={};
+          }
+          $scope.auditData='-';
+          $scope.getAuditData=function(frm_id){
+               debugger;
+               if ($('#' + frm_id).valid()) {
+                    $scope.audit.fromDate=$('#fromDate').val();
+                    $scope.audit.toDate=$('#toDate').val();
+                    $scope.audit.user_id = $rootScope.userdata.user_id;
+                    console.log(  $scope.audit);
+                    $http({
+                         method: "POST",
+                         url: path + 'user/getAuditData',
+                         data: $scope.audit
+                    }).then(function mySucces(response) {
+                         debugger;
+                         if (response.data.error == false) {
+                            $scope.auditData=response.data.data;
+                         } else {
+                             
+                              show_notification('Error', response.data.message, '', 'no');
+                         }
+                    });
+               }
+          }
+          $scope.clearAuditData=function(){
+             window.location.reload();
+          }
+}]);
      
