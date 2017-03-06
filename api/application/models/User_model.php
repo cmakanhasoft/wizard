@@ -1403,15 +1403,15 @@ $data_string = json_encode($data);
 //    return true;
 //   }
    public function submitedInventory($data){
-     $table = 'inventoryissue';
-     $primaryKey = 'inventoryissue.issue_id';
+     $table = 'inventory_adjustments';
+     $primaryKey = 'inventory_adjustments.inventory_id';
      $extraWhere='';
      $columns = array(
          array('db' => 'caseId', 'dt' => 0,'formatter' => function( $d, $row ){
               $str='<input type="checkbox"  name="issue_id" ng-model="inventory.issue_id['.$row['issue_id'].']" data-issue_id="'.$row['issue_id'].'" data-user_id="'.$row['user_id'].'" />';
               return $str;
        }),
-        array('db' => 'date', 'dt' => 1,'searchable'=>'inventoryissue.createdDate'),
+        array('db' => 'date', 'dt' => 1,'searchable'=>'date'),
         array('db' => 'caseId', 'dt' => 2,'searchable'=>'caseId'),
         array('db' => 'msku', 'dt' =>3,'searchable'=>'msku'),
         
@@ -1421,47 +1421,56 @@ $data_string = json_encode($data);
        })
      );
      
-     $order= 'ORDER BY inventoryissue.createdDate DESC';
-     $sql= 'select  DATE_FORMAT(inventoryissue.createdDate, "%Y-%m-%d") as date,inventoryissue.* from inventoryissue $where $order $limit '; 
+//     $order= 'ORDER BY inventoryissue.createdDate DESC';
+//     $sql= 'select  DATE_FORMAT(inventoryissue.createdDate, "%Y-%m-%d") as date,inventoryissue.* from inventoryissue $where $order $limit '; 
+//
+//     $extraWhere .='inventoryissue.user_id ='.$data['user_id'].' AND inventoryissue.issuse_status="1"';
 
-     $extraWhere .='inventoryissue.user_id ='.$data['user_id'].' AND inventoryissue.issuse_status="1"';
-
-     SSP::totalCondition($extraWhere,'');
-
-     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere);
-
-   return $data;
+     //SSP::totalCondition($extraWhere,'');
+       
+       
+        $sql = 'select a.* from (SELECT inventoryissue.issue_id,inventoryissue.caseId,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN inventoryissue ON inventoryissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="1"  ) as a  $where ORDER BY a.date DESC $limit';
+                
+        $total_record='select count(*) from (SELECT inventoryissue.caseId,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN inventoryissue ON inventoryissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="1") as a';
+        $extraWhere='';
+     
+     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere, $total_record);
+     return $data;
    }
    public function resolvedInventory($data){
-     $table = 'inventoryissue';
-     $primaryKey = 'inventoryissue.issue_id';
+     $table = 'inventory_adjustments';
+     $primaryKey = 'inventory_adjustments.inventory_id';
      $extraWhere='';
      $columns = array(
-         array('db' => 'caseId', 'dt' => 0,'formatter' => function( $d, $row ){
-              $str='<input type="checkbox"  name="issue_id" ng-model="inventory.issue_id['.$row['issue_id'].']" data-issue_id="'.$row['issue_id'].'" data-user_id="'.$row['user_id'].'" />';
-              return $str;
-       }),
-        array('db' => 'date', 'dt' => 1,'searchable'=>'inventoryissue.createdDate'),
-        array('db' => 'caseId', 'dt' => 2,'searchable'=>'caseId'),
-        array('db' => 'msku', 'dt' =>3,'searchable'=>'msku'),
+//         array('db' => 'caseId', 'dt' => 0,'formatter' => function( $d, $row ){
+//              $str='<input type="checkbox"  name="issue_id"  data-issue_id="'.$row['issue_id'].'" data-user_id="'.$row['user_id'].'" />';
+//              return $str;
+//       }),
+        array('db' => 'date', 'dt' => 0,'searchable'=>'date'),
+        array('db' => 'caseId', 'dt' => 1,'searchable'=>'caseId'),
+        array('db' => 'msku', 'dt' =>2,'searchable'=>'msku'),
         
-        array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
-              $str = '<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
-              $str .='    <a  href="#/caselogEdit/'.$row['issue_id'].'" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
+        array('db' => 'caseId', 'dt' =>3,'formatter' => function( $d, $row ){
+              $str='<a  href="#/caselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
               return $str;
        })
      );
      
-     $order= 'ORDER BY inventoryissue.createdDate DESC';
-     $sql= 'select  DATE_FORMAT(inventoryissue.createdDate, "%Y-%m-%d") as date,inventoryissue.* from inventoryissue $where $order $limit '; 
+//     $order= 'ORDER BY inventoryissue.createdDate DESC';
+//     $sql= 'select  DATE_FORMAT(inventoryissue.createdDate, "%Y-%m-%d") as date,inventoryissue.* from inventoryissue $where $order $limit '; 
+//
+//     $extraWhere .='inventoryissue.user_id ='.$data['user_id'].' AND inventoryissue.issuse_status="1"';
 
-     $extraWhere .='inventoryissue.user_id ='.$data['user_id'].' AND inventoryissue.issuse_status="5"';
-
-     SSP::totalCondition($extraWhere,'');
-
-     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere);
-
-   return $data;
+     //SSP::totalCondition($extraWhere,'');
+       
+       
+        $sql = 'select a.* from (SELECT inventoryissue.issue_id,inventoryissue.caseId,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN inventoryissue ON inventoryissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="2"  ) as a  $where ORDER BY a.date DESC $limit';
+                
+        $total_record='select count(*) from (SELECT inventoryissue.caseId,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN inventoryissue ON inventoryissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="2") as a';
+        $extraWhere='';
+     
+     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere, $total_record);
+     return $data;
    }
    public function getInventoryCaselog($data){
      $table = 'inventoryissue';
@@ -1528,10 +1537,18 @@ $data_string = json_encode($data);
     }else{
      $data['issuse_status']='1';
     }
+    if(isset($data['issue_id']) && !empty($data['issue_id']))  {
+      $type='submit';
+      $issueId=$data['issue_id'];
+      $updateinventoryissue=array('issuse_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+      $this->db->where('issue_id',$issueId);
+      $this->db->update('inventoryissue',$updateinventoryissue);
+    }else{
+      $data['createdDate']=date('Y-m-d H:i:s');
+      $this->db->insert('inventoryissue',$data);
+      $issueId= $this->db->insert_id();
+    }
     
-    $data['createdDate']=date('Y-m-d H:i:s');
-    $this->db->insert('inventoryissue',$data);
-    $issueId= $this->db->insert_id();
     if($issueId){
      if(isset($data['transactionId']) && !empty($data['transactionId'])){
        $orderId=trim($data['transactionId']);
@@ -2046,7 +2063,141 @@ $data_string = json_encode($data);
      $sql="select a.msku,IFNULL(b.Damaged,0) as Damaged,IFNULL(c.Destroyed,0) as Destroyed,IFNULL(d.Lost,0) as Lost,IFNULL(e.Reimbursed_d,0) as Reimbursed_d,IFNULL(f.Reimbursed_l,0) as Reimbursed_l  from (select i.msku from inventory_adjustments as i WHERE  i.inventory_status='0' AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as a left join (select sum(i.quantity) as Damaged,i.msku from inventory_adjustments as i where i.inventory_status='0' AND i.reason in ('6','E','Q') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as b on a.msku=b.msku left join ( select sum(i.quantity) as Destroyed,i.msku from inventory_adjustments as i where i.inventory_status='0' AND i.reason in ('D') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as c on c.msku=a.msku left join (select i.msku,sum(i.quantity) as Lost from inventory_adjustments as i where i.inventory_status='0' AND i.reason in ('M','F') AND i.user_id=".$data['user_id']." AND i.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY i.msku) as d on d.msku=a.msku left join (select p.msku,sum(p.quantityCase) as Reimbursed_d from payment_reimburs as p where  p.user_id=".$data['user_id']." AND p.reason='Damaged_Warehouse' AND p.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY p.msku) as e on e.msku=a.msku left join (select p.msku,sum(p.quantityCase) as Reimbursed_l from payment_reimburs as p where p.user_id=".$data['user_id']." AND p.reason='Lost_Warehouse' AND p.date BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' GROUP BY p.msku) as f on f.msku=a.msku";
     return $this->db->query($sql)->result_array();
    }
-    
+   
+   public function addAuditIssue($data){
+    if(!empty($data['user_id'])){
+      $userData=$this->db->select('*')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
+    }
+    $type=$data['type'];
+    unset($data['type']);
+    if($type=='draft'){
+     $data['issuse_status']='5';
+    }else{
+     $data['issuse_status']='1';
+    }
+    if(isset($data['issue_id']) && !empty($data['issue_id']))  {
+      $type='submit';
+      $issueId=$data['issue_id'];
+      $updateauditissue=array('issuse_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+      $this->db->where('issue_id',$issueId);
+      $this->db->update('auditissue',$updateauditissue);
+    }else{
+      $data['createdDate']=date('Y-m-d H:i:s');
+      $this->db->insert('auditissue',$data);
+      $issueId= $this->db->insert_id();
+    }
+   
+    if($issueId){
+     if($type=='submit'){
+     $path=$_SERVER["DOCUMENT_ROOT"]. '/js/auditContact.js --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password'].' --issueId='.$issueId;
+     $screperData= shell_exec('casperjs '.$path); 
+     $filesname=$_SERVER['DOCUMENT_ROOT'].'/js/auditmessage_'.$issueId.'.txt';
+          if(file_exists($filesname)){
+           $fileData=file_get_contents($filesname);
+           if(!empty($fileData)){
+           $updateinventoryissue=array('caseId'=>$fileData,'issuse_status'=>'1','modifyDate'=>date('Y-m-d H:i:s'));
+           $this->db->where('issue_id',$issueId);
+           $this->db->update('auditissue',$updateinventoryissue);
+         
+             return true;
+           }else {
+            return false;
+           }
+
+     }else{
+         return false;
+      }
+     }else if($type=='draft'){
+//       $updateData=array('inventory_status'=>'5');
+//       $trimmed_array=array_map('trim',$oneOrederId);
+//
+//       $this->db->where_in("transactionId", $trimmed_array);
+//       $this->db->update("inventory_adjustments",$updateData);
+       return true;
+     }
+    }
+   }
+   public function auditSubmited($data){
+     $table = 'auditissue';
+     $primaryKey = 'auditissue.issue_id';
+     $extraWhere='';
+     $columns = array(
+         array('db' => 'msku', 'dt' => 0,'formatter' => function( $d, $row ){
+      $msku=$d;
+            $str='<input type="checkbox"  name="issue_id" data-msku="'.$d.'" data-issue_id="'.$row['issue_id'].'" data-user_id="'.$row['user_id'].'" />';
+            return $str;
+       }),
+        array('db' => 'date', 'dt' => 1,'searchable'=>'date'),
+        array('db' => 'caseId', 'dt' => 2,'searchable'=>'caseId'),
+        array('db' => 'msku', 'dt' =>3,'searchable'=>'msku'),
+        
+        array('db' => 'caseId', 'dt' =>4,'formatter' => function( $d, $row ){
+              $str='<a  href="#/auditcaselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              return $str;
+       })
+     );
+     $sql = 'select a.* from (SELECT auditissue.caseId,auditissue.issue_id,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN auditissue ON auditissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="1"  GROUP BY inventory_adjustments.msku ) as a  $where ORDER BY a.date DESC $limit';
+                
+    $total_record='select count(*) from (SELECT auditissue.caseId,auditissue.issue_id,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN auditissue ON auditissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="1"  GROUP BY inventory_adjustments.msku) as a';
+
+     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere);
+     return $data;
+   }
+   public function auditResolved($data){
+     $table = 'inventory_adjustments';
+     $primaryKey = 'inventory_adjustments.inventory_id';
+     $extraWhere='';
+     $columns = array(
+        array('db' => 'date', 'dt' => 0,'searchable'=>'date'),
+        array('db' => 'caseId', 'dt' => 1,'searchable'=>'caseId','formatter' => function( $d, $row ){
+              if($d!='null' && $d !=''){
+               return $d;
+              }else {
+               return '--';
+              }
+       }),
+        array('db' => 'msku', 'dt' =>2,'searchable'=>'msku'),
+     );
+     $sql = 'select * from (SELECT auditissue.caseId,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN auditissue ON auditissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="2"  GROUP BY inventory_adjustments.msku ) as a  $where ORDER BY a.date DESC $limit';
+                
+    $total_record='select count(*) from (SELECT auditissue.caseId,inventory_adjustments.* FROM inventory_adjustments  LEFT JOIN auditissue ON auditissue.msku = inventory_adjustments.msku    WHERE inventory_adjustments.user_id = '.$data['user_id'].' AND inventory_adjustments.inventory_status ="2"  GROUP BY inventory_adjustments.msku) as a';
+     $extraWhere='';
+//     $sql= 'select auditissue.caseId,inventory_adjustments.date,inventory_adjustments.msku from inventory_adjustments  LEFT JOIN auditissue on  auditissue.msku=inventory_adjustments.msku $where  $order $limit '; 
+//
+//     $extraWhere .='inventory_adjustments.user_id=1 AND inventory_adjustments.inventory_status="2" group by inventory_adjustments.msku';
+
+     //SSP::totalCondition($extraWhere);
+
+      $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere, $total_record);
+     return $data;
+   }
+   public function updateResolvedStatus($data){
+   
+     $updateData=array('inventory_status'=>'2');
+     $this->db->where_in("msku", $data);
+     $this->db->update("inventory_adjustments",$updateData);
+     $cupdateData=array('issuse_status'=>'2');
+     $this->db->where_in("msku", $data);
+     $this->db->update("inventoryissue",$cupdateData);
+     return true;
+    }
+    public function auditcaselogDetail($data){
+    $result=[];
+//    $result['caseLog']=$this->db->select('*')->from('customerissue')->where('issue_id',$data['issue_id'])->get()->result_array();
+    $result['userData']=$this->db->select('*')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
+    $query="select DATE_FORMAT(auditissue.createdDate, '%Y-%m-%d') as issueDate,auditissue.* from auditissue where auditissue.issue_id= ".$data['issue_id']."";
+     $result['caseLog']=$this->db->query($query)->result_array();
+//    if(!empty($result['caseLog'][0]['caseId'])){
+//    $sql="select DATE_FORMAT(case_log_msg.createdDate, '%Y-%m-%d') as caseDate,case_log_msg.* from case_log_msg where case_log_msg.caseID= ".$result['caseLog'][0]['caseId']."";
+//     $result['caseLogMesgDetail']=$this->db->query($sql)->result_array();
+//    }else {
+//     $result['caseLogMesgDetail']='';
+//    }
+    return $result;
+   }
+    public function getAuditissue($data){
+      return $this->db->select('*')->from('auditissue')->where('issue_id',$data['issue_id'])->get()->result_array();
+   }
 }
 
 ?>

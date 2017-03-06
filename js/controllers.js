@@ -1914,6 +1914,54 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           $scope.clearAuditData=function(){
              window.location.reload();
           }
+          $scope.auditMarkResolveIsuue = function() {
+               debugger;
+               var msku = [];
+               $(':checkbox:checked').each(function(i) {
+                    msku[i] = $(this).attr("data-msku");
+               });
+               if (msku.length == 0) {
+                    show_notification('Error', "Please select at least one checkbox", '', 'no');
+               }
+               console.log(msku);
+               $http({
+                    url: path + "user/auditMarkResolveIsuue",
+                    method: "POST",
+                    data: msku,
+               }).success(function(response) {
+                    if (response.error == false) {
+                         show_notification('Success', response.message, '#/refundManager', 'yes');
+                    } else {
+                         show_notification('Error', response.message, '', 'no');
+                    }
+               });
+          }
+          if($stateParams.issue_id){
+                         $http({
+                              url: path + "user/auditcaselogDetail?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
+                              method: "GET"
+                         }).success(function(response) {
+                              if (response.error == false) {
+                                   debugger;
+                                   $scope.caseLog=response.data.caseLog[0];
+                                   $scope.userData=response.data.userData[0];
+                                  // $scope.caseLogDetail=response.data.caseLogMesgDetail;
+                                   setTimeout(function(){
+                                        $('#accordion-0').addClass('open');
+                                   $('#accordion-0').css('display','block');
+                                   },100);
+
+                              } else {
+                                   //alert('token not get');
+                               }
+                         });
+          }
+          $scope.globalFilter1 = function() {
+               $scope.quoteDatatable1.fnFilter($scope.searchSubmitedAudit);
+          };
+          $scope.globalFilter2= function() {
+               $scope.quoteDatatable2.fnFilter($scope.searchresolvedAudit);
+          };
           
 }]).controller('addauditCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
@@ -1949,7 +1997,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                    $('#pleasewait').html('Please Wait...');
                    
                    $http({
-                         url: path + "user/addinventoryIssue",
+                         url: path + "user/addAuditIssue",
                          method: "POST",
                          data: $scope.auditcase,
                      }).success(function(response){
@@ -1960,6 +2008,24 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                         }
                    });
               }
+          }
+}]).controller('auditviewCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          if($stateParams.issueid){
+               $http({
+                    url: path + "user/getAuditissue?issue_id="+$stateParams.issueid,
+                    method: "GET",
+                }).success(function(response) {
+                     if (response.error == false) {
+                         $scope.case = response.data[0];
+                         $scope.desvc=$scope.case.issue;
+                     } else {
+                         show_notification('Error', response.message, '', 'no');
+                    }
+               });
           }
 }]);
      

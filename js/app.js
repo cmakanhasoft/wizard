@@ -449,6 +449,32 @@
             requiredPermissions:['1','2']
           }
         }
+      }).state('/auditcaselogView/:issue_id ', {
+        url: '/auditcaselogView/:issue_id',
+        templateUrl: 'views/auditcaselogView.html',
+        controller: 'auditCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'audit',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2','3','4','5']
+          }
+        }
+      }).state('/auditview/:issueid ', {
+        url: '/auditview/:issueid',
+        templateUrl: 'views/auditview.html',
+        controller: 'auditviewCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'refundManager',
+        loginRequired:'No',
+        data: {
+          access: {
+            requiredPermissions:['1','2']
+          }
+        }
       })
   }]);
  app.run(['$rootScope', '$cookies','$state','authorization',function($rootScope,$cookies,$state,authorization) {
@@ -487,6 +513,7 @@
            var userProfile=hash1.split('/');
             var caseView = hash.indexOf("caseView");
             var inventoryView = hash.indexOf("inventoryView");
+            var auditview = hash.indexOf("auditview");
            var account_activation = hash.indexOf("account_activation");
            var account_register = hash.indexOf("register?plan_id");
            var forgotPass = hash.indexOf("forgotPass");
@@ -500,7 +527,7 @@
            }
           
           
-          if($cookies.get('userdata') === undefined && (hash !== '/register') &&  (hash !== '/') && (account_activation == -1) && (addpayments == -1) && (account_register== -1) && (forgotPass == -1) && (resetPassword== -1) && (addPassword == -1) && (caseView == -1) && (inventoryView == -1)) {
+          if($cookies.get('userdata') === undefined && (hash !== '/register') &&  (hash !== '/') && (account_activation == -1) && (addpayments == -1) && (account_register== -1) && (forgotPass == -1) && (resetPassword== -1) && (addPassword == -1) && (caseView == -1) && (inventoryView == -1) && (auditview== -1)) {
               window.location.href = '#/login';
           }
          

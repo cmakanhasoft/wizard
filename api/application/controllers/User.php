@@ -920,10 +920,10 @@ Team WizardofAMZ
     $subUserPass=$this->user_model->updateOrderStatus($postData);
     if($subUserPass){
       $message['error']= false;
-      $message['message']='you have successfully update status of selected orders as resolve';
+      $message['message']='Your order successfully resolved';
     }else {
        $message['error']= true;
-       $message['message']='we are not able to change the status of your selected order';
+       $message['message']='Your order not resolved';
     }
     $this->set_response($message, REST_Controller::HTTP_CREATED);
    }
@@ -1386,30 +1386,7 @@ Team WizardofAMZ
     public function addinventoryIssue_post(){
      $postData=$this->post();
      //print_r($postData); die;
-     if(isset($postData['issue_id'])){
-      unset($postData['issue_id']);
-     }
-     if(isset($postData['caseId'])){
-      unset($postData['caseId']);
-     }
-     if(isset($postData['rembId'])){
-      unset($postData['rembId']);
-     }
-     if(isset($postData['total'])){
-      unset($postData['total']);
-     }
-     if(isset($postData['note'])){
-      unset($postData['note']);
-     }
-     if(isset($postData['createdDate'])){
-      unset($postData['createdDate']);
-     }
-     if(isset($postData['modifyDate'])){
-      unset($postData['modifyDate']);
-     }
-     if(isset($postData['issuse_status'])){
-      unset($postData['issuse_status']);
-     }
+    
      $data=$this->user_model->addinventoryIssue($postData);
      if(!empty($data)){
        $message['error']=false;
@@ -1701,6 +1678,67 @@ Team WizardofAMZ
      $message['error']=true;
      $message['data']="";
      $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    
+    public function addAuditIssue_post(){
+     $postData=$this->post();
+     //print_r($postData); die;
+    
+     $data=$this->user_model->addAuditIssue($postData);
+     if(!empty($data)){
+       $message['error']=false;
+       $message['message']="Your case submited";
+     }else {
+       $message['error']=true;
+       $message['message']="Your case not submited";
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function auditSubmited_get(){
+     $getData=$this->get();
+     $this->set_response($this->user_model->auditSubmited($getData), REST_Controller::HTTP_CREATED);
+    }
+    public function auditResolved_get(){
+     $getData=$this->get();
+     $this->set_response($this->user_model->auditResolved($getData), REST_Controller::HTTP_CREATED);
+    }
+    public function auditMarkResolveIsuue_post(){
+    $postData=$this->post();
+    $subUserPass=$this->user_model->updateResolvedStatus($postData);
+    if($subUserPass){
+      $message['error']= false;
+      $message['message']='Your SKU resolved';
+    }else {
+       $message['error']= true;
+       $message['message']='SKU not resolved';
+    }
+    $this->set_response($message, REST_Controller::HTTP_CREATED);
+   }
+   public function auditcaselogDetail_get(){
+     $getData= $this->get();
+     $result=$this->user_model->auditcaselogDetail($getData);
+     if(!empty($result['caseLog'])){
+         $message['error']= false;
+         $message['message']='Log detail'; 
+         $message['data']=$result;
+     }else{
+         $message['error']= true;
+         $message['message']='Data not inserted'; 
+     }
+     $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function getAuditissue_get(){
+     $getData=$this->get();
+     $customerData=$this->user_model->getAuditissue($getData);
+     if(!empty($customerData)){
+         $message['error']= false;
+         $message['data']= $customerData;
+         $message['message']='get customer issue data.'; 
+     }else{
+         $message['error']=true;
+         $message['message']="no data avialble";
+     }
+      $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
     
 }
