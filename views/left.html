@@ -171,7 +171,7 @@
     <li ng-if="leftactivetab != 'caseLog'" access="1,2,3,4,5">
         <a href="#/caseLog" title="Case Log" >
             <i class="glyph-icon icon-linecons-paper-plane"></i>
-            <span>Case Log</span>
+            <span>Return Case Log</span>
         </a>
     </li>
     
@@ -179,7 +179,7 @@
      <li ng-if="leftactivetab == 'caseLog'" access="1,2,3,4,5">
         <a href="#/caseLog" title="Case Log" style="color: #1c82e1;">
             <i class="glyph-icon icon-linecons-paper-plane"></i>
-            <span>Case Log</span>
+            <span>Return Case Log</span>
         </a>
     </li>
     <li ng-if="leftactivetab != 'audit'" access="1,2,3,4,5">
@@ -189,15 +189,27 @@
         </a>
     </li>
     
-    
-    <li ng-if="leftactivetab == 'audit'" access="1,2,3,4,5">
+    <li ng-if="leftactivetab == 'audit'" access="1,2">
         <a href="#/audit" title="audit" style="color: #1c82e1;">
             <i class="glyph-icon icon-linecons-paper-plane"></i>
             <span>Audit</span>
         </a>
     </li>
+    <li ng-if="leftactivetab != 'auditCaselog'" access="1,2">
+        <a href="#/auditCaselog" title="auditCaselog" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit Caselog</span>
+        </a>
+    </li>
     
-    <li ng-if="leftactivetab != 'inventoryCaseLog'" access="1,2,3,4,5">
+    <li ng-if="leftactivetab == 'auditCaselog'" access="1,2,3,4,5">
+        <a href="#/auditCaselog" title="auditCaselog" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit Caselog</span>
+        </a>
+    </li>
+    
+<!--    <li ng-if="leftactivetab != 'inventoryCaseLog'" access="1,2,3,4,5">
         <a href="#/inventoryCaseLog" title="Inventory Case Log" >
             <i class="glyph-icon icon-linecons-paper-plane"></i>
             <span>Inventory Case Log</span>
@@ -208,7 +220,7 @@
             <i class="glyph-icon icon-linecons-paper-plane"></i>
             <span>Inventory Case Log</span>
         </a>
-    </li>
+    </li>-->
 	
 <!--    <li  ng-if="leftactivetab == 'setting'" access="1,2">
         <a href="#/user/updatedprofile/{{userdata.user_id}}" title="User" style="color: #1c82e1;" >

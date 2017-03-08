@@ -868,26 +868,46 @@ class User_model extends CI_Model {
                 return $str;
                 }),
                array('db' => 'order_id', 'dt' => 1,'searchable'=>'g.order_id'),
-               array('db' => 'order_date','dt' => 2, 'searchable'=>'g.order_date'),
-               array('db' => 'refund_date','dt' => 3,'searchable'=>'g.refund_date'),
-               array('db' => 'total','dt' => 4,'searchable'=>'g.total','formatter'=>function($d,$row){
-                if($d<0){
-                 return $d * (-1);
-                }else {
-                 return $d;
-                }
+               array('db' => 'total','dt' => 2, 'searchable'=>'g.total'),
+               array('db' => 'rembamount','dt' => 3,'searchable'=>'g.rembamount','formatter'=>function($d,$row){
+                 if(!empty($d)){
+                   return $d;
+                 }else {
+                  return '0';
+                 }
+                
                 }),
-                array('db' => 'order_id', 'dt' => 5,'formatter' => function( $d, $row ){
+               array('db' => 'sku','dt' => 4,'searchable'=>'g.sku','formatter'=>function($d,$row){
+                return $d;
+                }),
+                array('db' => 'asin','dt' => 5,'searchable'=>'g.asin','formatter'=>function($d,$row){
+                if(!empty($d)){
+                   return $d;
+                 }else {
+                  return '-';
+                 }
+                }),
+                array('db' => 'order_date','dt' => 6,'searchable'=>'g.order_date','formatter'=>function($d,$row){
+                return $d;
+                }),
+                array('db' => 'orderRefund','dt' => 7,'searchable'=>'g.orderRefund','formatter'=>function($d,$row){
+                return $d;
+                }),
+                array('db' => 'orderReturn','dt' => 8,'searchable'=>'g.orderReturn','formatter'=>function($d,$row){
+                return $d;
+                }),
+                array('db' => 'order_id', 'dt' => 9,'formatter' => function( $d, $row ){
                     $str='<a class="btn btn-border btn-alt" href="#/refundManager/view/'.$d.'" title="View"><i class="glyph-icon tooltip-button icon-eye" title="View" data-original-title=".icon-eye"></i></a>';
                 return $str;
                 })
            );
           $order='';
-          $sql='select * from (select c.orderId as customerReturnId,c.corder_status, CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn, b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5") AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31
+          $sql='select * from (select c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.order_date) ELSE DATEDIFF(CURDATE(),b.order_date) END as orderReturn, CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn, b.* from (select pr.porder_status,pr.amazonOrderId,pr.amountTotal as rembamount,pr.asin,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total,dr.sku,CASE WHEN dr.datetime !="" THEN DATEDIFF(dr.datetime,do.datetime) ELSE DATEDIFF(CURDATE(),do.datetime) END as orderRefund from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5") AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31
 
-UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id, dr.orderStatus, DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5" ) AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31  ) as g $where ORDER BY g.order_date DESC   $limit';
+UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.order_date) ELSE DATEDIFF(CURDATE(),b.order_date) END as orderReturn,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,pr.amountTotal as rembamount,pr.asin,a.* from (select dr.data_id,dr.order_id, dr.orderStatus, DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total,dr.sku,CASE WHEN dr.datetime !="" THEN DATEDIFF(dr.datetime,do.datetime) ELSE DATEDIFF(CURDATE(),do.datetime) END as orderRefund from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5" ) AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31  ) as g $where ORDER BY g.order_date DESC   $limit';
           $extraWhere .='g.total !=0.00';
-           $total_record ='select count(*) from (select  c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)asrefundreturn ,b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5")  AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31   UNION select c.corder_status,c.orderId as customerReturnId,DATEDIFF(c.date,b.refund_date)as refundreturn , b.* from (select pr.porder_status,pr.amazonOrderId,a.* from (select  dr.data_id,dr.order_id,dr.orderStatus,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,do.datetime as order_date,do.oorderStatus,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31 AND c.user_id='.$data['user_id'].' ) as g';
+           $total_record ='select count(*) from (select c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.order_date) ELSE DATEDIFF(CURDATE(),b.order_date) END as orderReturn, CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn, b.* from (select pr.porder_status,pr.amazonOrderId,pr.amountTotal as rembamount,pr.asin,a.* from (select dr.data_id,dr.order_id,dr.sku,CASE WHEN dr.datetime !="" THEN DATEDIFF(dr.datetime,do.datetime) ELSE DATEDIFF(CURDATE(),do.datetime) END as orderRefund,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,dr.orderStatus,do.oorderStatus,do.datetime as order_date,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) < 31 AND (dr.orderStatus="0" || dr.orderStatus="5")  AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31   '
+                   . 'UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.order_date) ELSE DATEDIFF(CURDATE(),b.order_date) END as orderReturn,CASE WHEN c.date !="" THEN DATEDIFF(c.date,b.refund_date) ELSE DATEDIFF(CURDATE(),b.refund_date) END as refundreturn , b.* from (select pr.porder_status,pr.amazonOrderId,pr.amountTotal as rembamount,pr.asin,a.* from (select  dr.data_id,dr.order_id,dr.sku,CASE WHEN dr.datetime !="" THEN DATEDIFF(dr.datetime,do.datetime) ELSE DATEDIFF(CURDATE(),do.datetime) END as orderRefund,DATEDIFF(dr.datetime,do.datetime) as orderRefundDays,dr.orderStatus,do.datetime as order_date,do.oorderStatus,dr.datetime as refund_date ,dr.total from data_range_report_refund as dr left join data_range_report_order as do on do.order_id=dr.order_id   where DATEDIFF(dr.datetime,do.datetime) >=31 AND (dr.orderStatus="0" || dr.orderStatus="5") AND (do.oorderStatus="0" || do.oorderStatus="5")  AND dr.user_id='.$data['user_id'].') as a left join  payment_reimburs as pr on pr.amazonOrderId= a.order_id where pr.amazonOrderId IS NULL ) as b left join  customer_report as c on c.orderId=b.order_id where c.orderId IS NULL OR DATEDIFF(c.date,b.refund_date) >=31 AND c.user_id='.$data['user_id'].' ) as g';
      $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere,$total_record);
 
    return $data;
@@ -1883,11 +1903,13 @@ $data_string = json_encode($data);
     else {
      $result['inventoryResolveCount']='0';
     }
-    $datadate=$this->db->select('customer_execution_time')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
+    $datadate=$this->db->select('user_email,user_password,customer_execution_time')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
      
      if(!empty($datadate[0]['customer_execution_time']) && $datadate[0]['customer_execution_time'] !='0000-00-00 00:00:00' && $datadate[0]['customer_execution_time'] != null){
       $days_ago = date('Y-m-d', strtotime('-4 days', strtotime($datadate[0]['customer_execution_time'])));
       $result['lastUpdatedDataDate']=$days_ago;
+      $result['user_email']=$datadate;
+      
      }else {
       $result['lastUpdatedDataDate']='Date not available';
      }
@@ -2197,6 +2219,116 @@ $data_string = json_encode($data);
    }
     public function getAuditissue($data){
       return $this->db->select('*')->from('auditissue')->where('issue_id',$data['issue_id'])->get()->result_array();
+   }
+   public function getAuditcaselog($data){
+    $table = 'auditissue';
+     $primaryKey = 'auditissue.issue_id';
+     $extraWhere='';
+     $columns = array(
+        array('db' => 'date', 'dt' => 0,'searchable'=>'auditissue.createdDate'),
+        array('db' => 'caseId', 'dt' => 1,'searchable'=>'caseId'),
+        array('db' => 'msku', 'dt' => 2,'searchable'=>'msku'),
+        
+        array('db' => 'caseId', 'dt' => 3,'formatter' => function( $d, $row ){
+              $str='<a  href="#/auditcaselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              return $str;
+       })
+     );
+     $order= 'ORDER BY auditissue.issue_id DESC';
+     $sql= 'select  DATE_FORMAT(auditissue.createdDate, "%Y-%m-%d") as date,auditissue.* from auditissue $where $order $limit '; 
+
+     $extraWhere .='auditissue.user_id ='.$data['user_id'].' AND auditissue.issuse_status="1"';
+
+     SSP::totalCondition($extraWhere,'');
+
+     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere);
+
+   return $data;
+    
+   }
+   public function auditDraft($data){
+    $table = 'auditissue';
+     $primaryKey = 'auditissue.issue_id';
+     $extraWhere='';
+     $columns = array(
+        array('db' => 'date', 'dt' => 0,'searchable'=>'auditissue.createdDate'),
+        array('db' => 'caseId', 'dt' => 1,'searchable'=>'caseId'),
+        array('db' => 'msku', 'dt' => 2,'searchable'=>'msku'),
+        
+        array('db' => 'caseId', 'dt' => 3,'formatter' => function( $d, $row ){
+              $str='<a  href="#/auditcaselogView/'.$row['issue_id'].'" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+              return $str;
+       })
+     );
+     $order= 'ORDER BY auditissue.issue_id DESC';
+     $sql= 'select  DATE_FORMAT(auditissue.createdDate, "%Y-%m-%d") as date,auditissue.* from auditissue $where $order $limit '; 
+
+     $extraWhere .='auditissue.user_id ='.$data['user_id'].' AND auditissue.issuse_status="5"';
+
+     SSP::totalCondition($extraWhere,'');
+     
+     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere);
+
+   return $data;
+    
+   }
+   public function auditsaveCaseData($data){
+    
+    if(isset($data['issuse_status']) && ($data['issuse_status']=='1' || $data['issuse_status']=='2')){
+    
+      $updateData=array('inventory_status'=>$data['issuse_status']);
+      $trimmed_array=$data['msku'];
+
+      $this->db->where_in("msku", $trimmed_array);
+      $this->db->update("inventory_adjustments",$updateData);
+    }
+     
+     $this->db->where("issue_id", $data['issue_id']);
+     $this->db->update("auditissue",$data);
+     return true;
+   }
+   public function filelogHistory($data){
+    $table = 'file_log';
+     $primaryKey = 'file_log.file_id';
+     $extraWhere='';
+     $columns = array(
+        array('db' => 'type', 'dt' => 0),
+        array('db' => 'fromdate', 'dt' => 1,'formatter'=>  function ($d,$row){
+     return $d.'&nbsp;&nbsp;&nbsp;&nbsp;<b>to</b>&nbsp;&nbsp;&nbsp;&nbsp;'.$row['todate'];
+        }),
+        array('db' => 'fromdate', 'dt' => 2,'formatter' => function( $d, $row ){
+              $str='<a href="javascript:void(0)" class="btn btn-s hover-info tooltip-button" data-placement="left" title="Download" ng-click="downloadFile(\''.$d.'\',\''.$row['todate'].'\',\''.$row['type'].'\')" data-original-title="Download"><i class="glyph-icon icon-cloud-download"></i></a>';
+              return $str;
+       })
+     );
+     
+     $order= 'ORDER BY file_log.issue_id DESC';
+     $sql= 'select  DATE_FORMAT(file_log.from_date, "%Y-%m-%d") as fromdate, DATE_FORMAT(file_log.to_date, "%Y-%m-%d") as todate ,file_log.* from file_log $where $order $limit '; 
+
+     $extraWhere .='file_log.user_id ='.$data['user_id'].'';
+     SSP::totalCondition($extraWhere,'');
+
+     $data = $this->ssp->simple($_REQUEST, $this->_sql_details, $table, $primaryKey, $columns, $sql,$extraWhere);
+
+   return $data;
+    
+   }
+   public function downloadFile($data){
+    $sql="select * from customer_report where createdDate BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' ";    $data=$this->db->query($sql)->result_array();
+    $out = '';
+    $out .= 'return-date'."\t".'order-id'."\t".'sku'."\t".'asin'."\t".'fnsku';
+    $out .="\n"; 
+    $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/file_log/myText.txt","wb");
+    fwrite($fp,$out);
+    for($i=0;$i<count($data);$i++){
+     $outs='';
+     $outs .=$data[$i]['date']."\t".$data[$i]['orderId']."\t".$data[$i]['sku']."\t".$data[$i]['asin']."\t".$data[$i]['fnsku'];
+     $outs .="\n";
+     fwrite($fp,$outs);
+    }
+    
+    
+    fclose($fp);
    }
 }
 

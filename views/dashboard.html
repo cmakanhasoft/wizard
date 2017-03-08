@@ -31,11 +31,7 @@
                      <div class="col-sm-4"><span>Last data updated Date :</span> {{lastUpdatedDataDate}}</div>
             
                       </div>
-            
-		  
-      
-     
-	 </div>
+         </div>
 
 	</div>
    </div>
@@ -79,6 +75,26 @@
             </div>
         </div>
     </div>
+</div>
+<div class="row"> 
+    <div class="col-md-12">
+    <h3>Seller central account details</h3>
+    <br />
+    <b>UserName:  </b>{{user_email.user_email}} <br />
+    <b>Password:  </b>{{user_email.user_password}}
+    </div>
+</div>
+<div class="row">
+    <table class="table table-bordered table-striped table-condensed" dashboard-datatable  data-url="user/filelogHistory?user_id={{userdata.user_id}}" data-method="GET" >
+        <thead>
+         <tr>
+          <th>Report Type</th>
+          <th>Date Range Covered</th>
+          <th>ACTION</th>
+         </tr>
+        </thead>
+    </table>
+    
 </div>
    </div>
  </div>

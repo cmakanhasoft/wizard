@@ -437,3 +437,30 @@ app.directive('dt1',function () {
         }
     }
 });
+
+app.directive('dashboardDatatable',function ($rootScope,$http,$compile) {
+     return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+            scope.dashboardDatatable = elem.dataTable({
+                "serverSide": true,
+                "bLengthChange": false,
+                "bInfo" : false,
+                "bJqueryUI": true,
+                "bSort":true,
+                "bsearching": false,
+                "bProcessing": true,
+                "sDom": 'C<"clear">R<"leftside"><"scrolltbl"rt><"bottomside"ilp>',
+               // "ajax": 'api/index.php/'+attrs.url,
+                "ajax":{"url": 'api/index.php/'+attrs.url,"beforeSend": function(xhr){
+                }},
+                "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    $compile(nRow)(scope);
+                },
+                initComplete: function (){
+
+                }
+            });
+        }
+    }
+});

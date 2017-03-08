@@ -752,11 +752,13 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          $scope.inventoryResolveCount=response.data.inventoryResolveCount;
                          $scope.remResolveData=response.data.remResolveData;
                          $scope.lastUpdatedDataDate=response.data.lastUpdatedDataDate;
+                         $scope.user_email=response.data.user_email[0];
                          $cookies.put('userdata', JSON.stringify($rootScope.userdata));
                $('#chnageuserbtn').addClass('hide');
                $('#chnagebtn').removeClass('hide');
                 sessionStorage.setItem("userdata", JSON.stringify($rootScope.userdata));
                show_notification('Success', 'You have successfully changed the user. Go to Returns Manager to view data', '', 'no');
+                     window.location.reload();
                     } else {
                          //alert('token not get');
                      }
@@ -782,17 +784,48 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "GET"
                }).success(function(response) {
                     if (response.error == false) {
+                         debugger;
                          $scope.countRemResolveddData=response.data.countRemResolveddData;
                          $scope.countRemSubmitedData=response.data.countRemSubmitedData;
                          
                          $scope.inventoryResolveCount=response.data.inventoryResolveCount;
                          $scope.remResolveData=response.data.remResolveData;
                          $scope.lastUpdatedDataDate=response.data.lastUpdatedDataDate;
+                          $scope.user_email=response.data.user_email[0];
                     } else {
                          //alert('token not get');
                      }
                });
-               
+              
+               $scope.downloadFile=function(fromDate,toDate,type){
+                    debugger;
+                    if($scope.download  ==undefined){
+                         $scope.download ={};
+                    }
+                    $scope.download .fromDate=fromDate;
+                    $scope.download .toDate=toDate;
+                    $scope.download .type=type;
+                    $scope.download .user_id=$rootScope.userdata.user_id;
+                    
+                    $http({
+                         url: path + "user/downloadFile",
+                         method: "POST",
+                         data:$scope.download 
+                    }).success(function(response) {
+                         if (response.error == false) {
+                              debugger;
+
+                         } else {
+                              //alert('token not get');
+                          }
+                    });
+                    
+                    
+//                    var link = document.createElement("a");
+//                    link.download = 'download';
+//                    link.href = 'http://103.239.146.250:898/amazon_local/js/activation.js';
+//                    link.click();
+          }
                
 //          setTimeout(function() {
 //               body_sizer();
@@ -1936,26 +1969,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     }
                });
           }
-          if($stateParams.issue_id){
-                         $http({
-                              url: path + "user/auditcaselogDetail?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
-                              method: "GET"
-                         }).success(function(response) {
-                              if (response.error == false) {
-                                   debugger;
-                                   $scope.caseLog=response.data.caseLog[0];
-                                   $scope.userData=response.data.userData[0];
-                                  // $scope.caseLogDetail=response.data.caseLogMesgDetail;
-                                   setTimeout(function(){
-                                        $('#accordion-0').addClass('open');
-                                   $('#accordion-0').css('display','block');
-                                   },100);
-
-                              } else {
-                                   //alert('token not get');
-                               }
-                         });
-          }
           $scope.globalFilter1 = function() {
                $scope.quoteDatatable1.fnFilter($scope.searchSubmitedAudit);
           };
@@ -2002,7 +2015,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          data: $scope.auditcase,
                      }).success(function(response){
                          if (response.error == false) {
-                             show_notification('Success', response.message, '#/inventoryad', 'yes');
+                             show_notification('Success', response.message, '#/audit', 'yes');
                          } else {
                              show_notification('Error', response.message, '', 'no');
                         }
@@ -2027,5 +2040,141 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     }
                });
           }
-}]);
+}]).controller('auditCaselogCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          
+           $scope.globalFilter1 = function() {
+               $scope.quoteDatatable1.fnFilter($scope.search_sku);
+          };
+          $scope.globalFilter2= function() {
+               $scope.quoteDatatable2.fnFilter($scope.auditDraft);
+          };
+          
+          
+}]).controller('auditcaselogViewCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          $scope.auditaccordian=function(id){
+               $("[id^=accordion]").removeClass('open');
+               $('[id^=accordion]').css('display','none');
+               $('#accordion-'+id).addClass('open');
+               $('#accordion-'+id).css('display','block');
+          }
+          
+          $scope.mydisabled=true;
+            $scope.addCaseId=function(id,type){
+                 if(type=='case'){
+                         $('#caseIdDiv').removeClass('hide');
+                         $('#casecross').removeClass('hide');
+                         $('#rembIdDiv').addClass('hide');
+                         $('#statusDiv').addClass('hide');
+                          $('#rembcross').addClass('hide');
+                          $('#statuscross').addClass('hide');
+                          $('#notebtn').addClass('hide');
+                          $scope.mydisabled=true;
+                         $('#caseId').val(id);
+                 }else if(type=="remb") {
+                      $('#rembIdDiv').removeClass('hide');
+                      $('#rembcross').removeClass('hide');
+                      $('#statusDiv').addClass('hide');
+                      $('#caseIdDiv').addClass('hide');
+                       $('#casecross').addClass('hide');
+                       $('#statuscross').addClass('hide');
+                       $('#notebtn').addClass('hide');
+                       $scope.mydisabled=true;
+                      
+                      $('#rembId').val(id);
+                 }else if(type=="status"){
+                      $('#statusDiv').removeClass('hide');
+                      $('#statuscross').removeClass('hide');
+                      $('#rembIdDiv').addClass('hide');
+                      $('#caseIdDiv').addClass('hide');
+                      $('#rembcross').addClass('hide');
+                      $('#casecross').addClass('hide');
+                      $('#notebtn').addClass('hide');
+                      $scope.mydisabled=true;
+                      $('#issue_status').val(id);
+                  }
+                  else if(type=="notes"){
+                       $('#statusDiv').addClass('hide');
+                      $('#statuscross').addClass('hide');
+                      $('#rembIdDiv').addClass('hide');
+                      $('#caseIdDiv').addClass('hide');
+                      $('#rembcross').addClass('hide');
+                      $('#casecross').addClass('hide');
+                      
+                      $('#notebtn').removeClass('hide');
+                      $('#note').val(id);
+                      $scope.mydisabled=false;
+                  }
+          }
+          $scope.status=function(){
+                setTimeout(function(){
+                    $('#rembpencil').addClass('hide');
+               },100);
+            
+          }
+          $scope.removeId=function(type){
+                  $('#caseIdDiv').addClass('hide');
+                  $('#rembIdDiv').addClass('hide');
+                  $('#statusDiv').addClass('hide');
+                  $('#rembcross').addClass('hide');
+                  $('#casecross').addClass('hide');
+                  $('#statuscross').addClass('hide');
+          }
+          $scope.auditsaveCaseData=function(type,issue_id){
+               $scope.saveCaseData={};
+               $scope.saveCaseData.issue_id=issue_id;
+               if(type=='case'){
+                    $scope.saveCaseData.caseId=$('#caseId').val();
+               }else if(type=="remb"){
+                    $scope.saveCaseData.rembId=$('#rembId').val();
+               }else if(type=="status"){
+                    $scope.saveCaseData. issuse_status=$('#issue_status').val();
+                    $scope.saveCaseData. order_id=$('#order_id').val();
+               }else if(type=="notes"){
+                    $scope.saveCaseData. note=$('#note').val();
+                    $scope.saveCaseData. order_id=$('#order_id').val();
+               }
+                $http({
+                    url: path + "user/auditsaveCaseData",
+                    method: "POST",
+                    data:$scope.saveCaseData
+               }).success(function(response) {
+                       if (response.error == false) {
+                              show_notification('Success', response.message, '#/auditcaselogView/'+$scope.saveCaseData.issue_id, 'yes');
+                         } else {
+                              show_notification('Error', response.message, '', 'no');
+                         }
+               });
+               
+          }
+          
+          if($stateParams.issue_id){
+                         $http({
+                              url: path + "user/auditcaselogDetail?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
+                              method: "GET"
+                         }).success(function(response) {
+                              if (response.error == false) {
+                                   debugger;
+                                   $scope.caseLog=response.data.caseLog[0];
+                                   $scope.userData=response.data.userData[0];
+                                  // $scope.caseLogDetail=response.data.caseLogMesgDetail;
+                                   setTimeout(function(){
+                                        $('#accordion-0').addClass('open');
+                                   $('#accordion-0').css('display','block');
+                                   },100);
+
+                              } else {
+                                   //alert('token not get');
+                               }
+                         });
+          }
+          
+ }]);
      

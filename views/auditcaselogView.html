@@ -72,7 +72,7 @@
                                                 </h3>
                                         </div>
                                             <div class="col-md-2" ng-if="caseLog.caseId !='' &&  caseLogDetail !=''">
-                                                <button type="submit" class="btn btn-block btn-blue-alt" ng-click="sentReplay()">Reply</button>
+<!--                                                <button type="submit" class="btn btn-block btn-blue-alt" ng-click="sentReplay()">Reply</button>-->
                                             </div>
                                         </div>
                                     </div>
@@ -82,11 +82,103 @@
                                             <input type="text" class="form-control" id="caseId" name="caseId" placeholder="Enter case Id" ng-model="caseLog.caseId" required>
                                        </div>
                                         <div class=" col-sm-2 form-group">
-                                        <button type="submit" class="btn btn-block btn-blue-alt" ng-click="saveCaseData('case',caseLog.issue_id)">Submit</button>
+                                        <button type="submit" class="btn btn-block btn-blue-alt" ng-click="auditsaveCaseData('case',caseLog.issue_id)">Submit</button>
                                        </div>
                                     </div>
                                    <br />
-                                    
+                                   <div class="example-box-wrapper">
+                                            <div class="content-box">
+                                                <div class="content-box-wrapper bg-white" style="    font-size: 15px;">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <ul class="reset-ul">
+                                                                <li><i class="glyph-icon tooltip-button icon-calendar"></i>&nbsp;&nbsp;<b>Case submitted date:&nbsp;&nbsp;</b>{{caseLog.issueDate}}</li>
+
+                                                            </ul>
+                                                            
+
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <ul class="reset-ul">
+                                                                <li><i class="glyph-icon icon-cog"></i>&nbsp;&nbsp;<b>SKU&nbsp;&nbsp;</b>{{caseLog.msku}}
+                                                                    <input type="hidden" class="form-control" id="msku" name="msku" ng-model="caseLog.msku" value="{{caseLog.msku}}">
+
+                                                                </li>
+                                                                <li><i class="glyph-icon icon-cog"></i>&nbsp;&nbsp;<b>Status:&nbsp;&nbsp;</b>
+                                                                    <span ng-if="caseLog.issuse_status == '0'">Default</span> 
+                                                                    <span ng-if="caseLog.issuse_status == '1'">Submitted</span> 
+                                                                    <span ng-if="caseLog.issuse_status == '2'">Reimbursed & Resolved</span> 
+                                                                    <span ng-if="caseLog.issuse_status == '3'">Needs Action</span> 
+                                                                    <span ng-if="caseLog.issuse_status == '4'">Ignore</span> 
+                                                                    <a  href="javascript:void(0)" title="Edit Case Id" ng-click="addCaseId(caseLog.issuse_status, 'status')"><i class="glyph-icon tooltip-button  icon-pencil" title="Edit Case Id" data-original-title=".icon-pencil"></i></a>
+                                                                    <a  href="javascript:void(0)" title="Remove ReimbursementId" id="statuscross" class="hide" ng-click="removeId()"><i class="glyph-icon tooltip-button icon-remove" title="Remove ReimbursementId" data-original-title=".icon-remove"></i></a> </li>
+                                                            </ul>
+                                                            <br />
+                                                            <div class="row hide" id="statusDiv">
+                                                                <div class="col-sm-6 form-group">
+                                                                    <select class="form-control" id="issue_status" ng-model="caseLog.issuse_status" ng-change="status()">
+                                                                        <option value="0">Select status</option>
+                                                                        <option value="1">Submitted</option>
+                                                                        <option value="3">Needs Action</option>
+                                                                        <option value="4">Ignore</option>
+                                                                        <option value="2">Reimbursed & Resolved</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class=" col-sm-4 form-group">
+                                                                    <button type="submit" class="btn btn-block btn-blue-alt" ng-click="auditsaveCaseData('status', caseLog.issue_id)">Submit</button>
+                                                                </div>
+                                                            </div> 
+                                                        </div>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="content-box">
+                                                <div class="content-box-wrapper bg-white" style="    font-size: 15px;">
+                                                    <div class="row">
+                                                        <div class="col-sm-12 form-group">
+                                                            Notes:
+                                                            <a  href="javascript:void(0)" title="Edit Notes" ng-click="addCaseId(caseLog.note, 'notes')"><i class="glyph-icon tooltip-button  icon-pencil" title="Edit Notes" data-original-title=".icon-pencil"></i></a>
+                                                            <br />
+
+                                                            <textarea id="note" ng-disabled="mydisabled" class="form-control">
+                                                        {{caseLog.note}}
+                                                            </textarea>
+
+                                                            <div class="col-sm-2">
+                                                                <button type="submit" class="btn btn-block btn-blue-alt hide" id="notebtn" ng-click="auditsaveCaseData('notes', caseLog.issue_id)">Submit</button>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-12 form-group">
+                                                            Description
+
+                                                            <textarea id="note" ng-disabled="mydisabled" class="form-control" style="min-height: 150px;">
+                                                        {{caseLog.issue}}
+                                                            </textarea>
+
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion">
+                                                    <div class="accordion-section" ng-repeat="c  in  caseLogDetail">
+                                                        <a class="accordion-section-title" href="javascript:void(0)" ng-click="auditaccordian($index)">{{c.caseDate}}</a>
+
+                                                        <div id="accordion-{{$index}}" class="accordion-section-content" style="overflow-y: auto; height: 400px;">
+                                                            <pre>
+                                                    <div ng-bind-html="c.des"></div>
+                                                            </pre>
+                                                        </div>
+                                                    </div>
+                                                </div><!--end .accordion-->
+
+                                            </div>
+                                        </div> 
                             </div>
                         </div>
                     </div>

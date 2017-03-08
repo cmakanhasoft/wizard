@@ -953,11 +953,18 @@ Team WizardofAMZ
     $this->set_response($message, REST_Controller::HTTP_CREATED);
    }
    public function stest_post(){
-    echo $afterdate=date('Y-m-d', strtotime("+3 days")); die;
-    echo $sql="select user_id from user_email where deq6_time < '".$currentDate."' limit 1 "; die;
-    echo $latestTime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +15 minutes")); die;
-    $a= $this->user_model->newUser();
-    print_r($a); die;
+    
+    $filedata=$this->user_model->getUserData(array('user_id'=>1));
+     $date = strtotime($filedata[0]['createdDate']); 
+     $fromDate= date('Y-m-d H:i:s', strtotime("-18 month",$date)); 
+     $toDate= date('Y-m-d H:i:s', strtotime("-2 days")); 
+     $fileLogArray=array('from_date'=>$fromDate,'to_date'=>$toDate,'type'=>'customer_report','user_id'=>$filedata[0]['user_id'],'createdDate'=>date('Y-m-d H:i:s'),'modifyDate'=>date('Y-m-d H:i:s'));
+     $this->db->insert('file_log',$fileLogArray);
+     echo $this->db->insert_id();
+     
+    die; 
+    
+    
    }
     public function getUserData_get(){
      $getData=$this->get();
@@ -1017,6 +1024,8 @@ Team WizardofAMZ
          if($result){
             unlink($fileName);
             $changeStatus=$this->user_model->changeCustomerClick($customerData);
+            
+            
             $message['message']='Customer report inserted.';
             $message['error']=false;
           }else {
@@ -1739,6 +1748,36 @@ Team WizardofAMZ
          $message['message']="no data avialble";
      }
       $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function getAuditcaselog_get(){
+      $getData=$this->get();
+      $this->set_response($this->user_model->getAuditcaselog($getData), REST_Controller::HTTP_CREATED);
+    }
+    public function auditDraft_get(){
+      $getData=$this->get();
+      $this->set_response($this->user_model->auditDraft($getData), REST_Controller::HTTP_CREATED);
+    }
+    public function auditsaveCaseData_post(){
+     $postData=$this->post();
+     $caseData=$this->user_model->auditsaveCaseData($postData);
+     if($caseData){
+         $message['error']= false;
+         $message['message']='Data updated successfully'; 
+     }else{
+         $message['error']=true;
+         $message['message']="Data not updated";
+     }
+      $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+     public function filelogHistory_get(){
+      $getData=$this->get();
+      $this->set_response($this->user_model->filelogHistory($getData), REST_Controller::HTTP_CREATED);
+    }
+    
+    public function downloadFile_post(){
+     $postData=$this->post();
+     $downloadData=$this->user_model->downloadFile($postData);
+     print_r($downloadData); die;
     }
     
 }

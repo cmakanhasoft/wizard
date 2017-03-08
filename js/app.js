@@ -452,7 +452,7 @@
       }).state('/auditcaselogView/:issue_id ', {
         url: '/auditcaselogView/:issue_id',
         templateUrl: 'views/auditcaselogView.html',
-        controller: 'auditCtrl',
+        controller: 'auditcaselogViewCtrl',
         headeruse: 'forguest',
         leftuse: 'forsetting',
         leftactivetab: 'audit',
@@ -473,6 +473,19 @@
         data: {
           access: {
             requiredPermissions:['1','2']
+          }
+        }
+      }).state('/auditCaselog ', {
+        url: '/auditCaselog',
+        templateUrl: 'views/auditCaselog.html',
+        controller: 'auditCaselogCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'auditCaselog',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2','3','4','5']
           }
         }
       })
