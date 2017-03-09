@@ -60,7 +60,12 @@ casper.then(function() {
         this.echo('Login successfully');
     }
 });
-
+casper.then(function() {
+     if(this.exists("#merchant-picker-btn-logout-announce")) {
+          fs.write('notlogin.txt','123', 644);
+          casper.exit();
+     }
+});
 casper.then(function() {
     this.mouse.click('#merchant-picker-btn-choose-another-announce');
 });

@@ -1,101 +1,97 @@
-
 <div id="page-content-wrapper">
  <div id="page-content">
    <div class="container">
     <script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines.js"></script>
 <script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines-demo.js"></script>
-
      <div id="page-title">
       <h2>Dashboard</h2>
       <p>The most complete user interface framework that can be used to create stunning admin dashboards and presentation websites.</p>
-    
      </div>
-    <div class="panel">
+     <div class="panel">
 	<div class="panel-body">
-   <div class="example-box-wrapper" ng-if="userdata.role_id=='1' || userdata.role_id== '2'">
-		  
-		 <div class="col-sm-12">
-                          <div class="col-sm-1">
-                              <label>User</label></div>
-                          <div class="col-sm-4">
-                              <select class="form-control" ng-model="user.user_id" ng-disabled='dis'  name="user_id" id="user_id" required  ng-change="getUserTime(user.user_id)">
-                                  <option value="">-- Select User --</option>
-                                  <option value="{{u.user_id}}" ng-repeat="u in userList">{{u.firstName}} - {{u.lastName}} - {{u.email}}</option>
+            <div class="example-box-wrapper" ng-if="userdata.role_id=='1' || userdata.role_id== '2'">
+                
+                <div class="col-sm-12">
+                    <div class="col-sm-1">
+                        <label>User</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control" ng-model="user.user_id" ng-disabled='dis'  name="user_id" id="user_id" required  ng-change="getUserTime(user.user_id)">
+                            <option value="">-- Select User --</option>
+                            <option value="{{u.user_id}}" ng-repeat="u in userList">{{u.firstName}} - {{u.lastName}} - {{u.email}}</option>
 
-                              </select>
-                          </div>
-                          <div class="col-sm-2" >
-                            <button type="submit" class="btn btn-block btn-blue-alt hide" id='chnageuserbtn' ng-click="changeUser('user-validation')">Submit</button>
-                            <button type="submit" class="btn btn-block btn-blue-alt" id='chnagebtn' ng-click="change()" style="margin-top: 0px;">Change</button>
-                       </div>
-                     <div class="col-sm-4"><span>Last data updated Date :</span> {{lastUpdatedDataDate}}</div>
-            
-                      </div>
-         </div>
-
-	</div>
-   </div>
+                        </select>
+                    </div>
+                    <div class="col-sm-2" >
+                         <button type="submit" class="btn btn-block btn-blue-alt hide" id='chnageuserbtn' ng-click="changeUser('user-validation')">Submit</button>
+                         <button type="submit" class="btn btn-block btn-blue-alt" id='chnagebtn' ng-click="change()" style="margin-top: 0px;">Change</button>
+                    </div>
+                    <div class="col-sm-4">
+                        <span>Last data updated Date :</span> {{lastUpdatedDataDate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
      <div class="row">
-    <div class="col-md-4">
-        <div class="dashboard-box dashboard-box-chart bg-white content-box">
-            <div class="content-wrapper">
-                <div class="header bg-green" style="min-height: 100px;">
-                    <b style="padding: 5px;">${{remResolveData}}</b>
-                    
-                    <span>Total amount reimbursed till now from cases for the user</span>
+        <div class="col-md-4">
+            <div class="dashboard-box dashboard-box-chart bg-white content-box">
+                <div class="content-wrapper">
+                    <div class="header bg-green" style="min-height: 100px;">
+                        <b style="padding: 5px;">${{remResolveData}}</b>
+                        <span>Total amount reimbursed till now from cases for the user</span>
+                    </div>
                 </div>
-            </div>
-           
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="dashboard-box dashboard-box-chart bg-white content-box">
-            <div class="content-wrapper">
-                <div class="header bg-red" style="min-height: 100px;">
-                    <b style="padding: 5px;">
-                        {{countRemResolveddData}} / {{countRemSubmitedData}}
-                    </b>
-                    
-                    <span>Total number of cases won OUT of total number of cases submitted</span>
-                </div>
-                
-                
+
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="dashboard-box dashboard-box-chart bg-white content-box">
-            <div class="content-wrapper">
-                <div class="header bg-orange" style="min-height: 100px;">
-                    <b style="padding: 5px;">
-                        {{inventoryResolveCount}} 
-                    </b>
-                    <span>Total number of items reimbursed</span>
+        <div class="col-md-4">
+            <div class="dashboard-box dashboard-box-chart bg-white content-box">
+                <div class="content-wrapper">
+                    <div class="header bg-red" style="min-height: 100px;">
+                        <b style="padding: 5px;">
+                            {{countRemResolveddData}} / {{countRemSubmitedData}}
+                        </b>
+
+                        <span>Total number of cases won OUT of total number of cases submitted</span>
+                    </div>
+
+
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="dashboard-box dashboard-box-chart bg-white content-box">
+                <div class="content-wrapper">
+                    <div class="header bg-orange" style="min-height: 100px;">
+                        <b style="padding: 5px;">
+                            {{inventoryResolveCount}} 
+                        </b>
+                        <span>Total number of items reimbursed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-<div class="row"> 
-    <div class="col-md-12">
-    <h3>Seller central account details</h3>
-    <br />
-    <b>UserName:  </b>{{user_email.user_email}} <br />
-    <b>Password:  </b>{{user_email.user_password}}
+    <div class="row"> 
+        <div class="col-md-12">
+            <h3>Seller central account details</h3>
+            <br />
+            <b>UserName:  </b>{{user_email.user_email}} <br />
+            <b>Password:  </b>{{user_email.user_password}}
+        </div>
     </div>
-</div>
-<div class="row">
-    <table class="table table-bordered table-striped table-condensed" dashboard-datatable  data-url="user/filelogHistory?user_id={{userdata.user_id}}" data-method="GET" >
-        <thead>
-         <tr>
-          <th>Report Type</th>
-          <th>Date Range Covered</th>
-          <th>ACTION</th>
-         </tr>
-        </thead>
-    </table>
-    
-</div>
+    <div class="row">
+        <table class="table table-bordered table-striped table-condensed" dashboard-datatable  data-url="user/filelogHistory?user_id={{userdata.user_id}}" data-method="GET" >
+            <thead>
+             <tr>
+              <th>Report Type</th>
+              <th>Date Range Covered</th>
+              <th>ACTION</th>
+             </tr>
+            </thead>
+        </table>
+    </div>
    </div>
  </div>
 </div>

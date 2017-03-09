@@ -180,7 +180,53 @@ class User_model extends CI_Model {
         $this->db->where('is_payment','1');
         return $this->db->get($this->table)->result_array();
     }
-    
+    public function paymentReport($data,$userId){
+     
+      $userId=$userId;
+      if(count($data)>1){
+            if($data[0] !='date/time' &&  $data[1] !='settlement id' && $data[4]!='sku' && $data[1] !=''){
+              $orderId=$data[3];
+              $date=date('Y-m-d',strtotime($data[0]));
+                  $importData=array(
+                    'datetime'=>$date,
+                    'user_id'=>$userId,
+                    'settlement_id'=>$data[1],
+                    'type'=>$data[2],
+                    'order_id'=>$data[3],
+                    'sku'=>$data[4],
+                    'description'=>$data[5],
+                    'quantity'=>$data[6],
+                    'marketplace'=>$data[7],
+                    'fulfillment'=>$data[8],
+                    'order_city'=>$data[9],
+                    'order_state'=>$data[10],
+                    'order_postal'=>$data[11],
+                    'product_sales'=>$data[12],
+                    'shipping_credits'=>$data[13],
+                    'gift_wrap_credits'=>$data[14],
+                    'promotional_rebates'=>$data[15],
+                    'sales_tax_collected'=>$data[16],
+                    'selling_fees'=>$data[17],
+                    'fba_fees'=>$data[18],
+                    'other_transaction_fees'=>$data[19],
+                    'other'=>$data[20],
+                    'total'=>$data[21],
+                    'oorderStatus'=>'0',
+                    'createdDate'=>date('Y-m-d H:i:s')
+                    );
+                  
+                    $this->db->insert('paymentreport', $importData);
+                    $this->db->insert_id();
+             return true;
+            }else {
+             return false;
+            }
+           
+          }else {
+           return false;
+          }
+      
+      }
     public function dataRange($data,$userId){
       $userId=$userId;
       if(count($data)>1){
@@ -636,7 +682,7 @@ class User_model extends CI_Model {
         $insertData=array('user_email'=>md5(time()).POSTMARKDOMAIN,
           'user_password'=>md5(time()),
           'user_id'=>$userId,
-          'first_time_status'=>0,
+          'first_time_status'=>'0',
           'created_date'=>date('Y-m-d H:i:s')
           );
           $this->db->insert('user_email', $insertData);
@@ -1340,8 +1386,8 @@ $data_string = json_encode($data);
    public function newUser(){
     return $this->db->select('*')->from('user_email')->where('first_time_status','0')->where('token !=','')->get()->result_array();
    }
-   public function chnageFirtTimeLoginStatus($data){
-      $updateArray=array('first_time_status'=>'1');
+   public function changeFirtTimeLoginStatus($data){
+      $updateArray=array('first_time_status'=>'1','user_status'=>'3');
       $this->db->where("user_email", $data[0]['user_email']);
       $this->db->update("user_email",$updateArray);
       return $this->db->affected_rows();
@@ -1906,7 +1952,7 @@ $data_string = json_encode($data);
     $datadate=$this->db->select('user_email,user_password,customer_execution_time')->from('user_email')->where('user_id',$data['user_id'])->get()->result_array();
      
      if(!empty($datadate[0]['customer_execution_time']) && $datadate[0]['customer_execution_time'] !='0000-00-00 00:00:00' && $datadate[0]['customer_execution_time'] != null){
-      $days_ago = date('Y-m-d', strtotime('-4 days', strtotime($datadate[0]['customer_execution_time'])));
+      $days_ago = date('Y-m-d', strtotime('-5 days', strtotime($datadate[0]['customer_execution_time'])));
       $result['lastUpdatedDataDate']=$days_ago;
       $result['user_email']=$datadate;
       
@@ -2292,7 +2338,18 @@ $data_string = json_encode($data);
      $primaryKey = 'file_log.file_id';
      $extraWhere='';
      $columns = array(
-        array('db' => 'type', 'dt' => 0),
+        array('db' => 'type', 'dt' => 0,'formatter'=>  function ($d,$row){
+      if($d=='customer_report'){
+       return 'FBA customer returns Report';
+      }else if($d=='payment_report'){
+       return 'Payment Report';
+      }else if($d=='inventory_report'){
+        return 'Inventory Adjustments Report';
+      }else if($d=='remb_report'){
+        return 'Reimbursements Report';
+      }
+     
+        }),
         array('db' => 'fromdate', 'dt' => 1,'formatter'=>  function ($d,$row){
      return $d.'&nbsp;&nbsp;&nbsp;&nbsp;<b>to</b>&nbsp;&nbsp;&nbsp;&nbsp;'.$row['todate'];
         }),
@@ -2313,23 +2370,189 @@ $data_string = json_encode($data);
    return $data;
     
    }
-   public function downloadFile($data){
-    $sql="select * from customer_report where createdDate BETWEEN '".$data['fromDate']."' AND '".$data['toDate']."' ";    $data=$this->db->query($sql)->result_array();
-    $out = '';
-    $out .= 'return-date'."\t".'order-id'."\t".'sku'."\t".'asin'."\t".'fnsku';
-    $out .="\n"; 
-    $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/file_log/myText.txt","wb");
-    fwrite($fp,$out);
-    for($i=0;$i<count($data);$i++){
-     $outs='';
-     $outs .=$data[$i]['date']."\t".$data[$i]['orderId']."\t".$data[$i]['sku']."\t".$data[$i]['asin']."\t".$data[$i]['fnsku'];
-     $outs .="\n";
-     fwrite($fp,$outs);
+   public function customerdownloadFile($datas){
+    $result=[];
+    $fileName='customer_'.$datas['fromDate'].'_'.$datas['toDate'].'.txt';
+    $filePath=$_SERVER['DOCUMENT_ROOT']."amazon_local/file_log/".$fileName;
+    
+    if(file_exists($filePath)){
+      return $filePath;
+    }else {
+      $sql="select * from customer_report where user_id=".$datas['user_id']." AND date BETWEEN '".$datas['fromDate']."' AND '".$datas['toDate']."' ";    
+      $data=$this->db->query($sql)->result_array();
+      if(count($data)>0){
+      $out = '';
+      $out .= 'return-date'."\t".'order-id'."\t".'sku'."\t".'asin'."\t".'fnsku'."\t".'product-name'."\t".'quantity'."\t".'fulfillment-center-id'."\t".'detailed-disposition'."\t".'reason'."\t".'status';
+      $out .="\n"; 
+
+      $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/file_log/".$fileName."","wb");
+      fwrite($fp,$out);
+       for($i=0;$i<count($data);$i++){
+        $outs='';
+        $outs .=$data[$i]['date']."\t".$data[$i]['orderId']."\t".$data[$i]['sku']."\t".$data[$i]['asin']."\t".$data[$i]['fnsku']."\t".$data[$i]['title']."\t".$data[$i]['quantity']."\t".$data[$i]['fc']."\t".$data[$i]['disposition']."\t".$data[$i]['reason']."\t".$data[$i]['status'];
+        $outs .="\n";
+        fwrite($fp,$outs);
+       }
+       fclose($fp);
+       $result['path']=$filePath;
+       $result['toDate']=$datas['toDate'];
+       $result['fromDate']=$datas['fromDate'];
+       
+       return $result;
+      }else {
+       return false;
+      }
     }
-    
-    
-    fclose($fp);
    }
+   public function rembdownloadFile($datas){
+    $result=[];
+    $fileName='remb_'.$datas['fromDate'].'_'.$datas['toDate'].'.txt';
+    $filePath=$_SERVER['DOCUMENT_ROOT']."/amazon_local/file_log/".$fileName;
+    if(file_exists($filePath)){
+      return $filePath;
+    }else {
+      $sql="select * from payment_reimburs where user_id=".$datas['user_id']." AND date BETWEEN '".$datas['fromDate']."' AND '".$datas['toDate']."' ";    
+      $data=$this->db->query($sql)->result_array();
+      if(count($data)>0){
+      $out = '';
+      $out .= 'approval-date'."\t".'reimbursement-id'."\t".'case-id'."\t".'amazon-order-id'."\t".'reason'."\t".'sku'."\t".'fnsku'."\t".'asin'."\t".'product-name'."\t".'condition'."\t".'currency-unit'."\t".'amount-per-unit'."\t".'amount-total'."\t".'quantity-reimbursed-cash'."\t".'quantity-reimbursed-inventory'."\t".'quantity-reimbursed-total'."\t".'original-reimbursement-id'."\t".'original-reimbursement-type'."\t".'';
+      $out .="\n"; 
+
+      $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/file_log/".$fileName."","wb");
+      fwrite($fp,$out);
+       for($i=0;$i<count($data);$i++){
+        $outs='';
+        $outs .=$data[$i]['date']."\t".$data[$i]['remId']."\t".$data[$i]['caseId']."\t".$data[$i]['amazonOrderId']."\t".$data[$i]['reason']."\t".$data[$i]['msku']."\t".$data[$i]['fnskus']."\t".$data[$i]['asin']."\t".$data[$i]['title']."\t".$data[$i]['recondition']."\t".$data[$i]['currency-unit']."\t".$data[$i]['amountPerUnit']."\t".$data[$i]['amountTotal']."\t".$data[$i]['quantityCase']."\t".$data[$i]['quantityReimInventry']."\t".$data[$i]['quantityReimTotal']."\t".$data[$i]['originalId']."\t".$data[$i]['originalType'];
+        $outs .="\n";
+        fwrite($fp,$outs);
+       }
+       fclose($fp);
+       $result['path']=$filePath;
+       $result['toDate']=$datas['toDate'];
+       $result['fromDate']=$datas['fromDate'];
+       
+       return $result;
+      }else {
+       return false;
+      }
+    }
+   }
+   public function inventorydownloadFile($datas){
+    $result=[];
+    $fileName='inventory_'.$datas['fromDate'].'_'.$datas['toDate'].'.txt';
+    $filePath=$_SERVER['DOCUMENT_ROOT']."/amazon_local/file_log/".$fileName;
+    if(file_exists($filePath)){
+      return $filePath;
+    }else {
+      $sql="select * from inventory_adjustments where user_id=".$datas['user_id']." AND date BETWEEN '".$datas['fromDate']."' AND '".$datas['toDate']."' ";    
+      $data=$this->db->query($sql)->result_array();
+      if(count($data)>0){
+      $out = '';
+      $out .= 'adjusted-date'."\t".'transaction-item-id'."\t".'fnsku'."\t".'sku'."\t".'product-name'."\t".'fulfillment-center-id'."\t".'quantity'."\t".'reason'."\t".'disposition';
+      $out .="\n"; 
+
+      $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/file_log/".$fileName."","wb");
+      fwrite($fp,$out);
+       for($i=0;$i<count($data);$i++){
+        $outs='';
+        $outs .=$data[$i]['date']."\t".$data[$i]['transactionId']."\t".$data[$i]['fnSku']."\t".$data[$i]['msku']."\t".$data[$i]['title']."\t".$data[$i]['fc']."\t".$data[$i]['quantity']."\t".$data[$i]['reason']."\t".$data[$i]['disposition'];
+        $outs .="\n";
+        fwrite($fp,$outs);
+       }
+       fclose($fp);
+       $result['path']=$filePath;
+       $result['toDate']=$datas['toDate'];
+       $result['fromDate']=$datas['fromDate'];
+       
+       return $result;
+      }else {
+       return false;
+      }
+    }
+   }
+   public function paymentdownloadFile($datas){
+    $result=[];
+    $fileName='payment_'.$datas['fromDate'].'_'.$datas['toDate'].'.csv';
+    $filePath=$_SERVER['DOCUMENT_ROOT']."/amazon_local/file_log/".$fileName;
+    if(file_exists($filePath)){
+      return $filePath;
+    }else {
+      $sql="select * from paymentreport where user_id=".$datas['user_id']." AND datetime BETWEEN '".$datas['fromDate']."' AND '".$datas['toDate']."' ";    
+      $data=$this->db->query($sql)->result_array();
+      
+      if(count($data)>0){
+      $out = '';
+      $out .= 'date/time'."\t".
+              'settlement id'."\t".
+              'type'."\t".
+              'order id'."\t".
+              'sku'."\t".
+              
+              'quantity'."\t".
+              'marketplace'."\t".
+              'fulfillment'."\t".
+              'order city'."\t".
+              'order state'."\t".
+              'order postal'."\t".
+              'product sales'."\t".
+              'shipping credits'."\t".
+              'gift wrap credits'."\t".
+              'promotional rebates'."\t".
+              'sales tax collected'."\t".
+              'selling fees'."\t".
+              'fba fees'."\t".
+              'other transaction fees'."\t".
+              'other'."\t".
+              'total'."\t".
+              'description';
+      $out .="\n"; 
+
+      $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/file_log/".$fileName."","wb");
+      fwrite($fp,$out);
+       for($i=0;$i<count($data);$i++){
+        $outs='';
+        $outs .=$data[$i]['datetime']."\t".
+                $data[$i]['settlement_id']."\t".
+                $data[$i]['type']."\t".
+                $data[$i]['order_id']."\t".
+                $data[$i]['sku']."\t".
+                
+                $data[$i]['quantity']."\t".
+                $data[$i]['marketplace']."\t".
+                $data[$i]['fulfillment']."\t".
+                $data[$i]['order_city']."\t".
+                $data[$i]['order_state']."\t".
+                $data[$i]['order_postal']."\t".
+                $data[$i]['product_sales']."\t".
+                $data[$i]['shipping_credits']."\t".
+                $data[$i]['gift_wrap_credits']."\t".
+                $data[$i]['promotional_rebates']."\t".
+                $data[$i]['sales_tax_collected']."\t".
+                $data[$i]['selling_fees']."\t".
+                $data[$i]['fba_fees']."\t".
+                $data[$i]['other_transaction_fees']."\t".
+                $data[$i]['other']."\t".
+                $data[$i]['total']."\t".
+                $data[$i]['description'];
+        $outs .="\n";
+        fwrite($fp,$outs);
+       }
+       fclose($fp);
+       $result['path']=$filePath;
+       $result['toDate']=$datas['toDate'];
+       $result['fromDate']=$datas['fromDate'];
+       
+       return $result;
+      }else {
+       return false;
+      }
+    }
+   }
+   public function addfileLog($filedata){
+    $this->db->insert('file_log',$filedata);
+    return  $this->db->insert_id();
+   }
+   
 }
 
 ?>

@@ -952,15 +952,35 @@ Team WizardofAMZ
     }
     $this->set_response($message, REST_Controller::HTTP_CREATED);
    }
-   public function stest_post(){
+   public function stest_get(){
+    $getData=$this->get();
+     $dfileName=$_SERVER["DOCUMENT_ROOT"]. '/amazon_local/js/data.csv'; 
+         if(file_exists($dfileName)){
+          $rresult=false;
+          if (($handle = fopen($dfileName, "r")) !== FALSE) {
+           fgetcsv($handle);   
+           while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+               $num = count($data); 
+               for ($c=0; $c < $num; $c++) {
+                 $col[$c] = $data[$c];
+               }; 
+              if(isset($col[3]) && $col[3] !='order id'){
+              
+               $rresult=$this->user_model->paymentReport($col,$getData['user_id']);  
+               
+             }
+           }
+      }
+           
+         }
     
-    $filedata=$this->user_model->getUserData(array('user_id'=>1));
-     $date = strtotime($filedata[0]['createdDate']); 
-     $fromDate= date('Y-m-d H:i:s', strtotime("-18 month",$date)); 
-     $toDate= date('Y-m-d H:i:s', strtotime("-2 days")); 
-     $fileLogArray=array('from_date'=>$fromDate,'to_date'=>$toDate,'type'=>'customer_report','user_id'=>$filedata[0]['user_id'],'createdDate'=>date('Y-m-d H:i:s'),'modifyDate'=>date('Y-m-d H:i:s'));
-     $this->db->insert('file_log',$fileLogArray);
-     echo $this->db->insert_id();
+//    $filedata=$this->user_model->getUserData(array('user_id'=>1));
+//     $date = strtotime($filedata[0]['createdDate']); 
+//     $fromDate= date('Y-m-d H:i:s', strtotime("-18 month",$date)); 
+//     $toDate= date('Y-m-d H:i:s', strtotime("-2 days")); 
+//     $fileLogArray=array('from_date'=>$fromDate,'to_date'=>$toDate,'type'=>'customer_report','user_id'=>$filedata[0]['user_id'],'createdDate'=>date('Y-m-d H:i:s'),'modifyDate'=>date('Y-m-d H:i:s'));
+//     $this->db->insert('file_log',$fileLogArray);
+//     echo $this->db->insert_id();
      
     die; 
     
@@ -1024,8 +1044,6 @@ Team WizardofAMZ
          if($result){
             unlink($fileName);
             $changeStatus=$this->user_model->changeCustomerClick($customerData);
-            
-            
             $message['message']='Customer report inserted.';
             $message['error']=false;
           }else {
@@ -1047,6 +1065,14 @@ Team WizardofAMZ
          $message['message']='No any status true';
            $message['error']=true;
       } 
+      $filedata=$this->user_model->getUserData(array('user_id'=>$customerData[0]['user_id']));
+      
+       $date = strtotime($filedata[0]['createdDate']); 
+       $fromDate= date('Y-m-d H:i:s', strtotime("-18 month",$date)); 
+       $toDate= date('Y-m-d H:i:s', strtotime("-2 days")); 
+       $fileLogArray=array('from_date'=>$fromDate,'to_date'=>$toDate,'type'=>'customer_report','user_id'=>$filedata[0]['user_id'],'createdDate'=>date('Y-m-d H:i:s'),'modifyDate'=>date('Y-m-d H:i:s'));
+      
+      $filelogData=$this->user_model->addfileLog($fileLogArray);
       $addtime=$this->user_model->addTime($message['message']);
     }
     public function rembCasperClick_get(){
@@ -1086,7 +1112,17 @@ Team WizardofAMZ
         $message['message']='No true status of remb.';
         $message['error']=true;
       }
-      $this->user_model->addTime($message['message']);
+      
+       $filedata=$this->user_model->getUserData(array('user_id'=>$rembData[0]['user_id']));
+      
+       $date = strtotime($filedata[0]['createdDate']); 
+       $fromDate= date('Y-m-d H:i:s', strtotime("-18 month",$date)); 
+       $toDate= date('Y-m-d H:i:s', strtotime("-2 days")); 
+       $fileLogArray=array('from_date'=>$fromDate,'to_date'=>$toDate,'type'=>'remb_report','user_id'=>$filedata[0]['user_id'],'createdDate'=>date('Y-m-d H:i:s'),'modifyDate'=>date('Y-m-d H:i:s'));
+      
+       $filelogData=$this->user_model->addfileLog($fileLogArray);
+      
+       $this->user_model->addTime($message['message']);
     }
     public function inventoryCasperClick_get(){
      $addtime=$this->user_model->addTime();
@@ -1126,6 +1162,16 @@ Team WizardofAMZ
         $message['message']='No true status of inventory status.';
         $message['error']=true;
       }
+      
+      $filedata=$this->user_model->getUserData(array('user_id'=>$inventoryData[0]['user_id']));
+      
+       $date = strtotime($filedata[0]['createdDate']); 
+       $fromDate= date('Y-m-d H:i:s', strtotime("-18 month",$date)); 
+       $toDate= date('Y-m-d H:i:s', strtotime("-2 days")); 
+       $fileLogArray=array('from_date'=>$fromDate,'to_date'=>$toDate,'type'=>'inventory_report','user_id'=>$filedata[0]['user_id'],'createdDate'=>date('Y-m-d H:i:s'),'modifyDate'=>date('Y-m-d H:i:s'));
+      
+       $filelogData=$this->user_model->addfileLog($fileLogArray);
+      
       $this->user_model->addTime($message['message']);
       $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
@@ -1158,10 +1204,10 @@ Team WizardofAMZ
                }
               
                $changeStatus=$this->user_model->changeDatarangeClick($rangeData);
-                unlink($dfileName);
-            $message['message']='datarange report inserted.';
-            $message['error']=false;
-               
+               $rresult=$this->user_model->paymentReport($col,$rangeData[0]['user_id']);  
+               $message['message']='datarange report inserted.';
+               $message['error']=false;
+               unlink($dfileName);
              }
            }
       }
@@ -1335,9 +1381,13 @@ Team WizardofAMZ
        $downloadpath=$_SERVER["DOCUMENT_ROOT"]. '/js/newUser.js';
 	
        $downloadData=shell_exec('casperjs '.$downloadpath.' --email='.$userData[0]['user_email'].' --password='.$userData[0]['user_password']);
-       
-        if(!empty($downloadData)){
-         $Data=$this->user_model->chnageFirtTimeLoginStatus($userData);
+        $notloginfileName=$_SERVER["DOCUMENT_ROOT"]. '/js/notlogin.txt';
+        if(file_exists($notloginfileName)){
+           unlink($notloginfileName);
+           $message['error']=true;
+           $message['message']="No any chnages first time user staus";
+        }else {
+          $Data=$this->user_model->changeFirtTimeLoginStatus($userData);
          if($Data){
            $message['error']=false;
            $message['message']="Change first time user staus";
@@ -1345,9 +1395,7 @@ Team WizardofAMZ
            $message['error']=true;
            $message['message']="No any chnages first time user staus";
          }
-        }else {
-          $message['error']=true;
-          $message['message']="Some error in new user scraper";
+          
         }
      }else {
        $message['error']=true;
@@ -1776,8 +1824,26 @@ Team WizardofAMZ
     
     public function downloadFile_post(){
      $postData=$this->post();
-     $downloadData=$this->user_model->downloadFile($postData);
-     print_r($downloadData); die;
+     if($postData['type']=='customer_report'){
+     $downloadData=$this->user_model->customerdownloadFile($postData);
+     
+     }else if($postData['type']=='remb_report'){
+       $downloadData=$this->user_model->rembdownloadFile($postData);
+     }
+     else if($postData['type']=='inventory_report'){
+       $downloadData=$this->user_model->inventorydownloadFile($postData);
+     }
+     else if($postData['type']=='payment_report'){
+       $downloadData=$this->user_model->paymentdownloadFile($postData);
+     }
+     if(!empty($downloadData)){
+       $message['error']= false;
+       $message['data']=$downloadData; 
+     }else {
+       $message['error']= true;
+       $message['message']='Data not avialable'; 
+     }
+    $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
     
 }

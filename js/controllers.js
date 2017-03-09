@@ -812,19 +812,20 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          method: "POST",
                          data:$scope.download 
                     }).success(function(response) {
+                         debugger;
                          if (response.error == false) {
-                              debugger;
+                               var link = document.createElement("a");
+                              link.download = response.data.fromDate+'-'+response.data.toDate;
+                              link.href = response.data.path;
+                              link.click();
 
                          } else {
-                              //alert('token not get');
+                               show_notification('Error', response.message, '', 'no');
                           }
                     });
                     
                     
-//                    var link = document.createElement("a");
-//                    link.download = 'download';
-//                    link.href = 'http://103.239.146.250:898/amazon_local/js/activation.js';
-//                    link.click();
+
           }
                
 //          setTimeout(function() {
