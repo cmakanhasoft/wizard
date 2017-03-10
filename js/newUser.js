@@ -67,12 +67,29 @@ casper.then(function() {
      }
 });
 casper.then(function() {
+    this.wait(2000, function() {
+          this.capture('1.png');
+     });
+});
+casper.then(function() {
     this.mouse.click('#merchant-picker-btn-choose-another-announce');
 });
 casper.then(function() {
-    this.mouse.click('#selection-btn-A2TK57SRMQA7DK-ATVPDKIKX0DER-announce');
+    this.wait(2000, function() {
+          this.capture('2.png');
+     });
 });
-
+casper.then(function() {
+     this.evaluate(function() {
+            document.getElementById("selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER").click();
+        });
+    //this.mouse.click('#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER');
+});
+casper.then(function() {
+    this.wait(2000, function() {
+          this.capture('3.png');
+     });
+});
 casper.on("page.error", function(msg, trace) {
     this.echo("Error: " + msg);
 });

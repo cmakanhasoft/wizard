@@ -1,0 +1,254 @@
+<div id="page-sidebar" class="bg-gradient-1 font-inverse">
+    <div class="scroll-sidebar">
+<ul id="sidebar-menu">
+    <li  ng-if="leftactivetab == 'dashboard'" access="1,2,3,4,5">
+        <a href="#/dashboard" title="Dashboard" style="color: #1c82e1;" >
+          <i class="glyph-icon icon-dashboard opacity-80 font-size-20"></i>
+           <span>Dashboard</span>
+        </a>
+    </li>
+     <li  ng-if="leftactivetab != 'dashboard'" access="1,2,3,4,5">
+        <a href="#/dashboard" title="Dashboard" >
+             <i class="glyph-icon icon-dashboard opacity-80 font-size-20"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+	
+	<li ng-if="leftactivetab != 'amazon_integration' && userdata.amazonStatus!=3" access="1,3,4,5">
+        <a href="#/amazon_integration" title="Amazon Integration" >
+            <i class="glyph-icon icon-linecons-diamond"></i>
+            <span>Amazon Integration</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'amazon_integration'  &&  userdata.amazonStatus!=3" access="1,3,4,5">
+        <a href="#/amazon_integration" title="Amazon Integration" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-diamond"></i>
+            <span>Amazon Integration</span>
+        </a>
+    </li>
+<!--	<li  ng-if="leftactivetab == 'user_man'" access="1,2">
+        <a href="#/user_man" title="User management" style="color: #1c82e1;" >
+          <i class="glyph-icon icon-dashboard opacity-80 font-size-20"></i>
+           <span>User management</span>
+        </a>
+    </li>
+     <li  ng-if="leftactivetab != 'user_man'" access="1,2">
+        <a href="#/user_man" title="User management" >
+             <i class="glyph-icon icon-dashboard opacity-80 font-size-20"></i>
+            <span>User management</span>
+        </a>
+    </li>-->
+    
+<!--    <li  ng-if="leftactivetab == 'user'" access="2">
+        <a href="#/user" title="User" style="color: #1c82e1;" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>User</span>
+        </a>
+    </li>
+    <li  ng-if="leftactivetab != 'user'" access="2">
+        <a href="#/user" title="User" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>User</span>
+        </a>
+    </li>-->
+	
+<!--	<li  ng-if="leftactivetab == 'userlist'" access="2">
+        <a href="#/userlist" title="Userl List" style="color: #1c82e1;" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>User List</span>
+        </a>
+    </li>
+    <li  ng-if="leftactivetab != 'userlist'" access="2">
+        <a href="#/userlist" title="User List" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>User List</span>
+        </a>
+    </li>-->
+    
+<!--    <li ng-if="leftactivetab != 'customer'" access="1">
+        <a href="#/customer" title="Customer Returns" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Customer Returns</span>
+        </a>
+    </li>
+    <li  class="sfHover" ng-if="leftactivetab == 'customer'" access="1">
+        <a href="#/customer" title="Customer Returns" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Customer Returns</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab != 'reimbursements'" access="1">
+        <a href="#/reimbursements" title="Reimbursements">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Reimbursements</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'reimbursements'" access="1">
+        <a href="#/reimbursements" title="Reimbursements" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Reimbursements</span>
+        </a>
+    </li>-->
+<!--    <li ng-if="leftactivetab != 'inventory'" access="1">
+        <a href="#/inventory" title="Inventory Adjustments">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Inventory Adjustments</span>
+        </a>
+    </li>
+
+    <li ng-if="leftactivetab == 'inventory'" access="1">
+        <a href="#/inventory" title="Inventory Adjustments" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Inventory Adjustments</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab != 'payments'" access="1">
+        <a href="#/payments" title="payments" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Payments Order</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'payments'" access="1">
+        <a href="#/payments" title="payments" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Payments Order</span>
+        </a>
+    </li>-->
+<!--    <li ng-if="leftactivetab != 'order'" access="1,3,4,5">
+        <a href="#/order" title="Order" >
+            <i class="glyph-icon icon-linecons-diamond"></i>
+            <span>Order refund</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'order'" access="1,3,4,5">
+        <a href="#/order" title="Order" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-diamond"></i>
+            <span>Order refund</span>
+        </a>
+    </li>-->
+    
+    <li ng-if="leftactivetab != 'refundManager'" access="1,2">
+        <a href="#/refundManager" title="Refund Manager" >
+            <i class="glyph-icon icon-linecons-wallet"></i>
+            <span>Returns Manager</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'refundManager'" access="1,2">
+        <a href="#/refundManager" title="Refund Manager" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-wallet"></i>
+            <span>Returns Manager</span>
+        </a>
+    </li>
+	
+	
+    
+    
+    <!-- <li ng-if="leftactivetab != 'inventoryadjust'" access="1,3,4,5">
+        <a href="javascript:void(0)" title="Inventory Adjustments" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Inventory Adjustments</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'inventoryadjust'" access="1,3,4,5">
+        <a href="javascript:void(0)" title="Inventory Adjustments" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Inventory Adjustments</span>
+        </a>
+    </li> -->
+   
+    <li ng-if="leftactivetab != 'inventoryad'" access="1,2">
+        <a href="#/inventoryad" title="Inventory Adjustments" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Inventory Detail</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'inventoryad'" access="1,2">
+        <a href="#/inventoryad" title="Inventory Adjustments" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Inventory Detail</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab != 'caseLog'" access="1,2,3,4,5">
+        <a href="#/caseLog" title="Case Log" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Return Case Log</span>
+        </a>
+    </li>
+    
+    
+     <li ng-if="leftactivetab == 'caseLog'" access="1,2,3,4,5">
+        <a href="#/caseLog" title="Case Log" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Return Case Log</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab != 'audit'" access="1,2,3,4,5">
+        <a href="#/audit" title="audit" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit</span>
+        </a>
+    </li>
+    
+    <li ng-if="leftactivetab == 'audit'" access="1,2">
+        <a href="#/audit" title="audit" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab != 'auditCaselog'" access="1,2">
+        <a href="#/auditCaselog" title="auditCaselog" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit Caselog</span>
+        </a>
+    </li>
+    
+    <li ng-if="leftactivetab == 'auditCaselog'" access="1,2,3,4,5">
+        <a href="#/auditCaselog" title="auditCaselog" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Audit Caselog</span>
+        </a>
+    </li>
+    
+<!--    <li ng-if="leftactivetab != 'inventoryCaseLog'" access="1,2,3,4,5">
+        <a href="#/inventoryCaseLog" title="Inventory Case Log" >
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Inventory Case Log</span>
+        </a>
+    </li>
+    <li ng-if="leftactivetab == 'inventoryCaseLog'" access="1,2,3,4,5">
+        <a href="#/inventoryCaseLog" title="Inventory Case Log" style="color: #1c82e1;">
+            <i class="glyph-icon icon-linecons-paper-plane"></i>
+            <span>Inventory Case Log</span>
+        </a>
+    </li>-->
+	
+<!--    <li  ng-if="leftactivetab == 'setting'" access="1,2">
+        <a href="#/user/updatedprofile/{{userdata.user_id}}" title="User" style="color: #1c82e1;" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Setting</span>
+        </a>
+    </li>
+     <li  ng-if="leftactivetab != 'setting'" access="1">
+        <a href="#/user/updatedprofile/{{userdata.user_id}}" title="User" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>Setting</span>
+        </a>
+    </li>-->
+
+<!--    <li  ng-if="leftactivetab == 'limitedaccess'" access="1">
+        <a href="#/limitedaccess" title="limitedaccess" style="color: #1c82e1;" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>limitedaccess</span>
+        </a>
+    </li>
+     <li  ng-if="leftactivetab != 'limitedaccess'" access="1">
+        <a href="#/limitedaccess" title="limitedaccess" >
+            <i class="glyph-icon icon-linecons-tv"></i>
+            <span>limitedaccess</span>
+        </a>
+    </li>-->
+
+    </ul><!-- #sidebar-menu -->
+
+    </div>
+</div>

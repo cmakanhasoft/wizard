@@ -3,7 +3,7 @@
   <div class="container">
    <div id="page-title">
 	<h2>Edit case
-		<a href="#/caseLog" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+		<a href="#/auditCaselog" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
 	</h2>
    </div>
    <div class="panel">
@@ -35,17 +35,12 @@
 			</div>
 		   </div>
 		  <div class="form-group">
-			<label for="order_id">Order Id *:</label>
+			<label for="msku">SKU*:</label>
 			<div class="input-group input-group-lg">
-			 <input type="text" class="form-control" id="order_id" name="order_id" placeholder="Enter OrderID" ng-model="caseLogData.order_id" required>
+			 <input type="text" class="form-control" id="msku" name="msku" placeholder="Enter SKU" ng-model="caseLogData.msku" required>
 			</div>
 		   </div>
-		  <div class="form-group">
-			<label for="mail_id">Your Email*:</label>
-			<div class="input-group input-group-lg">
-			 <input type="text" class="form-control" id="mail_id" name="mail_id" placeholder="Enter Mail id" ng-model="caseLogData.mail_idcaseLogData">
-			</div>
-		   </div>
+		  
                   <div class="form-group col-md-12 hide" id='timeDiv' >
                 <label for="dtp_input1" class="col-md-2 control-label">Date Time</label>
                 <div class="input-group date form_datetime"  data-date-format="dd MM yyyy - HH:ii" data-link-field="dtp_input1" date-time-picker  style="width:350px;">
@@ -57,16 +52,13 @@
                     <input type="hidden" id="dtp_input1" value="" /><br/>
                     
             </div>
-            
-                  
-                  
-                  <div class="form-group" id="issusediv">
-                      <button type="submit" class="btn btn-primary" id="editbtn" ng-click="editCase('case-validation')">Save as Draft</button>
-                      <button type="button" class="btn btn-primary hide" id="sedulSubmitbtn" ng-click="draftscheduleIssue('case-validation')">Set Scheduled</button>
-                      <button type="submit" class="btn btn-primary" id="draftbtn" ng-click="draftCaseSubmit('case-validation')">Submit Case</button>
-                      <button type="button" class="btn btn-primary" id="setTimebtn" ng-click="setTime()">Set Time</button>
-                     <a href="#/caseLog" class="btn btn-default">Cancle</a>
-                   </div>
+              <div class="form-group" id="issusediv">
+                  <button type="submit" class="btn btn-primary" id="editbtn" ng-click="auditEditCase('case-validation')">Save as Draft</button>
+                  <button type="button" class="btn btn-primary hide" id="sedulSubmitbtn" ng-click="auditDraftscheduleIssue('case-validation')">Set Scheduled</button>
+                  <button type="submit" class="btn btn-primary" id="draftbtn" ng-click="auditDraftCaseSubmit('case-validation')">Submit Case</button>
+                  <button type="button" class="btn btn-primary" id="setTimebtn" ng-click="setTime()">Set Time</button>
+                 <a href="#/auditCaselog" class="btn btn-default">Cancle</a>
+               </div>
           </form>
 	 </div>
 

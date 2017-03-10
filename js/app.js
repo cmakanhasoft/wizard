@@ -455,13 +455,27 @@
         controller: 'auditcaselogViewCtrl',
         headeruse: 'forguest',
         leftuse: 'forsetting',
-        leftactivetab: 'audit',
+        leftactivetab: 'auditCaselog',
         loginRequired:'Yes',
         data: {
           access: {
             requiredPermissions:['1','2','3','4','5']
           }
         }
+       }).state('/auditcaselogEdit/:issue_id ', {
+        url: '/auditcaselogEdit/:issue_id',
+        templateUrl: 'views/auditcaselogEdit.html',
+        controller: 'auditcaselogEditCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'auditCaselog',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['1','2','3','4','5']
+          }
+        }
+        
       }).state('/auditview/:issueid ', {
         url: '/auditview/:issueid',
         templateUrl: 'views/auditview.html',
@@ -486,6 +500,32 @@
         data: {
           access: {
             requiredPermissions:['1','2','3','4','5']
+          }
+        }
+      }).state('/auditreplyView/:auditreplyId ', {
+        url: '/auditreplyView/:auditreplyId',
+        templateUrl: 'views/auditreplyView.html',
+        controller: 'auditreplyviewCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'audit',
+        loginRequired:'No',
+        data: {
+          access: {
+            requiredPermissions:['1','2']
+          }
+        }
+      }).state('/customerReplyView/:customerReplyId ', {
+        url: '/customerReplyView/:customerReplyId',
+        templateUrl: 'views/customerReplyView.html',
+        controller: 'customerReplyviewCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'audit',
+        loginRequired:'No',
+        data: {
+          access: {
+            requiredPermissions:['1','2']
           }
         }
       })
@@ -525,7 +565,9 @@
            var hash1 = window.location.hash.substr(1);
            var userProfile=hash1.split('/');
             var caseView = hash.indexOf("caseView");
+            var auditreplyView = hash.indexOf("auditreplyView");
             var inventoryView = hash.indexOf("inventoryView");
+            var customerReplyView = hash.indexOf("customerReplyView");
             var auditview = hash.indexOf("auditview");
            var account_activation = hash.indexOf("account_activation");
            var account_register = hash.indexOf("register?plan_id");
@@ -540,7 +582,7 @@
            }
           
           
-          if($cookies.get('userdata') === undefined && (hash !== '/register') &&  (hash !== '/') && (account_activation == -1) && (addpayments == -1) && (account_register== -1) && (forgotPass == -1) && (resetPassword== -1) && (addPassword == -1) && (caseView == -1) && (inventoryView == -1) && (auditview== -1)) {
+          if($cookies.get('userdata') === undefined && (hash !== '/register') &&  (hash !== '/') && (account_activation == -1) && (addpayments == -1) && (account_register== -1) && (forgotPass == -1) && (resetPassword== -1) && (addPassword == -1) && (caseView == -1) && (inventoryView == -1) && (auditview== -1) && (auditreplyView == -1) && (customerReplyView == -1)) {
               window.location.href = '#/login';
           }
          

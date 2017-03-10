@@ -161,7 +161,7 @@ casper.then(function() {
           var lastissue = finalissues.slice(1, -1);
           var finalorder_id = order_id.slice(1, -1);
           $('#subject_customer_orders').val(finalreason);
-          $('#customer_orders_info').html(lastissue);
+          $('#customer_orders_info').html(issues);
           $('#customer_orders_order_id').val(finalorder_id);
           $('#customer_orders_submit-announce').click();
      }, reason, issues, order_id);

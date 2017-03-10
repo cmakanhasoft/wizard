@@ -35,15 +35,27 @@
 			 <input type="text" class="form-control" id="mail_id" name="mail_id" placeholder="Enter Mail id" ng-model="auditcase.mail_id" required>
 			</div>
 		   </div>
+                   <div class="form-group col-md-12 hide" id='timeDiv'>
+                        <label for="dtp_input1" class="col-md-2 control-label">Date Time</label>
+                        <div class="input-group date form_datetime"  data-date-format="dd MM yyyy - HH:ii" data-link-field="dtp_input1" date-time-picker  style="width:350px;">
+                            <input class="form-control" size="16" type="text" value="" readonly="" ng-model="auditcase.scheduleTime" required>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                                <a href="javascript:void(0)" ng-click="hidetime()" style="float:right; margin-bottom: 5px; font-size: 20px;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+                        </div>
+                            <input type="hidden" id="dtp_input1" value="" /><br/>
+
+                    </div>
 		  <div>
 		   <h2 id="pleasewait"></h2>
 		  </div>
 		   <div class="form-group" id="issusediv">
-                <a href="#/inventoryad" class="btn btn-default" >Close</a>
-			<button type="button" class="btn btn-primary" id="submitbtn" ng-click="addAuditIssue('issue-validation','submit')">Submit</button>
-                <!-- <button type="button" class="btn btn-primary" id="drftbtn" ng-click="addinventoryIssue('issue-validation','draft')">Save Draft</button> -->
-		   </div>
-		  </form>
+                        <a href="#/audit" class="btn btn-default" >Close</a>
+			<button type="button" class="btn btn-primary" id="submitbtn" ng-click="addAuditIssue('issue-validation','submit')">Submit</button>                         <button type="button" class="btn btn-primary hide" id="sedulSubmitbtn" ng-click="auditScheduleIssue('issue-validation')">Set Schedule</button>
+                         <button type="button" class="btn btn-primary" id="drftbtn" ng-click="addAuditIssue('issue-validation','draft')">Save Draft</button>
+                     <button type="button" class="btn btn-primary" id="setTimebtn" ng-click="setTime()">Set Time</button>
+                   </div>
+                  </form>
 	
 	 </div>
 
