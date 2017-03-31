@@ -527,7 +527,20 @@
           access: {
             requiredPermissions:['1','2']
           }
-        }
+        } 
+      }).state('/addAuditCase ', {
+        url: '/addAuditCase',
+        templateUrl: 'views/addmulauditcase.html',
+        controller: 'auditCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'audit',
+        loginRequired:'No',
+        data: {
+          access: {
+            requiredPermissions:['1','2']
+          }
+        } 
       })
   }]);
  app.run(['$rootScope', '$cookies','$state','authorization',function($rootScope,$cookies,$state,authorization) {

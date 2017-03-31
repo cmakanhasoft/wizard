@@ -65,7 +65,7 @@ var endDate = tdateArr[1] + "/" + tdateArr[2] + "/" + tdateArr[0];
  
  /// before 3 days reocord
  var ft7 = new Date();
-ft7.setDate(ft7.getDate() - 3);
+ft7.setDate(ft7.getDate() - 4);
  var fdate7 = ft7.toISOString().split('T')[0];  
  var fdateArr7 = fdate7.split("-");
 var startDate7 = fdateArr7[1] + "/" + fdateArr7[2] + "/" + fdateArr7[0];

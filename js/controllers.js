@@ -1254,10 +1254,24 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $scope.quoteDatatable.fnFilter($scope.search_user);
           };
           
+          
      }]).controller('amazonIntegrationCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          
+          $scope.confirmtoken=function(){
+                $http({
+                    url: path + "user/changeuserStaus?user_id="+$rootScope.userdata.user_id,
+                    method: "GET"
+               }).success(function(response) {
+                    if (response.error == false) {
+                         show_notification('Success', response.message, '', 'no');
+                    } else {
+                         show_notification('Error', response.message, '', 'no');
+                     }
+               });
           }
            $http({
                     url: path + "user/getUserData?user_id="+$rootScope.userdata.user_id,
@@ -2022,6 +2036,131 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $scope.quoteDatatable2.fnFilter($scope.searchresolvedAudit);
           };
           
+          
+          $scope.setMulAuditIssue = function() {
+               debugger;
+               if($scope.auditissue==undefined){
+                    $scope.auditissue={};
+               } 
+               var msku_count=[];
+              $(':checkbox:checked').each(function(i){
+                    msku_count[i] = $(this).attr("data-msku");
+               });
+               
+                if(Object.keys(msku_count).length==0){
+                    show_notification('Error' ,"Please select at least one checkbox" ,'','no');
+
+               }else if(Object.keys(msku_count).length>3){
+                     show_notification('Error' ,"You can select only 3 order." ,'','no');
+               }else  {
+                         if (Object.keys(msku_count).length !=0) {
+                               var fromdate=$('#fromDate').val();
+                              var toDate=$('#toDate').val();
+
+                              var mdy = fromdate.split('-');
+                              var mdy1 =toDate.split('-');
+
+                               var a1=new Date(mdy[0],mdy[1]-1,mdy[2] );
+                               var b1=new Date(mdy1[0], mdy1[1]-1,mdy1[2] );
+
+
+                               var daydiff=Math.round((b1-a1)/(1000*60*60*24));
+                               console.log(daydiff);    
+                              
+                              var damaged=[];
+                              var destroyed=[];
+                              var lost=[];
+                              var msku=[];
+                              var a=[];
+                              $(':checkbox:checked').each(function(i){
+                                   damaged[i] = $(this).attr("data-damaged");
+                                   destroyed[i] = $(this).attr("data-destroyed");
+                                   lost[i] = $(this).attr("data-lost");
+                                   msku[i] = $(this).attr("data-msku");
+
+                                  a.push({"damaged":damaged[i],"destroyed":destroyed[i],"lost":lost[i],"msku":msku[i]});
+                                });
+                                 
+                                  var orderCase=''
+                                  var msg='';
+                                  var mulOrderId='';
+                                   for(var j=0;j<a.length;j++){
+                                         var sym=''
+                                        if(j<a.length-1){
+                                             sym =' | ';
+                                        }
+                                        mulOrderId +=a[j]['msku']+sym;
+                                        msg +='With regard to SKU GH-25B-2. Were we credited for the 0 damaged units? Were we credited for the 0 destroyed units? Were we credited for the 0 lost units?';
+                                           msg+='\n';
+                                            msg+='\n';
+                                      }
+                              }
+                              if($rootScope.auditissue==undefined){
+                                   $rootScope.auditissue={};
+                              }
+                                var fisrtline  ='We are reconciling our inventory for the last '+daydiff+' days using the inventory reconciliation report in seller central.';
+                              $rootScope.auditissue.issue= 'Hello \n'+fisrtline+'\n \n'+msg  +  '\n\nThanks, \n';
+
+                              $rootScope.auditissue.msku= mulOrderId;
+                              $rootScope.auditissue.contactReason='Other FBA issue';
+                              console.log($rootScope.auditissue);
+                              window.location.href = '#/addAuditCase';
+
+                    }
+           }
+          $scope.setTime=function(){
+                  $('#timeDiv').removeClass('hide');
+                  $('#sedulSubmitbtn').removeClass('hide');
+                  $('#submitbtn').addClass('hide');
+                  $('#drftbtn').addClass('hide');
+             }
+             $scope.hidetime=function(){
+                  $('#timeDiv').addClass('hide');
+                   $('#submitbtn').removeClass('hide');
+                  $('#sedulSubmitbtn').addClass('hide');
+                  $('#drftbtn').removeClass('hide');
+             }
+             $scope.addMulAuditIssue=function(frm_id,type){
+                  debugger;
+               if ($('#' + frm_id).valid()) {
+                   $scope.auditissue.user_id=$rootScope.userdata.user_id;
+                   $scope.auditissue.type=type;
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   
+                   $http({
+                         url: path + "user/addMulAuditIssue",
+                         method: "POST",
+                         data: $scope.auditissue,
+                     }).success(function(response){
+                         if (response.error == false) {
+                             show_notification('Success', response.message, '#/audit', 'yes');
+                         } else {
+                             show_notification('Error', response.message, '', 'no');
+                        }
+                   });
+              }
+          }
+           $scope.auditMulScheduleIssue=function(frm_id){
+                if ($('#' + frm_id).valid()) {
+                   $scope.auditcase.user_id=$rootScope.userdata.user_id;
+                   $scope.auditcase.scheduleTime=$('#dtp_input1').val();
+                   $('#issusediv').addClass('hide');
+                   $('#pleasewait').html('Please Wait...');
+                   $http({
+                         url: path + "user/auditMulScheduleIssue",
+                         method: "POST",
+                         data: $scope.auditcase,
+                    }).success(function(response) {
+                        if (response.error == false) {
+                             show_notification('Success', response.message, '#/refundManager', 'yes');
+                         } else {
+                             show_notification('Error', response.message, '', 'no');
+                        }
+                   });
+              }
+               
+          }
          
           
 }]).controller('addauditCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
@@ -2035,10 +2174,23 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     $scope.auditcase={};
                }
                $scope.auditcase.contactReason='Other FBA issue';
+               var fromdate=$('#fromDate').val();
+               var toDate=$('#toDate').val();
+               
+               var mdy = fromdate.split('-');
+               var mdy1 =toDate.split('-');
+
+                var a1=new Date(mdy[0],mdy[1]-1,mdy[2] );
+                var b1=new Date(mdy1[0], mdy1[1]-1,mdy1[2] );
+
+
+                var daydiff=Math.round((b1-a1)/(1000*60*60*24));
+                console.log(daydiff);     
+                    
                    var issue ='Hello,';
                    issue +='\n';
                    issue +='\n';
-                   issue +='We are reconciling our inventory for the last 6 months using the inventory reconciliation report in seller central.';
+                   issue +='We are reconciling our inventory for the last '+daydiff+' days using the inventory reconciliation report in seller central.';
                    issue +='\n';
                    issue +='\n';
                    issue +='With regard to SKU '+$stateParams.sku+'. Were we credited for the '+$stateParams.damaged+' damaged units? Were we credited for the '+$stateParams.destroyed+' destroyed units? Were we credited for the '+$stateParams.lost+' lost units?';

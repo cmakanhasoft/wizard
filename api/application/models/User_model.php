@@ -1321,23 +1321,50 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
     public function getCustomerissue($data) {
         return $this->db->select('*')->from('customerissue')->where('issue_id', $data['issue_id'])->get()->result_array();
     }
+    
+    
+    public function getDigitalOceanImage() {
+         $ch = curl_init('https://api.digitalocean.com/v2/snapshots?page=1&per_page=1');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
+            'Content-Type: application/json'
+                )
+        );
 
-    public function getDigitalOcean() {
-        $proxyPassword = substr(md5($this->password), 1, 10);
-        $user_data = <<<EOD
+        $result = curl_exec($ch);
+        $result1 = json_decode($result);
+        $createarray = json_decode(json_encode($result1), True);
+        
+        return $createarray['snapshots'][0]['id']; 
+    }
+    
+    
+    public function getDigitalOcean($image_id) {
+        $resultData=array(); 
+        $proxyPassword=substr(md5('admin2'),1,10); 
+        $proxyUser=substr(sha1('123'),1,10);
+        $resultData['password']=$proxyPassword;
+        $resultData['user']=$proxyUser;
+        $user_data =  <<<CLoudConfig
 #cloud-config
-packages:
-  - nginx
-EOD;
-        $data = array("name" => "Droplet11", "region" => "nyc3", "size" => "512mb", "image" => "ubuntu-14-04-x64", "user_data" => $user_data);
+runcmd:
+ - htpasswd -b -c /etc/squid/squid_passwd $proxyUser $proxyPassword
+ - service squid restart
+CLoudConfig;
+        
+        $tag = $this->getEnvironmentTag(); 
+        $ssh=array('ca:6f:64:c4:d8:b8:48:2f:1e:1f:c7:76:ad:f5:b7:8c');
+        $data = array("name"=>"demo","region"=>"nyc3","size"=>"512mb","image"=>$image_id,'ssh_keys'=>$ssh,'user_data'=>$user_data);
         $data_string = json_encode($data);
-
-        $ch = curl_init('https://api.digitalocean.com/v2/droplets');
+        
+       $ch = curl_init('https://api.digitalocean.com/v2/droplets');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer 580aae8e12beefc1ad8610671bda1faecb01a06ee1d1f78ab58464361fcb6899',
+            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
             'Content-Type: application/json',
             'Content-Length: ' . strlen($data_string))
         );
@@ -1348,28 +1375,230 @@ EOD;
 
         $droplate = $createarray['droplet'];
         $droplateid = $droplate['id'];
-        return $ipData = $this->getDroplet($droplateid);
+        
+        $ipData = $this->getDroplet($droplateid);
+       
+        $tagdata=$this->tagDroplet($droplateid, $tag);
+       
+       $resultData['ip']=$ipData;
+       $resultData['droplate']=$droplate;
+       $resultData['droplateid']=$droplateid;
+       $resultData['tagdata']=$tagdata;
+       
+       print_r($resultData); die;
     }
 
+   public function getEnvironmentTag()
+    {
+        switch (true) {
+            case in_array('test', ['dev', 'test']):
+                return 'local8';
+//            case defined('YII_BETA_TEST') && YII_BETA_TEST === true:
+//                return 'beta';
+//            case YII_ENV === 'prod' && defined('YII_ACCEPTANCE_TEST') && YII_ACCEPTANCE_TEST === true:
+//                return 'alpha';
+//            case YII_ENV === 'prod' && (!defined('YII_ACCEPTANCE_TEST') || YII_ACCEPTANCE_TEST !== true):
+//                return 'prod';
+            default:
+                return 'unknown';
+        }
+    }     
+    
     public function getDroplet($id) {
         $ch = curl_init('https://api.digitalocean.com/v2/droplets/' . $id);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer 580aae8e12beefc1ad8610671bda1faecb01a06ee1d1f78ab58464361fcb6899',
+            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
+            'Content-Type: application/json'
+                )
+        );
+
+         $result = curl_exec($ch); 
+        $result1 = @json_decode($result,TRUE);
+        if(is_array($result1)){
+                  if(!isset($result1)){
+                        $output='$result1 is not set';
+                    }
+                    elseif(!isset($result1["droplet"])){
+                        $output='$result1["droplet"] is not set';
+                    }
+                    elseif(!isset($result1["droplet"]["networks"])){
+                        $output='$result1["droplet"]["networks"] is not set';
+                    }
+                    elseif(!isset($result1["droplet"]["networks"]["v4"])){
+                        $output='$result1["droplet"]["networks"]["v4"] is not set';
+                    }
+                    elseif(!isset($result1["droplet"]["networks"]["v4"][0])){
+                        $output='$result1["droplet"]["networks"]["v4"][0] is not set';
+                    }
+                    elseif(!isset($result1["droplet"]["networks"]["v4"][0]["ip_address"])){
+                       $output='$result1["droplet"]["networks"]["v4"][0]["ip_address"] is not set'; 
+                    }
+                    else{
+                        $output=$result1['droplet']['networks']['v4'][0]['ip_address'];
+                    }
+        }else {
+            
+            $output='not array';
+        }
+       // print_r($result1);
+       // print_r($result1['droplet']['networks']['v4'][0]['ip_address']); 
+//        $createarray = json_encode($result1);
+//        $droplate = $createarray['droplet']['networks'];
+//       
+        //print_r($createarray['networks']);
+       
+        
+       
+
+      
+        return $output;
+    }
+    public function tagDroplet($dropletId, $tags)
+    {
+        $a= $this->createTag($dropletId,$tags);
+        
+
+// Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL, "https://api.digitalocean.com/v2/tags/".$tags."/resources");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"resources\":[{\"resource_id\":{$dropletId},\"resource_type\":\"droplet\"}]}");
+curl_setopt($ch, CURLOPT_POST, 1);
+
+$headers = array();
+$headers[] = "Content-Type: application/json";
+$headers[] = "Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49";
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$result = curl_exec($ch);
+
+if (curl_errno($ch)) {
+    echo 'Error:' . curl_error($ch);
+}
+return true;
+        
+        
+// Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL, "https://api.digitalocean.com/v2/tags/awesome/resources");
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"resources\":[{\"resource_id\":\"{$dropletId}\",\"resource_type\":\"droplet\"}]}");
+curl_setopt($ch, CURLOPT_POST, 1);
+
+$headers = array();
+$headers[] = "Content-Type: application/json";
+$headers[] = "Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49";
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+$result = curl_exec($ch);
+print_r($result); die;
+if (curl_errno($ch)) {
+    echo 'Error:' . curl_error($ch);
+}
+curl_close ($ch);
+         // $a={"resources":[{"resource_id":"droplet_id","resource_type":"droplet"},]};
+//          $data=array();
+//          $data['resources']=array();
+//          $data['resources'][0]=array();
+//          $data['resources'][0]['resource_id']=$dropletId;
+//          $data['resources'][0]['resource_type']='droplet';
+//          
+//           $data["resources"] = [
+//           [ "resource_id" => $dropletId, "resource_type" => "droplet"]
+//       ];
+           
+//           $data_string = json_encode($data);
+//        
+//           $ch = curl_init('https://api.digitalocean.com/v2/test5/resources');
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+//        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+//        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+//            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
+//            'Content-Type: application/json'
+//                )
+//        );
+//
+//        $result = curl_exec($ch);
+//        $result1 = json_decode($result);
+//           print_r($result1); die;
+
+      
+   }
+   public function createTag($dropletId,$tag)
+   {
+        $data=array('name'=>$tag);
+        $data_string = json_encode($data);
+       $ch = curl_init('https://api.digitalocean.com/v2/tags');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
             'Content-Type: application/json'
                 )
         );
 
         $result = curl_exec($ch);
         $result1 = json_decode($result);
-        $createarray = json_decode(json_encode($result1), True);
-
-        $droplate = $createarray['droplet'];
-
-        return $finalipAddress = $droplateid = $droplate['networks']['v4'][0]['ip_address'];
-    }
-
+        echo $dropletId;
+       print_r($result1); 
+//       $curl = curl_init();
+//
+//        curl_setopt_array($curl, array(
+//          CURLOPT_URL => "https://api.digitalocean.com/v2/tags/".$tag."/resources",
+//          CURLOPT_RETURNTRANSFER => true,
+//          CURLOPT_ENCODING => "",
+//          CURLOPT_MAXREDIRS => 10,
+//          CURLOPT_TIMEOUT => 30,
+//          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+//          CURLOPT_CUSTOMREQUEST => "POST",
+//          CURLOPT_POSTFIELDS => "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"\"resources\"\"\r\n\r\n[{\"resource_id\":'".$dropletId."',\"resource_type\":\"droplet\"}]\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--",
+//          CURLOPT_HTTPHEADER => array(
+//            "authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49",
+//            "cache-control: no-cache",
+//            "content-type: application/json",
+//            
+//          ),
+//        ));
+//
+//        $response = curl_exec($curl);
+//        $err = curl_error($curl);
+//
+//        curl_close($curl);
+//
+//        if ($err) {
+//          echo "cURL Error #:" . $err;
+//        } else {
+//          echo $response;
+//        }
+//       $data["name"] = $tag;
+//       $data_string = json_encode($data);
+//       try {
+//           $ch = curl_init('https://api.digitalocean.com/v2/tags/'.$tag);
+//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+//            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+//            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+//                'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
+//                'Content-Type: application/json',
+//                'Content-Length: ' . strlen($data_string))
+//            );
+//
+//            $result = curl_exec($ch);
+//            $result1 = json_decode($result);
+//            $createarray = json_decode(json_encode($result1), True);
+//           
+//            return $createarray;
+//       } catch (\Exception $e) {
+//          
+//          return $e;
+//       }
+   }
     public function updateUserip($ip, $user) {
         $updateip = array('user_ip' => $ip);
         $this->db->where('user_id', $user);
@@ -1474,11 +1703,11 @@ EOD;
     }
 
     public function newUser() {
-        return $this->db->select('*')->from('user_email')->where('first_time_status', '0')->where('token !=', '')->get()->result_array();
+        return $this->db->select('*')->from('user_email')->where('first_time_status', '0')->where('user_status','2')->where('token !=', '')->get()->result_array();
     }
 
     public function changeFirtTimeLoginStatus($data) {
-        $updateArray = array('first_time_status' => '1', 'user_status' => '3');
+        $updateArray = array('first_time_status' => '1', 'user_status' => '3','customer_execution_time'=>date('Y-m-d'));
         $this->db->where("user_email", $data[0]['user_email']);
         $this->db->update("user_email", $updateArray);
         return $this->db->affected_rows();
@@ -2060,7 +2289,7 @@ EOD;
         $datadate = $this->db->select('user_email,user_password,customer_execution_time')->from('user_email')->where('user_id', $data['user_id'])->get()->result_array();
 
         if (!empty($datadate[0]['customer_execution_time']) && $datadate[0]['customer_execution_time'] != '0000-00-00 00:00:00' && $datadate[0]['customer_execution_time'] != null) {
-            $days_ago = date('Y-m-d', strtotime('-5 days', strtotime($datadate[0]['customer_execution_time'])));
+            $days_ago = date('Y-m-d', strtotime('-4 days', strtotime($datadate[0]['customer_execution_time'])));
             $result['lastUpdatedDataDate'] = $days_ago;
             $result['user_email'] = $datadate;
         } else {
@@ -2277,6 +2506,8 @@ EOD;
         }
 
         if ($issueId) {
+            $mskuId = trim($data['msku']);
+            $oneMskuId = explode("|", $mskuId);
             if ($type == 'submit') {
                 $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issueId;
                 $screperData = shell_exec('casperjs ' . $path);
@@ -2289,7 +2520,8 @@ EOD;
                         $this->db->update('auditissue', $updateauditcaseId);
 
                         $updateinventoryissue = array('inventory_status' => '1', 'modifyDate' => date('Y-m-d H:i:s'));
-                        $this->db->where_in("msku", $data['msku']);
+                        $trimmed_array = array_map('trim', $oneMskuId);
+                        $this->db->where_in("msku", $trimmed_array);
                         $this->db->update('inventory_adjustments', $updateinventoryissue);
                         return true;
                     } else {
@@ -2300,16 +2532,81 @@ EOD;
                 }
             } else if ($type == 'draft') {
                     $updateauditcaseId = array('issuse_status' => '5', 'modifyDate' => date('Y-m-d H:i:s'));
-                    $this->db->where('msku', $data['msku']);
+                    $this->db->where('issue_id', $issueId);
                     $this->db->update('auditissue', $updateauditcaseId);
 
+                    $trimmed_array = array_map('trim', $oneMskuId);
+                        
                     $updateinventoryissue = array('inventory_status' => '1', 'modifyDate' => date('Y-m-d H:i:s'));
-                    $this->db->where_in("msku", $data['msku']);
+                    $this->db->where_in("msku", $trimmed_array);
                     $this->db->update('inventory_adjustments', $updateinventoryissue);
                 return true;
             }
         }
     }
+    public function addMulAuditIssue($data){
+        if (!empty($data['user_id'])) {
+            $userData = $this->db->select('*')->from('user_email')->where('user_id', $data['user_id'])->get()->result_array();
+        }
+        $type = $data['type'];
+        unset($data['type']);
+        if ($type == 'draft'){
+            $data['issuse_status'] = '5';
+        }else{
+            $data['issuse_status'] = '1';
+        }
+        if (isset($data['issue_id']) && !empty($data['issue_id'])) {
+            $type = 'submit';
+            $issueId = $data['issue_id'];
+//            $updateauditissue = array('issuse_status' => '1', 'modifyDate' => date('Y-m-d H:i:s'));
+            $this->db->where('issue_id', $issueId);
+            $this->db->update('auditissue', $data);
+        }else {
+            $data['createdDate'] = date('Y-m-d H:i:s');
+            $this->db->insert('auditissue', $data);
+            $issueId = $this->db->insert_id();
+        }
+        if($issueId){
+            $mskuId = trim($data['msku']);
+            $oneMskuId = explode("|", $mskuId);
+        
+        if ($type == 'submit') {
+                $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issueId;
+                $screperData = shell_exec('casperjs ' . $path);
+                $filesname = $_SERVER['DOCUMENT_ROOT'] . '/js/auditmessage_' . $issueId . '.txt';
+                if (file_exists($filesname)) {
+                    $fileData = file_get_contents($filesname);
+                    if (!empty($fileData)) {
+                        $updateauditcaseId = array('caseId' => $fileData, 'issuse_status' => '1', 'modifyDate' => date('Y-m-d H:i:s'));
+                        $this->db->where('issue_id', $issueId);
+                        $this->db->update('auditissue', $updateauditcaseId);
+
+                         $trimmed_array = array_map('trim', $oneMskuId);
+                        $updateinventoryissue = array('inventory_status' => '1', 'modifyDate' => date('Y-m-d H:i:s'));
+                        $this->db->where_in("msku", $trimmed_array);
+                        $this->db->update('inventory_adjustments', $updateinventoryissue);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else if ($type == 'draft') {
+                    $updateauditcaseId = array('issuse_status' => '5', 'modifyDate' => date('Y-m-d H:i:s'));
+                    $this->db->where('issue_id', $issueId);
+                    $this->db->update('auditissue', $updateauditcaseId);
+
+                    $trimmed_array = array_map('trim', $oneMskuId);
+                    $updateinventoryissue = array('inventory_status' => '1', 'modifyDate' => date('Y-m-d H:i:s'));
+                    $this->db->where_in("msku", $trimmed_array);
+                    $this->db->update('inventory_adjustments', $updateinventoryissue);
+                return true;
+            }
+        }
+        
+    }
+    
 
     public function auditSubmited($data) {
         $table = 'auditissue';
@@ -2739,7 +3036,17 @@ EOD;
         $startDatae=$currentDatae.' 0:00:00';
         $endDatae=$currentDatae.' 23:50:59';
         
-       $sql="select * from customerissue where scheduleTime >= '".$startDatae."' AND  scheduleTime <= '".$endDatae."'"; 
+       $sql="select * from customerissue where scheduleTime >= '".$startDatae."' AND  scheduleTime <= '".$endDatae."' limit 1"; 
+       return  $this->db->query($sql)->result_array();
+    }
+    public function getAuditschedulecase(){
+         //$this->db->select('*')->from('customerissue')->where('scheduleTime',date('Y-m-d'))->limit('1')->get()->result_array();
+         //echo $this->db->last_query(); die;
+        $currentDatae=date('Y-m-d');
+        $startDatae=$currentDatae.' 0:00:00';
+        $endDatae=$currentDatae.' 23:50:59';
+        
+       $sql="select * from auditissue where scheduleTime >= '".$startDatae."' AND  scheduleTime <= '".$endDatae."' limit 1"; 
        return  $this->db->query($sql)->result_array();
     }
     
@@ -2775,6 +3082,35 @@ EOD;
         $this->db->where('issue_id', $data['issue_id']);
         $this->db->update('auditissue', $data);
         return true;
+    }
+    public function changeuserStaus($data){
+        $updateArray=array('user_status'=>'2');
+        $this->db->where('user_id',$data['user_id']);
+        $this->db->update('user_email',$updateArray);
+        return true;
+    }
+    public function auditMulScheduleIssue($data) {
+        
+        if(isset($data['issue_id']) && !empty($data['issue_id'])){
+            $data['issuse_status'] = '6';
+            $data['modifyDate'] = date('Y-m-d H:i:s');
+            $this->db->where('issue_id',$data['issue_id']);
+            $this->db->update('auditissue',$data);
+            $issueId =$data['issue_id'];
+        }else {
+            $data['createdDate'] = date('Y-m-d H:i:s');
+            $data['issuse_status'] = '6';
+            $this->db->insert('auditissue', $data);
+            $issueId = $this->db->insert_id();
+        }
+        $orderId = trim($data['msku']);
+        $oneOrederId = explode("|", $orderId);
+        $updateData = array('inventory_status' => '6');
+        $trimmed_array = array_map('trim', $oneOrederId);
+
+        $this->db->where_in("msku", $trimmed_array);
+        $this->db->update("inventory_adjustments", $updateData);
+        return $issueId;
     }
 
 }

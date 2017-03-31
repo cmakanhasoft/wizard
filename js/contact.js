@@ -68,7 +68,7 @@ casper.then(function() {
           return feedbackMessages;
      });
      reason = JSON.stringify(d[0].reason)
-     issues = JSON.stringify(d[0].issues)
+     issues = d[0].issues;
      order_id = JSON.stringify(d[0].order_id)
 })
 
@@ -130,28 +130,16 @@ casper.then(function() {
           var finalsearchorderId=searchorderid[0].trim();
           $("#order_id").val(finalsearchorderId);
      }, order_id);
-     this.wait(2000, function() {
-          this.capture('form2.png');
-     });
 });
 
 casper.then(function() {
      this.mouse.click("#getOrderDetailsButton-announce");
-     this.wait(2000, function() {
-          this.capture('form3.png');
-     });
 });
 casper.then(function() {
      this.mouse.click("#question_30004_radio_button_id");
-     this.wait(2000, function() {
-          this.capture('form4.png');
-     });
 });
 casper.then(function() {
      this.mouse.click("#get_question_action_button-announce");
-     this.wait(2000, function() {
-          this.capture('form5.png');
-     });
 });
 
 casper.then(function() {
@@ -165,10 +153,8 @@ casper.then(function() {
           $('#customer_orders_order_id').val(finalorder_id);
           $('#customer_orders_submit-announce').click();
      }, reason, issues, order_id);
-
 });
 casper.then(function() {
-
      this.wait(2000, function() {
           this.capture('form6.png');
      });

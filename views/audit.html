@@ -22,15 +22,18 @@
                             <div class="col-lg-3">
                               <input type="text" dt2 class="form-control" id="toDate" name="toDate" placeholder="YYYY-MM-DD"  required>  
                             </div>
-                            <div class="col-lg-2">
-                                <button type="submit" class="btn btn-block btn-blue-alt" ng-click="getAuditData('date-validation')">Submit</button>
+                            <div class="col-lg-1">
+                                <button type="submit" class="btn btn-primary" ng-click="getAuditData('date-validation')">Submit</button>
                             </div>
-                          <div class="col-lg-2">
-                                <button type="button" class="btn btn-block btn-blue-alt" ng-click="clearAuditData()">Clear</button>
+                          <div class="col-lg-1">
+                                <button type="button" class="btn btn-primary" ng-click="clearAuditData()">Clear</button>
                           </div>
                           <div class="col-lg-2" ng-if="auditData!='' && auditData != '-'" >
-    <button type="button" class="btn btn-primary" id="markasresolve" ng-click="auditMarkResolveIsuue()">Mark as Resolve</button>
+    <button type="button" class="btn btn-primary" id="markasresolve" ng-click="auditMarkResolveIsuue()">Resolve</button>
                           </div>
+                          <div class="col-lg-2" ng-if="auditData!='' && auditData != '-'" >
+    <button type="button" class="btn btn-primary" id="markasresolve" ng-click="setMulAuditIssue()">Submit Case</button>
+                          </div>      
                           </form>
                         </div>
                     </div>
@@ -52,7 +55,7 @@
                                         </thead>
                                         <tbody>
                                          <tr dt-rows ng-repeat="a in auditData">
-                                             <td><input type="checkbox" name="msku" data-msku="{{a.msku}}" /></td>
+                                         <td><input type="checkbox" name="msku" data-msku="{{a.msku}}" data-damaged="{{a.Damaged}}" data-destroyed="{{a.Destroyed}}" data-lost="{{a.Lost}}" /></td>
                                           <td>{{a.msku}}</td> 
                                           <td>{{a.Damaged }}</td>
                                           <td>{{a.Destroyed}}</td>

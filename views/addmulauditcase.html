@@ -1,0 +1,60 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+  <div class="container">
+   <div id="page-title">
+	<h2>Inventory Issue
+		<a href="#/audit" style="float:right;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+	</h2>
+   </div>
+   <div class="panel">
+	<div class="panel-body">
+	 <div class="example-box-wrapper">
+		  <form role="form"  id="issue-validation">
+		  <!-- <input type="text" class="form-control" id="data_id" name="contactReason" placeholder="Enter contact reason" ng-model="reimeli.data_id" required> -->
+		   <div class="form-group">
+			<label for="contactReason">Contact Reason *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="contactReason" name="contactReason" placeholder="Enter contact reason" ng-model="auditissue.contactReason" required>
+			</div>
+		   </div>
+		   <div class="form-group">
+			<label for="issue">Please describe your issue *:</label>
+			<div class="input-group input-group-lg">
+			 <textarea class="form-control" id="issue" style="min-height: 350px;" name="issue"  ng-model="auditissue.issue" required rows="10" ></textarea>
+			</div>
+		   </div>
+		  <div class="form-group">
+			<label for="order_id">ASIN, SKU, or FNSKU (optional) *:</label>
+			<div class="input-group input-group-lg">
+			 <input type="text" class="form-control" id="msku" name="msku" placeholder="Enter Msku" ng-model="auditissue.msku" required>
+            </div>
+		   </div>
+		  		   <div class="form-group col-md-12 hide" id='timeDiv'>
+                        <label for="dtp_input1" class="col-md-2 control-label">Date Time</label>
+                        <div class="input-group date form_datetime"  data-date-format="dd MM yyyy - HH:ii" data-link-field="dtp_input1" date-time-picker  style="width:350px;">
+                            <input class="form-control" size="16" type="text" value="" readonly="" ng-model="auditissue.scheduleTime" required>
+                            <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                                <span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+                                                <a href="javascript:void(0)" ng-click="hidetime()" style="float:right; margin-bottom: 5px; font-size: 20px;"><i class="glyph-icon tooltip-button icon-times-circle" title="" data-original-title=".icon-times-circle"></i></a>
+                        </div>
+                            <input type="hidden" id="dtp_input1" value="" /><br/>
+
+                    </div>
+		  <div>
+		   <h2 id="pleasewait"></h2>
+		  </div>
+		   <div class="form-group" id="issusediv">
+                        <a href="#/audit" class="btn btn-default" >Close</a>
+			<button type="button" class="btn btn-primary" id="submitbtn" ng-click="addMulAuditIssue('issue-validation','submit')">Submit</button>                         <button type="button" class="btn btn-primary hide" id="sedulSubmitbtn" ng-click="auditMulScheduleIssue('issue-validation')">Set Schedule</button>
+                         <button type="button" class="btn btn-primary" id="drftbtn" ng-click="addAuditIssue('issue-validation','draft')">Save Draft</button>
+                     <button type="button" class="btn btn-primary" id="setTimebtn" ng-click="setTime()">Set Time</button>
+                   </div>
+                  </form>
+	
+	 </div>
+
+	</div>
+   </div>
+  </div>
+ </div>
+</div>

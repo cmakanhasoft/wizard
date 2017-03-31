@@ -68,7 +68,7 @@ casper.then(function() {
           return feedbackMessages;
      });
      reason = JSON.stringify(d[0].reason);
-     issues = JSON.stringify(d[0].issues);
+     issues = d[0].issues;
      msku = JSON.stringify(d[0].msku);
      console.log(reason);
      console.log(issues);
@@ -153,7 +153,7 @@ casper.then(function() {
           var lastissue = finalissues.slice(1, -1);
           var finalmsku_id = msku.slice(1, -1);
           $('#subject_fba_issues').val(finalreason);
-          $('#fba_issues_info').html(lastissue);
+          $('#fba_issues_info').html(issues);
           $('#asin_fba_issues').val(finalmsku_id);
           $('#replyTo').val('joelk@wizardofamz.com');
           $('#missing_inventory_submit-announce').click();

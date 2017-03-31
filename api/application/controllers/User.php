@@ -78,18 +78,19 @@ class User extends REST_Middel_Controller {
     }
 
     public function recvEmail_post() {
-         $data = file_get_contents('php://input');
+        $data = file_get_contents('php://input');
         //$data = $this->post();
        
         $maildata=json_decode($data,true);
         //$maildata = $data;
         if (preg_match('/Invitation/', $maildata['Subject'])) {
             $user = $this->user_model->invitationrecvEmail($data);
-            $cookiefileName = 'cookie' . $user[0]['user_id'] . '.txt';
-            $resultFilename = 'code' . $user[0]['user_id'] . '.txt';
+            $cookiefileName= mt_rand().$user[0]['user_id'].'.cookie';
+           $resultFilename= mt_rand().$user[0]['user_id'].'.code';
             //$ip=$this->user_model->getDigitalOcean(); 
             //$userIp=$this->user_model->updateUserip($ip,$user[0]['user_id']); 
-
+//            $cookiefileName='testtttt.result';
+//            $resultFilename='resultttt.result';
             $link = $user[0]['recvData'];
             $var1 = '/invitation/';
             $var2 = '?mcid';
@@ -115,10 +116,10 @@ class User extends REST_Middel_Controller {
             $link2 = substr($result1, 0, $dd1);
 
 
-            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/aa.js --email=' . $user[0]['user_email'] . ' --password=' . $user[0]['user_password'] . '  --link=' . $link1 . ' --link2=' . $link2 . ' --cookieFilename=' . $cookiefileName . ' --resultFilename=' . $resultFilename;
+            $path = $_SERVER["DOCUMENT_ROOT"].'/js/token.js  --email='.$user[0]['user_email'].'  --password='.$user[0]['user_password'].'  --link='.$link1.' --link2='. $link2 .' --cookieFilename='.$cookiefileName.' --resultFilename=' .$resultFilename;
 
             $scraperData = shell_exec('casperjs ' . $path);
-            $filesname = $_SERVER['DOCUMENT_ROOT'] . '/js/' . $resultFilename;
+            $filesname = $_SERVER['DOCUMENT_ROOT'].'/js/' . $resultFilename;
             if (file_exists($filesname)) {
                 $fileData = file_get_contents($filesname);
                 if (!empty($fileData)) {
@@ -127,7 +128,7 @@ class User extends REST_Middel_Controller {
                         unlink($filesname);
                         $message['error'] = false;
                         $message['message'] = "Code get.";
-                        $message['ip'] = $ip;
+                        //$message['ip'] = $ip;
                         $message['data'] = $scraperData;
                     }
                 }
@@ -1006,24 +1007,197 @@ Team WizardofAMZ
     }
 
     public function stest_get() {
-        $getData = $this->get();
-        $dfileName = $_SERVER["DOCUMENT_ROOT"] . '/amazon_local/js/data.csv';
-        if (file_exists($dfileName)) {
-            $rresult = false;
-            if (($handle = fopen($dfileName, "r")) !== FALSE) {
-                fgetcsv($handle);
-                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                    $num = count($data);
-                    for ($c = 0; $c < $num; $c++) {
-                        $col[$c] = $data[$c];
-                    };
-                    if (isset($col[3]) && $col[3] != 'order id') {
+         $cookiefileName= mt_rand().'90'.'.cookie';
+           $resultFilename= mt_rand().'90'.'.code';
+            //$ip=$this->user_model->getDigitalOcean(); 
+            //$userIp=$this->user_model->updateUserip($ip,$user[0]['user_id']); 
+//            $cookiefileName='testtttt.result';
+//            $resultFilename='resultttt.result';
+            $link = 'http://sellercentral.amazon.com:80/gp/invitation/AFUVSFE2DUDD2?mcid=A3Q220XNDNGZN4&mk=ATVPDKIKX0DER';
+            $var1 = '/invitation/';
+            $var2 = '?mcid';
+            $pool = $link;
+            $temp1 = strpos($pool, $var1) + strlen($var1);
+            $result = substr($pool, $temp1, strlen($pool));
+            $dd = strpos($result, $var2);
+            if ($dd == 0) {
+                $dd = strlen($result);
+            }
+            $link1 = substr($result, 0, $dd);
 
-                        $rresult = $this->user_model->paymentReport($col, $getData['user_id']);
+            $var3 = '?mcid=';
+            $var4 = '&mk=';
+            $pool1 = $link;
+            $temp2 = strpos($pool1, $var3) + strlen($var3);
+            $result1 = substr($pool1, $temp2, strlen($pool1));
+            $dd1 = strpos($result1, $var4);
+            if ($dd1 == 0) {
+                $dd1 = strlen($result1);
+            }
+
+            $link2 = substr($result1, 0, $dd1);
+
+
+           echo $path = $_SERVER["DOCUMENT_ROOT"].'/js/token.js  --email='.'1412ac116d2f9531237ee48f89fce731@inbound.wizardofamz.com'.'  --password='.'1412ac116d2f9531237ee48f89fce731'.'  --link='.$link1.' --link2='. $link2 .' --cookieFilename='.$cookiefileName.' --resultFilename=' .$resultFilename.' --proxy=63.150.152.151:8080';
+           die;
+           
+//        $data=array();
+//          $data['resources']=array();
+//          $data['resources'][0]=array();
+//          $data['resources'][0]['resource_id']="droplet_id";
+//          $data['resources'][0]['resource_type']="droplet";
+////          
+////           $data["resources"] = [
+////           [ "resource_id" => $dropletId, "resource_type" => "droplet"]
+////       ];
+//           
+//           $data_string = json_encode($data);
+//           print_r($data_string); die;
+        //$tag=$this->user_model->createTag('test'); 
+        $image_id=$this->user_model->getDigitalOceanImage(); 
+        
+        $ip=$this->user_model->getDigitalOcean($image_id); 
+        //$userIp=$this->user_model->updateUserip($ip,$user[0]['user_id']); 
+        
+        die;
+        
+        
+        
+        
+        $cookiefileName= mt_rand().'89'.'.etet';
+           $resultFilename= mt_rand().'89'.'.etet';
+            //$ip=$this->user_model->getDigitalOcean(); 
+            //$userIp=$this->user_model->updateUserip($ip,$user[0]['user_id']); 
+//            $cookiefileName='testtttt.result';
+//            $resultFilename='resultttt.result';
+            $link = 'http://sellercentral.amazon.com:80/gp/invitation/5T7NNG3UGSAKH?mcid=A3Q220XNDNGZN4&mk=ATVPDKIKX0DER';
+            $var1 = '/invitation/';
+            $var2 = '?mcid';
+            $pool = $link;
+            $temp1 = strpos($pool, $var1) + strlen($var1);
+            $result = substr($pool, $temp1, strlen($pool));
+            $dd = strpos($result, $var2);
+            if ($dd == 0) {
+                $dd = strlen($result);
+            }
+            $link1 = substr($result, 0, $dd);
+
+            $var3 = '?mcid=';
+            $var4 = '&mk=';
+            $pool1 = $link;
+            $temp2 = strpos($pool1, $var3) + strlen($var3);
+            $result1 = substr($pool1, $temp2, strlen($pool1));
+            $dd1 = strpos($result1, $var4);
+            if ($dd1 == 0) {
+                $dd1 = strlen($result1);
+            }
+
+            $link2 = substr($result1, 0, $dd1);
+
+
+           echo $path = $_SERVER["DOCUMENT_ROOT"].'/js/token.js  --email='.'043c3d1fa5b0fd28ee4bc4e18c450ab7@inbound.wizardofamz.com'.'  --password='.'043c3d1fa5b0fd28ee4bc4e18c450ab7'.'  --link='.$link1.' --link2='. $link2 .' --cookieFilename='.$cookiefileName.' --resultFilename=' .$resultFilename;
+
+            $scraperData = shell_exec('casperjs  ' . $path);
+            sleep(10);
+            echo $scraperData; 
+            print_r($scraperData); die;
+            $filesname = $_SERVER['DOCUMENT_ROOT'] . '/js/'.$resultFilename;
+            if (file_exists($filesname)) {
+                echo $fileData = file_get_contents($filesname);
+                if (!empty($fileData)) {
+                    $token = $this->user_model->updateToken('89', $fileData);
+                    if ($token) {
+                        unlink($filesname);
+                        $message['error'] = false;
+                        $message['message'] = "Code get.";
+                        
+                        $message['data'] = $scraperData;
                     }
                 }
+            } else {
+                $message['error'] = true;
+                $message['message'] = "Code not get.";
             }
-        }
+        print_r($message);
+        
+        
+        //$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+//    $randstring = '';
+//    for ($i = 0; $i < 10; $i++) {
+//        $randstring .= $characters[rand(5, strlen($characters))];
+//    }
+//    echo $randstring; die;
+        
+        
+            
+            echo mt_rand(); die;
+             $charactersss = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $randstringcode = '';
+            for ($j = 0; $j < 10; $j++) {
+                $randstringcode .= $charactersss[rand(0, strlen($charactersss))];
+            }
+           
+            $cookiefileName = $randstringcookie.'1'.'.result';
+            $resultFilename = $randstringcode.'1'.'.result';
+            $link = 'http://sellercentral.amazon.com:80/gp/invitation/HSQSZV5BWCA6A?mcid=A3Q220XNDNGZN4&mk=ATVPDKIKX0DER';
+            $var1 = '/invitation/';
+            $var2 = '?mcid';
+            $pool = $link;
+            $temp1 = strpos($pool, $var1) + strlen($var1);
+            $result = substr($pool, $temp1, strlen($pool));
+            $dd = strpos($result, $var2);
+            if ($dd == 0) {
+                $dd = strlen($result);
+            }
+            $link1 = substr($result, 0, $dd);
+
+            $var3 = '?mcid=';
+            $var4 = '&mk=';
+            $pool1 = $link;
+            $temp2 = strpos($pool1, $var3) + strlen($var3);
+            $result1 = substr($pool1, $temp2, strlen($pool1));
+            $dd1 = strpos($result1, $var4);
+            if ($dd1 == 0) {
+                $dd1 = strlen($result1);
+            }
+
+            $link2 = substr($result1, 0, $dd1);
+
+
+           echo $path = $_SERVER["DOCUMENT_ROOT"].'/js/token.js  --email='.'test@gmail.com'.'  --password='. 'sadasdasd'.'  --link='.$link1.' --link2='. $link2 .' --cookieFilename='.$cookiefileName.' --resultFilename=' .$resultFilename;
+die;
+        
+//        
+//        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+//    $randstring = '';
+//    for ($i = 0; $i < 10; $i++) {
+//        $randstring .= $characters[rand(0, strlen($characters))];
+//    }
+//    echo $randstring;
+        
+        
+//       echo  long2ip(3237054459); die;
+//        $ip=$this->user_model->getDigitalOcean(); 
+//        
+//        echo $ip; die;
+//        $getData = $this->get();
+//        $dfileName = $_SERVER["DOCUMENT_ROOT"] . '/amazon_local/js/data.csv';
+//        if (file_exists($dfileName)) {
+//            $rresult = false;
+//            if (($handle = fopen($dfileName, "r")) !== FALSE) {
+//                fgetcsv($handle);
+//                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+//                    $num = count($data);
+//                    for ($c = 0; $c < $num; $c++) {
+//                        $col[$c] = $data[$c];
+//                    };
+//                    if (isset($col[3]) && $col[3] != 'order id') {
+//
+//                        $rresult = $this->user_model->paymentReport($col, $getData['user_id']);
+//                    }
+//                }
+//            }
+//        }
 
 //    $filedata=$this->user_model->getUserData(array('user_id'=>1));
 //     $date = strtotime($filedata[0]['createdDate']); 
@@ -1300,7 +1474,7 @@ Team WizardofAMZ
             $date = strtotime($filedata[0]['createdDate']);
             $fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
             $toDate = date('Y-m-d H:i:s', strtotime("-2 days"));
-            $fileLogArray = array('from_date' => $fromDate, 'to_date' => $toDate, 'type' => 'inventory_report', 'user_id' => $filedata[0]['user_id'], 'createdDate' => date('Y-m-d H:i:s'), 'modifyDate' => date('Y-m-d H:i:s'));
+            $fileLogArray = array('from_date' => $fromDate, 'to_date' => $toDate, 'type' => 'payment_report ', 'user_id' => $filedata[0]['user_id'], 'createdDate' => date('Y-m-d H:i:s'), 'modifyDate' => date('Y-m-d H:i:s'));
 
             $filelogData = $this->user_model->addfileLog($fileLogArray);
         } else {
@@ -1769,7 +1943,7 @@ Team WizardofAMZ
         $data = $this->user_model->scheduleIssue($postData);
         if (!empty($data)) {
             $message['error'] = FALSE;
-            $message['message'] = "Your case save but it sent after some times";
+            $message['message'] = "Your case save but it sent after some days";
             $message['data'] = $data;
         } else {
             $message['error'] = true;
@@ -1855,6 +2029,20 @@ Team WizardofAMZ
         //print_r($postData); die;
 
         $data = $this->user_model->addAuditIssue($postData);
+        if (!empty($data)) {
+            $message['error'] = false;
+            $message['message'] = "Your case submited";
+        } else {
+            $message['error'] = true;
+            $message['message'] = "Your case not submited";
+        }
+        $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+     public function addMulAuditIssue_post() {
+        $postData = $this->post();
+        //print_r($postData); die;
+
+        $data = $this->user_model->addMulAuditIssue($postData);
         if (!empty($data)) {
             $message['error'] = false;
             $message['message'] = "Your case submited";
@@ -2024,6 +2212,22 @@ Team WizardofAMZ
             $this->set_response($message, REST_Controller::HTTP_CREATED);
         }
     }
+    public function submitAuditScheduleCase_get(){
+        $caseData=$this->user_model->getAuditschedulecase();
+        if(!empty($caseData)){
+            $caseData[0]['type']='submit';
+            $customerData = $this->user_model->addAuditIssue($caseData[0]);
+            if($customerData){
+                $message['error'] = false;
+                $message['message'] = 'Submit your audit case ';   
+            }else {
+                $message['error'] = false;
+                $message['message'] = 'Your case not submited customer case ';   
+            }
+            $addtime = $this->user_model->addTime($message['message']);
+            $this->set_response($message, REST_Controller::HTTP_CREATED);
+        }
+    }
     public function auditScheduleIssue_post() {
         $postData = $this->post();
         $data = $this->user_model->auditScheduleIssue($postData);
@@ -2061,6 +2265,31 @@ Team WizardofAMZ
         } else {
             $message['error'] = true;
             $message['message'] = "Case not updated";
+        }
+        $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function changeuserStaus_get() {
+        $getData=$this->get();
+        $data=$this->user_model->changeuserStaus($getData);
+        if($data){
+            $message['error'] = false;
+            $message['message'] = "Thank you, Your data fetched after some time";
+        }else {
+            $message['error'] = true;
+            $message['message'] = "Sorry created some error";
+        }
+        $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+    public function auditMulScheduleIssue_post() {
+        $postData = $this->post();
+        $data = $this->user_model->auditMulScheduleIssue($postData);
+        if (!empty($data)) {
+            $message['error'] = FALSE;
+            $message['message'] = "Your case save but it sent after some times";
+            $message['data'] = $data;
+        } else {
+            $message['error'] = true;
+            $message['message'] = "Your case not save";
         }
         $this->set_response($message, REST_Controller::HTTP_CREATED);
     }

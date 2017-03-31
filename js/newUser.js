@@ -80,10 +80,14 @@ casper.then(function() {
      });
 });
 casper.then(function() {
-     this.evaluate(function() {
-            document.getElementById("selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER").click();
-        });
+  this.mouse.click('#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER-announce');
+     /*this.evaluate(function() {
+            $("#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER-announce").click();
+        });*/
     //this.mouse.click('#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER');
+});
+casper.then(function() {
+  this.mouse.click('span.spaui-sprite.spaui-alert-shiny.spaui-alert-shiny-ann:nth-child(1)');
 });
 casper.then(function() {
     this.wait(2000, function() {
