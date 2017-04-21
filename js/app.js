@@ -64,7 +64,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/user', {
@@ -77,7 +77,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/userlist', {
@@ -90,7 +90,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/user_man', {
@@ -103,7 +103,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/addUser', {
@@ -116,7 +116,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/inventory ', {
@@ -129,7 +129,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/reimbursements ', {
@@ -142,7 +142,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/user/updatedprofile/:id ', {
@@ -155,7 +155,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/payments ', {
@@ -195,7 +195,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/refundManager ', {
@@ -208,7 +208,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/addCase ', {
@@ -221,7 +221,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/inventoryCase ', {
@@ -234,7 +234,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/caseView/:issueid ', {
@@ -247,7 +247,7 @@
         loginRequired:'No',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/inventoryView/:issueid ', {
@@ -260,7 +260,7 @@
         loginRequired:'No',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/addDiscrep', {
@@ -273,7 +273,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/amazon_integration', {
@@ -299,7 +299,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/inventoryad ', {
@@ -312,7 +312,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/register ', {
@@ -343,7 +343,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/inventoryCaseLog ', {
@@ -356,7 +356,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/caselogView/:issue_id ', {
@@ -369,7 +369,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/caselogEdit/:issue_id ', {
@@ -382,7 +382,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
    }).state('/inventorycaseEdit/:issue_id ', {
@@ -395,7 +395,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/skuhistory/:sku ', {
@@ -408,7 +408,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
        }).state('/editRembId/:inventory_id/:reason ', {
@@ -420,7 +420,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/audit ', {
@@ -433,7 +433,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/auditcase/:damaged/:destroyed/:lost/:sku', {
@@ -446,7 +446,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/auditcaselogView/:issue_id ', {
@@ -459,7 +459,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
        }).state('/auditcaselogEdit/:issue_id ', {
@@ -472,7 +472,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
         
@@ -486,7 +486,7 @@
         loginRequired:'No',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/auditCaselog ', {
@@ -499,7 +499,7 @@
         loginRequired:'Yes',
         data: {
           access: {
-            requiredPermissions:['1','2','3','4','5']
+            requiredPermissions:['2']
           }
         }
       }).state('/auditreplyView/:auditreplyId ', {
@@ -512,7 +512,7 @@
         loginRequired:'No',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         }
       }).state('/customerReplyView/:customerReplyId ', {
@@ -525,7 +525,7 @@
         loginRequired:'No',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         } 
       }).state('/addAuditCase ', {
@@ -538,9 +538,22 @@
         loginRequired:'No',
         data: {
           access: {
-            requiredPermissions:['1','2']
+            requiredPermissions:['2']
           }
         } 
+      }).state('/billing', {
+        url: '/billing',
+        templateUrl: 'views/billing.html',
+        controller: 'billingCtrl',
+        headeruse: 'forguest',
+        leftuse: 'forsetting',
+        leftactivetab: 'billing',
+        loginRequired:'Yes',
+        data: {
+          access: {
+            requiredPermissions:['2']
+          }
+        }
       })
   }]);
  app.run(['$rootScope', '$cookies','$state','authorization',function($rootScope,$cookies,$state,authorization) {

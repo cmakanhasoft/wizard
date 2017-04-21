@@ -30,8 +30,15 @@ class User_model extends CI_Model {
                 $upData = array('userStatus' => 'Active');
                 $this->db->where('user_id', $data['user_id']);
                 $this->db->update('user', $upData);
-                return $this->db->affected_rows();
+                
             }
+            $sql="SELECT ip,port FROM proxy_ip WHERE ip NOT IN (SELECT user_ip FROM user_email) limit 1";
+            $proxyData=$this->db->query($sql)->result_array();
+            $updateUserData=array('user_ip'=>$proxyData[0]['ip'].':'.$proxyData[0]['port']);
+            $this->db->where('user_id',$data['user_id']);
+            $this->db->update('user_email',$updateUserData);
+            return $this->db->affected_rows();
+            
         }
     }
 
@@ -2283,7 +2290,7 @@ curl_close ($ch);
 
         if (!empty($inventoryResolveCount[0]['total'])) {
             $result['inventoryResolveCount'] = $inventoryResolveCount[0]['total'];
-        } else {
+        }else {
             $result['inventoryResolveCount'] = '0';
         }
         $datadate = $this->db->select('user_email,user_password,customer_execution_time')->from('user_email')->where('user_id', $data['user_id'])->get()->result_array();
@@ -3111,6 +3118,31 @@ curl_close ($ch);
         $this->db->where_in("msku", $trimmed_array);
         $this->db->update("inventory_adjustments", $updateData);
         return $issueId;
+    }
+    public function UserRembData($data){
+        $sql="SELECT customerissue.caseId,payment_reimburs.msku,payment_reimburs.remId,payment_reimburs.amountTotal,payment_reimburs.date FROM `customerissue` left join payment_reimburs on payment_reimburs.caseId=customerissue.caseId WHERE customerissue.user_id=".$data['user_id']." AND customerissue.issuse_status='2' "; 
+       return  $this->db->query($sql)->result_array();
+    }
+    
+    public function getCaseId(){
+        $sql="select caseId,user_id,rembId from customerissue where rembId=''";
+        $caseData= $this->db->query($sql)->result_array();
+        if(!empty($caseData)){
+            for($i=0;$i<count($caseData); $i++){
+                if(!empty($caseData[$i]['caseId'])){
+                    $psql="select remId,caseId from payment_reimburs where caseId=".$caseData[$i]['caseId']." AND user_id=".$caseData[$i]['user_id']."";
+                    $PcaseData= $this->db->query($psql)->result_array();
+                      if(!empty($PcaseData)){
+                        $updateCaseData=array('rembId'=>$PcaseData[0]['remId'],'modifyDate'=>date('Y-m-d H:i:s'));
+                        $this->db->where('caseId',$PcaseData[0]['caseId']);
+                        $this->db->update('customerissue',$updateCaseData);
+                    }
+                }
+            }
+            return true;
+        }else {
+            return false;
+        }
     }
 
 }

@@ -69,15 +69,14 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          url: path + 'user/login',
                          data: $scope.user
                     }).then(function mySucces(response) {
-                         if (response.data.error == false) {
-                              $cookies.put('userdata', JSON.stringify(response.data.data[0]));
-                              $rootScope.userdata = response.data.data[0];
-                              sessionStorage.setItem("userdata", JSON.stringify(response.data.data[0]));
-                              window.location.href = '#/dashboard';
-                              // show_notification('Success', response.data.message, '#/dashboard', 'no'); 
-                              setTimeout(function() {
-                                   body_sizer();
-                              }, 300);
+                              if (response.data.error == false) {
+                                   $cookies.put('userdata', JSON.stringify(response.data.data[0]));
+                                   $rootScope.userdata = response.data.data[0];
+                                   sessionStorage.setItem("userdata", JSON.stringify(response.data.data[0]));
+                                   window.location.href = '#/dashboard';
+                                   setTimeout(function() {
+                                        body_sizer();
+                                   }, 300);
                          } else {
                               if (response.data.login_token == '1') {
                                    $('#myModal').modal('show');
@@ -723,9 +722,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
-               
-             
-          }
+           }
           if($scope.user==undefined){
                $scope.user={};
                  $scope.user.user_id=$rootScope.userdata.user_id;
@@ -744,7 +741,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     url: path + "user/getDashboardData?user_id="+$rootScope.userdata.user_id ,
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $scope.countRemResolveddData=response.data.countRemResolveddData;
                          $scope.countRemSubmitedData=response.data.countRemSubmitedData;
@@ -784,7 +780,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "GET"
                }).success(function(response) {
                     if (response.error == false) {
-                         debugger;
                          $scope.countRemResolveddData=response.data.countRemResolveddData;
                          $scope.countRemSubmitedData=response.data.countRemSubmitedData;
                          
@@ -798,7 +793,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                });
               
                $scope.downloadFile=function(fromDate,toDate,type){
-                    debugger;
                     if($scope.download  ==undefined){
                          $scope.download ={};
                     }
@@ -812,7 +806,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          method: "POST",
                          data:$scope.download 
                     }).success(function(response) {
-                         debugger;
                          if (response.error == false) {
                                var link = document.createElement("a");
                               link.download = response.data.fromDate+'-'+response.data.toDate;
@@ -1119,7 +1112,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                
           }
          $scope.setTime=function(){
-              debugger;
               $('#timeDiv').removeClass('hide');
               $('#sedulSubmitbtn').removeClass('hide');
               $('#submitbtn').addClass('hide');
@@ -1212,7 +1204,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                var token = $('#stripeToken').val();
                $scope.cardDetail.token = token;
                $scope.cardDetail.uname = $rootScope.userPaymentData.email;
-               $scope.cardDetail.plan = $rootScope.userPaymentData.plan;
               $scope.cardDetail.user_id = $rootScope.userPaymentData.user_id;
                if ($scope.cardDetail.exp_month > 12) {
 
@@ -1315,7 +1306,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $('#replyModal').modal('toggle');
           }
 //          $scope.addDraftcustomerIssue = function() {
-//               debugger;
 //                    if($scope.inventory==undefined){
 //                    $scope.inventory={};
 //                  } 
@@ -1338,7 +1328,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
 //                        method: "POST",
 //                        data:$scope.inventory
 //                   }).success(function(response) {
-//                        debugger;
 //                             if (response.error == false) {
 //                                  show_notification('Success', response.message, '#/caseLog', 'yes');
 //                             } else {
@@ -1470,7 +1459,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                               method: "POST",
                               data:{'replyData':$scope.casereply}
                          }).success(function(response) {
-                              debugger;
                               if (response.error == false) {
                                    show_notification('Success', response.message, '', 'no');
                                    $('#replyModal').modal('hide');
@@ -1511,7 +1499,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     url: path + "user/allUserList",
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $scope.userList=response.data;
                          
@@ -1545,7 +1532,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     url: path + "user/caseLogData?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $scope.caseLogData=response.data[0];
                          if( $scope.caseLogData.scheduleTime !='' && $scope.caseLogData.scheduleTime != undefined){
@@ -1597,7 +1583,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     }
           }
           $scope.draftscheduleIssue=function(frm_id){
-               debugger;
                 if ($('#' + frm_id).valid()) {
                    $scope.caseLogData.user_id=$rootScope.userdata.user_id;
                    $scope.caseLogData.scheduleTime=$('#dtp_input1').val();
@@ -1776,7 +1761,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "POST",
                     data: $scope.remb,
                 }).success(function(response) {
-                     debugger;
                      if(response.error==false){
                          location.reload();
                     }else {
@@ -1830,7 +1814,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     $scope.remb={};
                }
                
-               debugger;
            $scope.remb.inventory_id=$rootScope.inventory_id;
            $scope.remb.reason=$rootScope.reason;
            $scope.remb.temprembid=$rootScope.temprembid;
@@ -1856,7 +1839,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "POST",
                     data: $scope.remb,
                 }).success(function(response) {
-                     debugger;
                      $('#pleasewait').html('');
                          $scope.inventoryData=response.data.inventoryData;
                          $scope.rembData=response.data.rembData;
@@ -1912,7 +1894,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "POST",
                     data: $scope.remb,
                 }).success(function(response) {
-                     debugger;
                      if(response.error==false){
                          location.reload();
                     }else {
@@ -1978,13 +1959,11 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
           }
-          debugger;
           if($scope.audit==undefined){
                $scope.audit={};
           }
           $scope.auditData='-';
           $scope.getAuditData=function(frm_id){
-               debugger;
                if ($('#' + frm_id).valid()) {
                     $scope.audit.fromDate=$('#fromDate').val();
                     $scope.audit.toDate=$('#toDate').val();
@@ -1995,7 +1974,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          url: path + 'user/getAuditData',
                          data: $scope.audit
                     }).then(function mySucces(response) {
-                         debugger;
                          if (response.data.error == false) {
                             $scope.auditData=response.data.data;
                          } else {
@@ -2038,7 +2016,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           
           
           $scope.setMulAuditIssue = function() {
-               debugger;
                if($scope.auditissue==undefined){
                     $scope.auditissue={};
                } 
@@ -2121,7 +2098,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                   $('#drftbtn').removeClass('hide');
              }
              $scope.addMulAuditIssue=function(frm_id,type){
-                  debugger;
                if ($('#' + frm_id).valid()) {
                    $scope.auditissue.user_id=$rootScope.userdata.user_id;
                    $scope.auditissue.type=type;
@@ -2169,7 +2145,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
           }
           if($stateParams.damaged){
-               debugger;
                if($scope.auditcase== undefined){
                     $scope.auditcase={};
                }
@@ -2405,7 +2380,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                               method: "POST",
                               data:{'replyData':$scope.casereply}
                          }).success(function(response) {
-                              debugger;
                               if (response.error == false) {
                                       $('#replyModal').modal('hide');
                                    show_notification('Success', response.message, '', 'no');
@@ -2423,7 +2397,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                               method: "GET"
                          }).success(function(response) {
                               if (response.error == false) {
-                                   debugger;
                                    $scope.caseLog=response.data.caseLog[0];
                                    $scope.userData=response.data.userData[0];
                                    $scope.caseLogDetail=response.data.caseLogMesgDetail;
@@ -2449,7 +2422,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "GET",
                 }).success(function(response) {
                      if (response.error == false) {
-                          debugger;
                          $scope.case = response.data[0];
                          $scope.desvc=$scope.case.des;
                      } else {
@@ -2468,7 +2440,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     method: "GET",
                 }).success(function(response) {
                      if (response.error == false) {
-                          debugger;
                          $scope.case = response.data[0];
                          $scope.desvc=$scope.case.des;
                      } else {
@@ -2500,7 +2471,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     url: path + "user/auditCaseLogData?user_id="+$rootScope.userdata.user_id+'&issue_id='+$stateParams.issue_id,
                     method: "GET"
                }).success(function(response) {
-                    debugger;
                     if (response.error == false) {
                          $scope.caseLogData=response.data[0];
                          if( $scope.caseLogData.scheduleTime !='' && $scope.caseLogData.scheduleTime != undefined){
@@ -2552,7 +2522,6 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     }
           }
           $scope.auditDraftscheduleIssue=function(frm_id){
-               debugger;
                 if ($('#' + frm_id).valid()) {
                    $scope.caseLogData.user_id=$rootScope.userdata.user_id;
                    $scope.caseLogData.scheduleTime=$('#dtp_input1').val();
@@ -2573,5 +2542,38 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                
           }
           
- }]);
+ }]).controller('billingCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+          if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
+          {
+               $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+           }
+         
+          $http({
+                    url: path + "user/allUserList",
+                    method: "GET"
+               }).success(function(response) {
+                    debugger;
+                    if (response.error == false) {
+                         $scope.userList=response.data;
+                    } else {
+                    
+                    }
+               });
+               $scope.UserRembData=function(){
+                     $http({
+                         url: path + "user/UserRembData?user_id="+$rootScope.userdata.user_id,
+                         method: "GET"
+                    }).success(function(response) {
+                         debugger;
+                         if (response.error == false) {
+                              $scope.UserRembData=response.data;
+                              if($scope.UserRembData !="" && $scope.UserRembData != undefined);{
+                                   $('#rembData').removeClass('hide');  
+                              }
+                         } else {
+                                $('#blankDiv').removeClass('hide');   
+                         }
+                    });
+               }
+}]);
      

@@ -1,0 +1,68 @@
+<div id="page-content-wrapper">
+ <div id="page-content">
+   <div class="container">
+<!--    <script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines.js"></script>
+<script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines-demo.js"></script>-->
+     <div id="page-title">
+      <h2>Billing</h2>
+      
+     </div>
+     <div class="panel">
+	<div class="panel-body">
+            <div class="example-box-wrapper">
+                
+                <div class="col-sm-12">
+                    <div class="col-sm-1">
+                        <label>User</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control" ng-model="user.user_id"  name="user_id" id="user_id" required  ng-change="getUserTime(user.user_id)">
+                            <option value="">-- Select User --</option>
+                            <option value="{{u.user_id}}" ng-repeat="u in userList">{{u.firstName}} - {{u.lastName}} - {{u.email}}</option>
+
+                        </select>
+                    </div>
+                    <div class="col-sm-2" >
+                         <button type="submit" class="btn btn-block btn-blue-alt" id='chnageuserbtn' ng-click="UserRembData('user-validation')">Submit</button>
+                    </div>
+                   
+                </div>
+                <br />
+                <br />
+                <br />
+                <div class="row hide" id="rembData">
+                    <table datatable="ng" class="table table-bordered table-striped table-condensed " ng-if="UserRembData!='' && UserRembData != '-'">
+                        <thead>
+                         <tr>
+                            <th>Case ID</th>
+                            <th>ReimbursementID</th>
+                            <th>SKU</th>
+                            <th>Date reimbursed</th> 
+                            <th>$ Amount</th>
+                            <th>$ Charges</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                         <tr dt-rows ng-repeat="a in UserRembData">
+                          <td>{{a.caseId}}</td> 
+                          <td>{{a.remId }}</td>
+                          <td>{{a.msku}}</td>
+                          <td>{{a.date}}</td>
+                          <td>{{a.amountTotal}}</td>
+                          <td>{{100 *20 / a.amountTotal | number : 2 }}</td>
+                         </tr>
+                        </tbody>
+                   </table>
+                </div>
+                <div class="row hide" id="blankDiv">
+                    <div class="col-sm-12 text-center">
+                        <h4>No any reimbursements records</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   </div>
+ </div>
+</div>
+

@@ -105,4 +105,5 @@ define('POSTMARK_API_KEY', 'be6b1380-fe16-4caa-8bc2-83165526879a');
 define('STRIPE_SECRET_KEY', 'sk_test_tRk2cqPq8MsdIoLxuujyFhe4');
 define('STRIPE_PUBLIC_KEY', 'sk_test_tRk2cqPq8MsdIoLxuujyFhe4');
 define('POSTMARKDOMAIN', '@inbound.kanhasoftdev.com');
-
+define('OXYUSERNAME', 'pradeep');
+define('OXYPASSWORD', 'a7G3nceY0J');

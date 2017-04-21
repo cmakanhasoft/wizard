@@ -1,8 +1,8 @@
 <div id="page-content-wrapper">
  <div id="page-content">
    <div class="container">
-    <script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines.js"></script>
-<script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines-demo.js"></script>
+<!--    <script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines.js"></script>
+<script type="text/javascript" src="assets/widgets/charts/sparklines/sparklines-demo.js"></script>-->
      <div id="page-title">
       <h2>Dashboard</h2>
       <p>The most complete user interface framework that can be used to create stunning admin dashboards and presentation websites.</p>
@@ -11,9 +11,9 @@
 	<div class="panel-body">
             <div class="example-box-wrapper" ng-if="userdata.role_id=='1' || userdata.role_id== '2'">
                 
-                <div class="col-sm-12">
+                <div class="col-sm-12" ng-if="userdata.role_id==2">
                     <div class="col-sm-1">
-                        <label>User</label>
+                        <label>User </label>
                     </div>
                     <div class="col-sm-4">
                         <select class="form-control" ng-model="user.user_id" ng-disabled='dis'  name="user_id" id="user_id" required  ng-change="getUserTime(user.user_id)">
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    <div class="row"> 
+    <div class="row" ng-if="userdata.role_id==2"> 
         <div class="col-md-12">
             <h3>Seller central account details</h3>
             <br />
