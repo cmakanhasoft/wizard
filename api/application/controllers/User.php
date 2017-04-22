@@ -115,8 +115,7 @@ class User extends REST_Middel_Controller {
 
             $link2 = substr($result1, 0, $dd1);
 
-
-            $path = $_SERVER["DOCUMENT_ROOT"].'/js/token.js  --email='.$user[0]['user_email'].'  --password='.$user[0]['user_password'].'  --link='.$link1.' --link2='. $link2 .' --cookieFilename='.$cookiefileName.' --resultFilename=' .$resultFilename;
+            $path = $_SERVER["DOCUMENT_ROOT"].'/js/token.js  --email='.$user[0]['user_email'].'  --password='.$user[0]['user_password'].'  --link='.$link1.' --link2='. $link2 .' --cookieFilename='.$cookiefileName.' --resultFilename=' .$resultFilename.' --proxy='.$user[0]['user_email'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD;
 
             $scraperData = shell_exec('casperjs ' . $path);
             $filesname = $_SERVER['DOCUMENT_ROOT'].'/js/' . $resultFilename;
@@ -158,7 +157,10 @@ class User extends REST_Middel_Controller {
                 $message['error'] = true;
                 $message['message'] = "Mail not get.";
             }
-        } else {
+        } else if (preg_match('/verification/', $maildata['Subject'])) { 
+            
+            
+        }else {
             $user = $this->user_model->auditRecvEmail($data);
             if (!empty($user)) {
                 if (isset($maildata['HtmlBody']) && !empty($maildata['HtmlBody'])) {
@@ -998,19 +1000,26 @@ Team WizardofAMZ
         $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
 
-    public function stest_get() {
-        $fileName = $_SERVER["DOCUMENT_ROOT"].'/js/customerReport.txt';
-        if (file_exists($fileName)){
-            $f_d = array_map('str_getcsv', file($fileName));
-
-            
-            if (trim(@$f_d[0][0]) == trim("return-date order-id    sku asin    fnsku   product-name    quantity    fulfillment-center-id   detailed-disposition    reason  status")) {
-                echo "if"; 
-            }else {
-                echo "else";
+    public function stest_post() {
+         $datas=$this->post();
+       if(isset($datas['HtmlBody']) && !empty($datas['HtmlBody'])){
+           echo $datas['HtmlBody'];
+           
+           
+           echo "-----------";
+           $a = $datas['HtmlBody'];
+            $var1 = '949714';
+            $var2 = '</p>';
+            $pool = $a;
+            $temp1 = strpos($pool, $var1) + strlen($var1);
+            $result = substr($pool, $temp1, strlen($pool));
+            $dd = strpos($result, $var2);
+            if ($dd == 0) {
+                $dd = strlen($result);
             }
-    die;
-       }   
+            $caseId = substr($result, 0, $dd);
+            echo $caseId; die;
+       }
     }
 
     public function getUserData_get() {
@@ -1040,12 +1049,12 @@ Team WizardofAMZ
         $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
 
-    public function clickCustomerReport_get() {
+    public function clickCustomerReport_get(){
         $addtime = $this->user_model->addTime();
         $userData = $this->user_model->getUserList();
         if (!empty($userData)) {
             $path = $_SERVER["DOCUMENT_ROOT"] . '/js/customerClick.js';
-            $data = shell_exec('casperjs ' . $path . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --customer_count=' . $userData[0]['customer_count'] . ' --rem_count=' . $userData[0]['remb_count'] . ' --inventory_count=' . $userData[0]['inventory_count'] . '');
+             $data = shell_exec('casperjs ' . $path . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --customer_count=' . $userData[0]['customer_count'] . ' --rem_count=' . $userData[0]['remb_count'] . ' --inventory_count=' . $userData[0]['inventory_count'] . ' --proxy='.$userData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD); 
             if (!empty($data)) {
                 $changetime = $this->user_model->changeTime($userData);
             }
@@ -1065,7 +1074,7 @@ Team WizardofAMZ
 
             $downloadpath = $_SERVER["DOCUMENT_ROOT"] . '/js/downloadCustomerReport.js';
 
-            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $customerData[0]['user_email'] . ' --password=' . $customerData[0]['user_password'] . ' --customer_count=' . $customerData[0]['customer_count']);
+            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $customerData[0]['user_email'] . ' --password=' . $customerData[0]['user_password'] . ' --customer_count=' . $customerData[0]['customer_count']. ' --proxy='.$customerData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
 
             if (!empty($downloadData)) {
                 $fileName = $_SERVER["DOCUMENT_ROOT"] . '/js/customer_' . $customerData[0]['customer_count'] . '.txt';
@@ -1125,7 +1134,7 @@ Team WizardofAMZ
         $rembData = $this->user_model->getrembStatus();
         if (!empty($rembData)) {
             $downloadrpath = $_SERVER["DOCUMENT_ROOT"] . '/js/downloadRem.js';
-            $downloadremData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $rembData[0]['user_email'] . ' --password=' . $rembData[0]['user_password'] . ' --rem_count=' . $rembData[0]['remb_count']);
+            $downloadremData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $rembData[0]['user_email'] . ' --password=' . $rembData[0]['user_password'] . ' --rem_count=' . $rembData[0]['remb_count']. ' --proxy='.$rembData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
             if (!empty($downloadremData)) {
                 $rfileName = $_SERVER["DOCUMENT_ROOT"] . '/js/rembData_' . $rembData[0]['remb_count'] . '.txt';
                 if (file_exists($rfileName)){
@@ -1183,7 +1192,7 @@ Team WizardofAMZ
         if (!empty($inventoryData)) {
             $downloadrpath = $_SERVER["DOCUMENT_ROOT"] . '/js/downloadInventoryReport.js';
 
-            $downloadinventoryData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $inventoryData[0]['user_email'] . ' --password=' . $inventoryData[0]['user_password'] . ' --inventory_count=' . $inventoryData[0]['inventory_count']);
+            $downloadinventoryData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $inventoryData[0]['user_email'] . ' --password=' . $inventoryData[0]['user_password'] . ' --inventory_count=' . $inventoryData[0]['inventory_count'] . ' --proxy='.$inventoryData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
             if (!empty($downloadinventoryData)) {
                 $ifileName = $_SERVER["DOCUMENT_ROOT"] . '/js/inventoryData_' . $inventoryData[0]['inventory_count'] . '.txt';
                 
@@ -1243,7 +1252,7 @@ Team WizardofAMZ
 
             $downloaddpath = $_SERVER["DOCUMENT_ROOT"] . '/js/datarange.js';
 
-            $downloadDatarangData = shell_exec('casperjs ' . $downloaddpath . ' --email=' . $rangeData[0]['user_email'] . ' --password=' . $rangeData[0]['user_password'] . ' --datarange_count=' . $rangeData[0]['datarange_count']);
+            $downloadDatarangData = shell_exec('casperjs ' . $downloaddpath . ' --email=' . $rangeData[0]['user_email'] . ' --password=' . $rangeData[0]['user_password'] . ' --datarange_count=' . $rangeData[0]['datarange_count']. ' --proxy='.$rangeData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
 
             if (!empty($downloadDatarangData)) {
                 $dfileName = $_SERVER["DOCUMENT_ROOT"] . '/js/datarange_' . $rangeData[0]['datarange_count'] . '.csv';
@@ -1462,10 +1471,10 @@ Team WizardofAMZ
 
     public function firstTimeLogin_get() {
         $userData = $this->user_model->newUser();
-        if (!empty($userData)) {
+        if (!empty($userData)){
             $downloadpath = $_SERVER["DOCUMENT_ROOT"] . '/js/newUser.js';
 
-            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password']);
+            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password']. ' --proxy='.$userData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
             $notloginfileName = $_SERVER["DOCUMENT_ROOT"] . '/js/notlogin.txt';
             if (file_exists($notloginfileName)) {
                 unlink($notloginfileName);
@@ -1476,7 +1485,7 @@ Team WizardofAMZ
                 if ($Data) {
                     $message['error'] = false;
                     $message['message'] = "Change first time user staus";
-                } else {
+                }else{
                     $message['error'] = true;
                     $message['message'] = "No any chnages first time user staus";
                 }
@@ -2138,7 +2147,6 @@ Team WizardofAMZ
                 curl_setopt($curl, CURLOPT_USERPWD, OXYUSERNAME.':'.OXYPASSWORD);
                 $result = curl_exec($curl);
                 $responceData=json_decode($result);
-                print_r($responceData); die;
                 $uuid=$responceData[0]->uuid;
                 $this->getProxyIp($uuid);
                 
