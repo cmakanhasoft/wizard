@@ -47,30 +47,38 @@ var payment_count=casper.cli.get('payment_count');
 //var prev_year = d.getFullYear()-1;
 //var startDate=curr_month+'/'+curr_date+'/'+curr_year;
 //var endDate=curr_month+'/'+curr_date+'/'+prev_year;
-var ft = new Date();
-ft.setFullYear(ft.getFullYear() );
-ft.setMonth(ft.getMonth() -18);
- var fdate = ft.toISOString().split('T')[0]; 
- var fdateArr = fdate.split("-");
-var startDate = fdateArr[1] + "/" + fdateArr[2] + "/" + fdateArr[0];
+var d = new Date();
+var cdate=d.getDate();
+var cmonth=d.getMonth()+1;
+var cyear=d.getFullYear()-1;
+
+var startDate=cmonth+'/'+cdate+'/'+cyear;
+console.log("start date:"+startDate);
+//ft.setFullYear(ft.getFullYear() );
+//ft.setMonth(ft.getMonth() -18);
+// var fdate = ft.toISOString().split('T')[0]; 
+// var fdateArr = fdate.split("-");
+//var startDate = fdateArr[1] + "/" + fdateArr[2] + "/" + fdateArr[0];
  
  
  var tt = new Date();
-tt.setDate(tt.getDate() - 2);
- var tdate = tt.toISOString().split('T')[0]; 
- var tdateArr = tdate.split("-");
-var endDate = tdateArr[1] + "/" + tdateArr[2] + "/" + tdateArr[0];
-
+ var tdate =tt.getDate()-2; 
+ var tmonth = tt.getMonth()+1;
+ var tyear = tt.getFullYear();
+var endDate = tmonth + "/" + tdate + "/" + tyear;
+console.log("end date:"+endDate);
 
  
  /// before 3 days reocord
  var ft7 = new Date();
-ft7.setDate(ft7.getDate() - 4);
- var fdate7 = ft7.toISOString().split('T')[0];  
- var fdateArr7 = fdate7.split("-");
-var startDate7 = fdateArr7[1] + "/" + fdateArr7[2] + "/" + fdateArr7[0];
+var fdate7 =ft7.getDate()-4; 
+var fmonth7= ft7.getMonth()+1;
+var fyear7= ft7.getFullYear();
+var startDate7 = fmonth7+ "/" + fdate7 + "/" + fyear7;
+ console.log("startDate7:"+startDate7);
  
- 
+var pstartDate='';
+var pendDate=''; 
 if(payment_count==0){
     var pstartDate=startDate;
     var pendDate=endDate;
@@ -138,15 +146,27 @@ casper.then(function(){
     }else {
         this.echo('Login successfully');
     }
+    this.wait(2000, function () {
+        this.capture('home1.png');
+    })
 });
 
 casper.thenOpen(cpath, function() {
+  this.wait(2000, function () {
+        this.capture('home2.png');
+    })
  });
  
  casper.thenOpen(rpath, function() {
+  this.wait(2000, function () {
+        this.capture('home3.png');
+    })
   });
 
 casper.thenOpen(ipath, function() {
+  this.wait(2000, function () {
+        this.capture('home4.png');
+    })
  });
 
 casper.then(function(){

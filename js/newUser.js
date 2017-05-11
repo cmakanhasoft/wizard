@@ -61,7 +61,7 @@ casper.then(function() {
     }
 });
 casper.then(function() {
-     if(this.exists("#merchant-picker-btn-logout-announce")) {
+     if(!this.exists("#merchant-picker-btn-choose-another-announce")) {
           fs.write('notlogin.txt','123', 644);
           casper.exit();
      }
@@ -81,10 +81,7 @@ casper.then(function() {
 });
 casper.then(function() {
   this.mouse.click('#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER-announce');
-     /*this.evaluate(function() {
-            $("#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER-announce").click();
-        });*/
-    //this.mouse.click('#selection-btn-A3Q220XNDNGZN4-ATVPDKIKX0DER');
+     
 });
 casper.then(function() {
   this.mouse.click('span.spaui-sprite.spaui-alert-shiny.spaui-alert-shiny-ann:nth-child(1)');

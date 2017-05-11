@@ -34,7 +34,7 @@ class User_model extends CI_Model {
             }
             $sql="SELECT ip,port FROM proxy_ip WHERE ip NOT IN (SELECT user_ip FROM user_email) limit 1";
             $proxyData=$this->db->query($sql)->result_array();
-            $updateUserData=array('user_ip'=>$proxyData[0]['ip'].':'.$proxyData[0]['port']);
+            $updateUserData=array('user_ip'=>$proxyData[0]['ip'],'user_ip_port'=>$proxyData[0]['port']);
             $this->db->where('user_id',$data['user_id']);
             $this->db->update('user_email',$updateUserData);
             return $this->db->affected_rows();
@@ -294,8 +294,9 @@ class User_model extends CI_Model {
 
             if ($data[0] != 'date/time' && $data[1] != 'settlement id') {
                 $orderId = $data[3];
-
-                $date = date('Y-m-d', strtotime($data[0]));
+                $newDate=str_replace("PDT","",$data[0]);
+                $newDate=str_replace("PST","",$data[0]);
+                $date = date('Y-m-d', strtotime($newDate));
                 if ($data[8] != 'Seller') {
 
                     $importData = array(
@@ -360,7 +361,10 @@ class User_model extends CI_Model {
                         $this->db->update('data_range_report_refund', $updatearray);
                     } else {
                         $total = $t;
-                        $date = date('Y-m-d', strtotime($data[0]));
+                        $newDate=str_replace("PDT","",$data[0]);
+                        $newDate=str_replace("PST","",$data[0]);
+                        $date = date('Y-m-d', strtotime($newDate));
+                        //$date = date('Y-m-d', strtotime($data[0]));
                         $importData = array(
                             'datetime' => $date,
                             'user_id' => $userId,
@@ -440,7 +444,11 @@ class User_model extends CI_Model {
         if (!empty($csv)) {
             for ($i = 0; $i < count($csv); $i++) {
                 $orderId = $csv[$i]['order-id'];
-                $date = date('Y-m-d', strtotime($csv[$i]['return-date']));
+                //$date = date('Y-m-d', strtotime($csv[$i]['return-date']));
+
+                $newDate=str_replace("PDT","",$csv[$i]['return-date']);
+                $newDate=str_replace("PST","",$csv[$i]['return-date']);
+                $date = date('Y-m-d', strtotime($newDate));
                 $insertData = array(
                     'asin' => $csv[$i]['asin'],
                     'date' => $date,
@@ -572,7 +580,10 @@ class User_model extends CI_Model {
         if (!empty($csv)) {
             for ($i = 0; $i < count($csv); $i++) {
                 $orderId = $csv[$i]['transaction-item-id'];
-                $date = date('Y-m-d', strtotime($csv[$i]['adjusted-date']));
+                //$date = date('Y-m-d', strtotime($csv[$i]['adjusted-date']));
+                $newDate=str_replace("PDT","",$csv[$i]['adjusted-date']);
+                $newDate=str_replace("PST","",$csv[$i]['adjusted-date']);
+                $date = date('Y-m-d', strtotime($newDate));
                 $insertData = array(
                     'date' => $date,
                     'disposition' => $csv[$i]['disposition'],
@@ -632,7 +643,10 @@ class User_model extends CI_Model {
         if (!empty($csv)) {
             for ($i = 0; $i < count($csv); $i++) {
                 $orderId = $csv[$i]['reimbursement-id'];
-                $date = date('Y-m-d', strtotime($csv[$i]['approval-date']));
+                //$date = date('Y-m-d', strtotime($csv[$i]['approval-date']));
+                $newDate=str_replace("PDT","",$csv[$i]['approval-date']);
+                $newDate=str_replace("PST","",$csv[$i]['approval-date']);
+                $date = date('Y-m-d', strtotime($newDate));
                 $insertData = array(
                     'date' => $date,
                     'remId' => $csv[$i]['reimbursement-id'],
@@ -1328,284 +1342,6 @@ UNION select  c.orderId as customerReturnId,c.corder_status,CASE WHEN c.date !="
     public function getCustomerissue($data) {
         return $this->db->select('*')->from('customerissue')->where('issue_id', $data['issue_id'])->get()->result_array();
     }
-    
-    
-    public function getDigitalOceanImage() {
-         $ch = curl_init('https://api.digitalocean.com/v2/snapshots?page=1&per_page=1');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
-            'Content-Type: application/json'
-                )
-        );
-
-        $result = curl_exec($ch);
-        $result1 = json_decode($result);
-        $createarray = json_decode(json_encode($result1), True);
-        
-        return $createarray['snapshots'][0]['id']; 
-    }
-    
-    
-    public function getDigitalOcean($image_id) {
-        $resultData=array(); 
-        $proxyPassword=substr(md5('admin2'),1,10); 
-        $proxyUser=substr(sha1('123'),1,10);
-        $resultData['password']=$proxyPassword;
-        $resultData['user']=$proxyUser;
-        $user_data =  <<<CLoudConfig
-#cloud-config
-runcmd:
- - htpasswd -b -c /etc/squid/squid_passwd $proxyUser $proxyPassword
- - service squid restart
-CLoudConfig;
-        
-        $tag = $this->getEnvironmentTag(); 
-        $ssh=array('ca:6f:64:c4:d8:b8:48:2f:1e:1f:c7:76:ad:f5:b7:8c');
-        $data = array("name"=>"demo","region"=>"nyc3","size"=>"512mb","image"=>$image_id,'ssh_keys'=>$ssh,'user_data'=>$user_data);
-        $data_string = json_encode($data);
-        
-       $ch = curl_init('https://api.digitalocean.com/v2/droplets');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($data_string))
-        );
-
-        $result = curl_exec($ch);
-        $result1 = json_decode($result);
-        $createarray = json_decode(json_encode($result1), True);
-
-        $droplate = $createarray['droplet'];
-        $droplateid = $droplate['id'];
-        
-        $ipData = $this->getDroplet($droplateid);
-       
-        $tagdata=$this->tagDroplet($droplateid, $tag);
-       
-       $resultData['ip']=$ipData;
-       $resultData['droplate']=$droplate;
-       $resultData['droplateid']=$droplateid;
-       $resultData['tagdata']=$tagdata;
-       
-       print_r($resultData); die;
-    }
-
-   public function getEnvironmentTag()
-    {
-        switch (true) {
-            case in_array('test', ['dev', 'test']):
-                return 'local8';
-//            case defined('YII_BETA_TEST') && YII_BETA_TEST === true:
-//                return 'beta';
-//            case YII_ENV === 'prod' && defined('YII_ACCEPTANCE_TEST') && YII_ACCEPTANCE_TEST === true:
-//                return 'alpha';
-//            case YII_ENV === 'prod' && (!defined('YII_ACCEPTANCE_TEST') || YII_ACCEPTANCE_TEST !== true):
-//                return 'prod';
-            default:
-                return 'unknown';
-        }
-    }     
-    
-    public function getDroplet($id) {
-        $ch = curl_init('https://api.digitalocean.com/v2/droplets/' . $id);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
-            'Content-Type: application/json'
-                )
-        );
-
-         $result = curl_exec($ch); 
-        $result1 = @json_decode($result,TRUE);
-        if(is_array($result1)){
-                  if(!isset($result1)){
-                        $output='$result1 is not set';
-                    }
-                    elseif(!isset($result1["droplet"])){
-                        $output='$result1["droplet"] is not set';
-                    }
-                    elseif(!isset($result1["droplet"]["networks"])){
-                        $output='$result1["droplet"]["networks"] is not set';
-                    }
-                    elseif(!isset($result1["droplet"]["networks"]["v4"])){
-                        $output='$result1["droplet"]["networks"]["v4"] is not set';
-                    }
-                    elseif(!isset($result1["droplet"]["networks"]["v4"][0])){
-                        $output='$result1["droplet"]["networks"]["v4"][0] is not set';
-                    }
-                    elseif(!isset($result1["droplet"]["networks"]["v4"][0]["ip_address"])){
-                       $output='$result1["droplet"]["networks"]["v4"][0]["ip_address"] is not set'; 
-                    }
-                    else{
-                        $output=$result1['droplet']['networks']['v4'][0]['ip_address'];
-                    }
-        }else {
-            
-            $output='not array';
-        }
-       // print_r($result1);
-       // print_r($result1['droplet']['networks']['v4'][0]['ip_address']); 
-//        $createarray = json_encode($result1);
-//        $droplate = $createarray['droplet']['networks'];
-//       
-        //print_r($createarray['networks']);
-       
-        
-       
-
-      
-        return $output;
-    }
-    public function tagDroplet($dropletId, $tags)
-    {
-        $a= $this->createTag($dropletId,$tags);
-        
-
-// Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
-$ch = curl_init();
-
-curl_setopt($ch, CURLOPT_URL, "https://api.digitalocean.com/v2/tags/".$tags."/resources");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"resources\":[{\"resource_id\":{$dropletId},\"resource_type\":\"droplet\"}]}");
-curl_setopt($ch, CURLOPT_POST, 1);
-
-$headers = array();
-$headers[] = "Content-Type: application/json";
-$headers[] = "Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49";
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-$result = curl_exec($ch);
-
-if (curl_errno($ch)) {
-    echo 'Error:' . curl_error($ch);
-}
-return true;
-        
-        
-// Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
-$ch = curl_init();
-
-curl_setopt($ch, CURLOPT_URL, "https://api.digitalocean.com/v2/tags/awesome/resources");
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"resources\":[{\"resource_id\":\"{$dropletId}\",\"resource_type\":\"droplet\"}]}");
-curl_setopt($ch, CURLOPT_POST, 1);
-
-$headers = array();
-$headers[] = "Content-Type: application/json";
-$headers[] = "Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49";
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-$result = curl_exec($ch);
-print_r($result); die;
-if (curl_errno($ch)) {
-    echo 'Error:' . curl_error($ch);
-}
-curl_close ($ch);
-         // $a={"resources":[{"resource_id":"droplet_id","resource_type":"droplet"},]};
-//          $data=array();
-//          $data['resources']=array();
-//          $data['resources'][0]=array();
-//          $data['resources'][0]['resource_id']=$dropletId;
-//          $data['resources'][0]['resource_type']='droplet';
-//          
-//           $data["resources"] = [
-//           [ "resource_id" => $dropletId, "resource_type" => "droplet"]
-//       ];
-           
-//           $data_string = json_encode($data);
-//        
-//           $ch = curl_init('https://api.digitalocean.com/v2/test5/resources');
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-//        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-//        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-//            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
-//            'Content-Type: application/json'
-//                )
-//        );
-//
-//        $result = curl_exec($ch);
-//        $result1 = json_decode($result);
-//           print_r($result1); die;
-
-      
-   }
-   public function createTag($dropletId,$tag)
-   {
-        $data=array('name'=>$tag);
-        $data_string = json_encode($data);
-       $ch = curl_init('https://api.digitalocean.com/v2/tags');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
-            'Content-Type: application/json'
-                )
-        );
-
-        $result = curl_exec($ch);
-        $result1 = json_decode($result);
-        echo $dropletId;
-       print_r($result1); 
-//       $curl = curl_init();
-//
-//        curl_setopt_array($curl, array(
-//          CURLOPT_URL => "https://api.digitalocean.com/v2/tags/".$tag."/resources",
-//          CURLOPT_RETURNTRANSFER => true,
-//          CURLOPT_ENCODING => "",
-//          CURLOPT_MAXREDIRS => 10,
-//          CURLOPT_TIMEOUT => 30,
-//          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-//          CURLOPT_CUSTOMREQUEST => "POST",
-//          CURLOPT_POSTFIELDS => "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"\"resources\"\"\r\n\r\n[{\"resource_id\":'".$dropletId."',\"resource_type\":\"droplet\"}]\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--",
-//          CURLOPT_HTTPHEADER => array(
-//            "authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49",
-//            "cache-control: no-cache",
-//            "content-type: application/json",
-//            
-//          ),
-//        ));
-//
-//        $response = curl_exec($curl);
-//        $err = curl_error($curl);
-//
-//        curl_close($curl);
-//
-//        if ($err) {
-//          echo "cURL Error #:" . $err;
-//        } else {
-//          echo $response;
-//        }
-//       $data["name"] = $tag;
-//       $data_string = json_encode($data);
-//       try {
-//           $ch = curl_init('https://api.digitalocean.com/v2/tags/'.$tag);
-//            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-//            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-//            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-//                'Authorization: Bearer a1b8ffdb13b35fded062363219d11d4bbfcd0cc6e8395bd95ff66bd71ee47e49',
-//                'Content-Type: application/json',
-//                'Content-Length: ' . strlen($data_string))
-//            );
-//
-//            $result = curl_exec($ch);
-//            $result1 = json_decode($result);
-//            $createarray = json_decode(json_encode($result1), True);
-//           
-//            return $createarray;
-//       } catch (\Exception $e) {
-//          
-//          return $e;
-//       }
-   }
     public function updateUserip($ip, $user) {
         $updateip = array('user_ip' => $ip);
         $this->db->where('user_id', $user);
@@ -1729,10 +1465,10 @@ curl_close ($ch);
             array('db' => 'caseId', 'dt' => 1, 'searchable' => 'caseId'),
             array('db' => 'order_id', 'dt' => 2, 'searchable' => 'order_id'),
             array('db' => 'caseId', 'dt' => 3, 'formatter' => function( $d, $row ) {
-            $str = '<a  href="#/caselogView/' . $row['issue_id'] . '" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
-            $str .='   <a  href="#/caselogEdit/' . $row['issue_id'] . '" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
-            return $str;
-        })
+                $str = '<a  href="#/caselogView/' . $row['issue_id'] . '" title="Add issue"><i class="glyph-icon tooltip-button  icon-eye" title="" data-original-title=".icon-eye"></i></a>';
+                $str .='   <a  href="#/caselogEdit/' . $row['issue_id'] . '" title="Edit issue"><i class="glyph-icon tooltip-button icon-pencil" title="Edit" data-original-title=".icon-pencil"></i></a>';
+                return $str;
+            })
         );
 
         $order = 'ORDER BY customerissue.issue_id DESC';
@@ -1994,8 +1730,8 @@ curl_close ($ch);
             $orderData = $this->db->select('*')->from('inventoryissue')->where('issue_id', $issue_id[$i])->get()->result_array();
             $orderId = trim($orderData[0]['transactionId']);
             $oneOrederId = explode("|", $orderId);
-
-            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/inventoryContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issue_id[$i];
+            $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/inventoryContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issue_id[$i]. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD;
             $screperData = shell_exec('casperjs ' . $path);
             $filesname = $_SERVER['DOCUMENT_ROOT'] . '/js/inmessage_' . $issue_id[$i] . '.txt';
             if (file_exists($filesname)) {
@@ -2039,7 +1775,9 @@ curl_close ($ch);
         $this->db->insert('case_log_reply_msg', $data['replyData']);
         $reply_id = $this->db->insert_id();
         if($reply_id){
-            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/customerReply.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --caseId=' . $data['caseID'] . '--reply_id=' . $reply_id;
+            
+            $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/customerReply.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --caseId=' . $data['caseID'] . '--reply_id=' . $reply_id. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD;
             $screperData = shell_exec('casperjs ' . $path);
             if (!empty($screperData)) {
                 return true;
@@ -2296,7 +2034,7 @@ curl_close ($ch);
         $datadate = $this->db->select('user_email,user_password,customer_execution_time')->from('user_email')->where('user_id', $data['user_id'])->get()->result_array();
 
         if (!empty($datadate[0]['customer_execution_time']) && $datadate[0]['customer_execution_time'] != '0000-00-00 00:00:00' && $datadate[0]['customer_execution_time'] != null) {
-            $days_ago = date('Y-m-d', strtotime('-4 days', strtotime($datadate[0]['customer_execution_time'])));
+            $days_ago = date('Y-m-d', strtotime('-5 days', strtotime($datadate[0]['customer_execution_time'])));
             $result['lastUpdatedDataDate'] = $days_ago;
             $result['user_email'] = $datadate;
         } else {
@@ -2516,7 +2254,8 @@ curl_close ($ch);
             $mskuId = trim($data['msku']);
             $oneMskuId = explode("|", $mskuId);
             if ($type == 'submit') {
-                $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issueId;
+                $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+                $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issueId. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD;
                 $screperData = shell_exec('casperjs ' . $path);
                 $filesname = $_SERVER['DOCUMENT_ROOT'] . '/js/auditmessage_' . $issueId . '.txt';
                 if (file_exists($filesname)) {
@@ -2578,7 +2317,8 @@ curl_close ($ch);
             $oneMskuId = explode("|", $mskuId);
         
         if ($type == 'submit') {
-                $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issueId;
+                $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+                $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditContact.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --issueId=' . $issueId. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD;
                 $screperData = shell_exec('casperjs ' . $path);
                 $filesname = $_SERVER['DOCUMENT_ROOT'] . '/js/auditmessage_' . $issueId . '.txt';
                 if (file_exists($filesname)) {
@@ -3019,7 +2759,8 @@ curl_close ($ch);
         $this->db->insert('aduit_reply_msg', $data['replyData']);
         $reply_id = $this->db->insert_id();
         if ($reply_id) {
-            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditReply.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --caseId=' . $data['caseID'] . '--reply_id=' . $reply_id;
+            $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+            $path = $_SERVER["DOCUMENT_ROOT"] . '/js/auditReply.js --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --caseId=' . $data['caseID'] . '--reply_id=' . $reply_id. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD;
             $screperData = shell_exec('casperjs ' . $path);
             if (!empty($screperData)) {
                 return true;

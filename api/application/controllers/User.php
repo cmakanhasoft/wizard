@@ -86,7 +86,7 @@ class User extends REST_Middel_Controller {
         if (preg_match('/Invitation/', $maildata['Subject'])) {
             $user = $this->user_model->invitationrecvEmail($data);
             $cookiefileName= mt_rand().$user[0]['user_id'].'.cookie';
-           $resultFilename= mt_rand().$user[0]['user_id'].'.code';
+            $resultFilename= mt_rand().$user[0]['user_id'].'.code';
             //$ip=$this->user_model->getDigitalOcean(); 
             //$userIp=$this->user_model->updateUserip($ip,$user[0]['user_id']); 
 //            $cookiefileName='testtttt.result';
@@ -130,6 +130,8 @@ class User extends REST_Middel_Controller {
                         //$message['ip'] = $ip;
                         $message['data'] = $scraperData;
                     }
+                }else {
+                   $message['message'] = "File available but  code not get"; 
                 }
             } else {
                 $message['error'] = true;
@@ -157,9 +159,6 @@ class User extends REST_Middel_Controller {
                 $message['error'] = true;
                 $message['message'] = "Mail not get.";
             }
-        } else if (preg_match('/verification/', $maildata['Subject'])) { 
-            
-            
         }else {
             $user = $this->user_model->auditRecvEmail($data);
             if (!empty($user)) {
@@ -211,7 +210,10 @@ class User extends REST_Middel_Controller {
         if (!empty($alluserdata)) {
             $activation = $this->user_model->checkActivation($postData);
             if(!empty($activation)){
-                  $payment = $this->user_model->checkPayment($postData); 
+                $message['error'] = false;
+                $message['message'] = "Login successfully.";
+                $message['data'] = $activation;
+                  /*$payment = $this->user_model->checkPayment($postData); 
                 if(!empty($payment)){
                     $message['error'] = false;
                     $message['message'] = "Login successfully.";
@@ -221,7 +223,7 @@ class User extends REST_Middel_Controller {
                     $message['error'] = true;
                     $message['message'] = "Before move ahead, please enter your card details for payment processing. ";
                     $message['data'] = $activation;
-                }
+                }*/
             }else {
                 $message['login_token']='0';
                 $message['error'] = true;
@@ -750,6 +752,7 @@ Team WizardofAMZ
 
     public function stripePayments_post() {
         $postData = $this->post();
+        
         $cardname = $this->post('cardname');
         $cardnumber = $this->post('cardnumber');
         $exp_month = $this->post('exp_month');
@@ -765,7 +768,7 @@ Team WizardofAMZ
 
             $customer = Customer::create(array(
                         'email' => $uname,
-                        'source' => $token
+                        'card' => $token
             ));
 
 //            $subscription = Subscription::create(array(
@@ -1000,26 +1003,10 @@ Team WizardofAMZ
         $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
 
-    public function stest_post() {
-         $datas=$this->post();
-       if(isset($datas['HtmlBody']) && !empty($datas['HtmlBody'])){
-           echo $datas['HtmlBody'];
-           
-           
-           echo "-----------";
-           $a = $datas['HtmlBody'];
-            $var1 = '949714';
-            $var2 = '</p>';
-            $pool = $a;
-            $temp1 = strpos($pool, $var1) + strlen($var1);
-            $result = substr($pool, $temp1, strlen($pool));
-            $dd = strpos($result, $var2);
-            if ($dd == 0) {
-                $dd = strlen($result);
-            }
-            $caseId = substr($result, 0, $dd);
-            echo $caseId; die;
-       }
+    public function stest_get() {
+        echo date('Y-m-d h:i:s');
+        $insertdata=array('time'=>date('Y-m-d H:i:s'),'data'=>'test');
+        $this->db->insert('test',$insertdata);
     }
 
     public function getUserData_get() {
@@ -1054,7 +1041,8 @@ Team WizardofAMZ
         $userData = $this->user_model->getUserList();
         if (!empty($userData)) {
             $path = $_SERVER["DOCUMENT_ROOT"] . '/js/customerClick.js';
-             $data = shell_exec('casperjs ' . $path . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --customer_count=' . $userData[0]['customer_count'] . ' --rem_count=' . $userData[0]['remb_count'] . ' --inventory_count=' . $userData[0]['inventory_count'] . ' --proxy='.$userData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD); 
+            $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+            $data = shell_exec('casperjs ' . $path . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password'] . ' --customer_count=' . $userData[0]['customer_count'] . ' --rem_count=' . $userData[0]['remb_count'] . ' --inventory_count=' . $userData[0]['inventory_count'] .' --payment_count='.$userData[0]['datarange_count'] . ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD); 
             if (!empty($data)) {
                 $changetime = $this->user_model->changeTime($userData);
             }
@@ -1073,8 +1061,8 @@ Team WizardofAMZ
         if (!empty($customerData)) {
 
             $downloadpath = $_SERVER["DOCUMENT_ROOT"] . '/js/downloadCustomerReport.js';
-
-            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $customerData[0]['user_email'] . ' --password=' . $customerData[0]['user_password'] . ' --customer_count=' . $customerData[0]['customer_count']. ' --proxy='.$customerData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
+            $ip=$customerData[0]['user_ip'].':'.$customerData[0]['user_ip_port'];
+            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $customerData[0]['user_email'] . ' --password=' . $customerData[0]['user_password'] . ' --customer_count=' . $customerData[0]['customer_count']. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
 
             if (!empty($downloadData)) {
                 $fileName = $_SERVER["DOCUMENT_ROOT"] . '/js/customer_' . $customerData[0]['customer_count'] . '.txt';
@@ -1115,7 +1103,13 @@ Team WizardofAMZ
             $filedata = $this->user_model->getUserData(array('user_id' => $customerData[0]['user_id']));
 
             $date = strtotime($filedata[0]['createdDate']);
-            $fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            if($filedata[0]['customer_count']==1){
+                $fromDate=date('Y-m-d H:i:s', strtotime("-1 year"));
+            }else {
+                $fromDate = date('Y-m-d H:i:s', strtotime("-4 days"));
+            }
+            //$fromDate=date('Y-m-d',strtotime($filedata[0]['createdDate'].' -1 year'));
+            //$fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
             $toDate = date('Y-m-d H:i:s', strtotime("-2 days"));
             $fileLogArray = array('from_date' => $fromDate, 'to_date' => $toDate, 'type' => 'customer_report', 'user_id' => $filedata[0]['user_id'], 'createdDate' => date('Y-m-d H:i:s'), 'modifyDate' => date('Y-m-d H:i:s'));
 
@@ -1134,7 +1128,8 @@ Team WizardofAMZ
         $rembData = $this->user_model->getrembStatus();
         if (!empty($rembData)) {
             $downloadrpath = $_SERVER["DOCUMENT_ROOT"] . '/js/downloadRem.js';
-            $downloadremData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $rembData[0]['user_email'] . ' --password=' . $rembData[0]['user_password'] . ' --rem_count=' . $rembData[0]['remb_count']. ' --proxy='.$rembData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
+            $ip=$rembData[0]['user_ip'].':'.$rembData[0]['user_ip_port'];
+            $downloadremData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $rembData[0]['user_email'] . ' --password=' . $rembData[0]['user_password'] . ' --rem_count=' . $rembData[0]['remb_count']. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
             if (!empty($downloadremData)) {
                 $rfileName = $_SERVER["DOCUMENT_ROOT"] . '/js/rembData_' . $rembData[0]['remb_count'] . '.txt';
                 if (file_exists($rfileName)){
@@ -1169,7 +1164,13 @@ Team WizardofAMZ
             $filedata = $this->user_model->getUserData(array('user_id' => $rembData[0]['user_id']));
 
             $date = strtotime($filedata[0]['createdDate']);
-            $fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            //$fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            //$fromDate=date('Y-m-d',strtotime($filedata[0]['createdDate'].' -1 year'));
+            if($filedata[0]['remb_count']==1){
+                $fromDate=date('Y-m-d H:i:s', strtotime("-1 year"));
+            }else {
+                $fromDate = date('Y-m-d H:i:s', strtotime("-4 days"));
+            }
             $toDate = date('Y-m-d H:i:s', strtotime("-2 days"));
             $fileLogArray = array('from_date' => $fromDate, 'to_date' => $toDate, 'type' => 'remb_report', 'user_id' => $filedata[0]['user_id'], 'createdDate' => date('Y-m-d H:i:s'), 'modifyDate' => date('Y-m-d H:i:s'));
 
@@ -1191,8 +1192,8 @@ Team WizardofAMZ
 
         if (!empty($inventoryData)) {
             $downloadrpath = $_SERVER["DOCUMENT_ROOT"] . '/js/downloadInventoryReport.js';
-
-            $downloadinventoryData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $inventoryData[0]['user_email'] . ' --password=' . $inventoryData[0]['user_password'] . ' --inventory_count=' . $inventoryData[0]['inventory_count'] . ' --proxy='.$inventoryData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
+            $ip=$inventoryData[0]['user_ip'].':'.$inventoryData[0]['user_ip_port'];
+            $downloadinventoryData = shell_exec('casperjs ' . $downloadrpath . ' --email=' . $inventoryData[0]['user_email'] . ' --password=' . $inventoryData[0]['user_password'] . ' --inventory_count=' . $inventoryData[0]['inventory_count'] . ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
             if (!empty($downloadinventoryData)) {
                 $ifileName = $_SERVER["DOCUMENT_ROOT"] . '/js/inventoryData_' . $inventoryData[0]['inventory_count'] . '.txt';
                 
@@ -1228,7 +1229,12 @@ Team WizardofAMZ
             $filedata = $this->user_model->getUserData(array('user_id' => $inventoryData[0]['user_id']));
 
             $date = strtotime($filedata[0]['createdDate']);
-            $fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            //$fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            if($filedata[0]['inventory_count']==1){
+                $fromDate=date('Y-m-d H:i:s', strtotime("-1 year"));
+            }else {
+                $fromDate = date('Y-m-d H:i:s', strtotime("-4 days"));
+            }
             $toDate = date('Y-m-d H:i:s', strtotime("-2 days"));
             $fileLogArray = array('from_date' => $fromDate, 'to_date' => $toDate, 'type' => 'inventory_report', 'user_id' => $filedata[0]['user_id'], 'createdDate' => date('Y-m-d H:i:s'), 'modifyDate' => date('Y-m-d H:i:s'));
 
@@ -1251,8 +1257,8 @@ Team WizardofAMZ
         if (!empty($rangeData)) {
 
             $downloaddpath = $_SERVER["DOCUMENT_ROOT"] . '/js/datarange.js';
-
-            $downloadDatarangData = shell_exec('casperjs ' . $downloaddpath . ' --email=' . $rangeData[0]['user_email'] . ' --password=' . $rangeData[0]['user_password'] . ' --datarange_count=' . $rangeData[0]['datarange_count']. ' --proxy='.$rangeData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
+            $ip=$rangeData[0]['user_ip'].':'.$rangeData[0]['user_ip_port'];
+            $downloadDatarangData = shell_exec('casperjs ' . $downloaddpath . ' --email=' . $rangeData[0]['user_email'] . ' --password=' . $rangeData[0]['user_password'] . ' --datarange_count=' . $rangeData[0]['datarange_count']. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
 
             if (!empty($downloadDatarangData)) {
                 $dfileName = $_SERVER["DOCUMENT_ROOT"] . '/js/datarange_' . $rangeData[0]['datarange_count'] . '.csv';
@@ -1294,7 +1300,13 @@ Team WizardofAMZ
             $filedata = $this->user_model->getUserData(array('user_id' => $rangeData[0]['user_id']));
 
             $date = strtotime($filedata[0]['createdDate']);
-            $fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            //$fromDate = date('Y-m-d H:i:s', strtotime("-18 month", $date));
+            //$fromDate=date('Y-m-d',strtotime($filedata[0]['createdDate'].' -1 year'));
+            if($filedata[0]['datarange_count']==1){
+                $fromDate=date('Y-m-d H:i:s', strtotime("-1 year"));
+            }else {
+                $fromDate = date('Y-m-d H:i:s', strtotime("-4 days"));
+            }
             $toDate = date('Y-m-d H:i:s', strtotime("-2 days"));
             $fileLogArray = array('from_date' => $fromDate, 'to_date' => $toDate, 'type' => 'payment_report ', 'user_id' => $filedata[0]['user_id'], 'createdDate' => date('Y-m-d H:i:s'), 'modifyDate' => date('Y-m-d H:i:s'));
 
@@ -1304,7 +1316,7 @@ Team WizardofAMZ
             $message['error'] = true;
         }
 
-
+print_r($message);
 
 
         $this->user_model->addTime($message['message']);
@@ -1473,8 +1485,8 @@ Team WizardofAMZ
         $userData = $this->user_model->newUser();
         if (!empty($userData)){
             $downloadpath = $_SERVER["DOCUMENT_ROOT"] . '/js/newUser.js';
-
-            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password']. ' --proxy='.$userData[0]['user_ip'].' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
+            $ip=$userData[0]['user_ip'].':'.$userData[0]['user_ip_port'];
+            $downloadData = shell_exec('casperjs ' . $downloadpath . ' --email=' . $userData[0]['user_email'] . ' --password=' . $userData[0]['user_password']. ' --proxy='.$ip.' --proxy-auth='.OXYUSERNAME.':'.OXYPASSWORD);
             $notloginfileName = $_SERVER["DOCUMENT_ROOT"] . '/js/notlogin.txt';
             if (file_exists($notloginfileName)) {
                 unlink($notloginfileName);

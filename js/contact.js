@@ -76,7 +76,9 @@ casper.then(function() {
      this.thenOpen("https://sellercentral.amazon.com/gp/homepage.html", function() {
      });
      console.log("Amazon website opened");
-
+   this.wait(2000, function() {
+          this.capture('amazonhome.png');
+     });
 });
 
 casper.then(function() {
@@ -115,31 +117,60 @@ casper.then(function() {
 
 casper.then(function() {
      this.mouse.click("div.a-box.cursorHand.a-declarative");
+      this.wait(2000, function() {
+          this.capture('form11.png');
+     });
 });
 
 casper.then(function() {
-     this.mouse.click("div#ctiWidget_SOA >div:nth-child(2)");
+     //this.mouse.click("div#ctiWidget_SOA >div:nth-child(2)");
+    // this.mouse.click("div#ctiWidget_SOA >div:nth-child(2)");
+       this.evaluate(function() {
+           $(".a-row.a-expander-container.scu-section-expander-container:eq(0) a").click();
+            //$(".a-row.a-expander-container.scu-section-expander-container:eq(1)").find(".scu-section-expander-inner a").click();
+        });
      this.wait(2000, function() {
           this.capture('form1.png');
      });
 });
 casper.then(function() {
-     this.evaluate(function(order_id) {
+    console.log(order_id);
+     var a=this.evaluate(function(order_id) {
           var a=order_id.replace(/"/g,"");
           var searchorderid=a.split("|");
           var finalsearchorderId=searchorderid[0].trim();
           $("#order_id").val(finalsearchorderId);
+          return finalsearchorderId;
      }, order_id);
+     console.log(a);
 });
 
 casper.then(function() {
+    
      this.mouse.click("#getOrderDetailsButton-announce");
+       this.wait(2000, function() {
+          this.capture('form12.png');
+     });
 });
 casper.then(function() {
-     this.mouse.click("#question_30004_radio_button_id");
+    
+    this.mouse.click("#question_30004_radio_button_id");
+      this.wait(2000, function() {
+          this.capture('form13.png');
+     });
+     this.evaluate(function() {
+           //$("#question_30004_radio_button_id").click();
+            //this.mouse.click("#question_30004_radio_button_id");
+        });
 });
 casper.then(function() {
      this.mouse.click("#get_question_action_button-announce");
+       this.wait(2000, function() {
+          this.capture('form14.png');
+     });
+     this.evaluate(function() {
+         //$("#get_question_action_button-announce").click();
+     });
 });
 
 casper.then(function() {

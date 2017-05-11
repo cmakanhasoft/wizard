@@ -78,9 +78,10 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                                         body_sizer();
                                    }, 300);
                          } else {
-                              if (response.data.login_token == '1') {
-                                   $('#myModal').modal('show');
-                                   $rootScope.userPaymentData = response.data.data[0];
+                              if (response.data.error == 'false') {
+                                   //$('#myModal').modal('show');
+                                   //$rootScope.userPaymentData = response.data.data[0];
+                                   $rootScope.userdata = response.data.data[0];
                               } else {
                                    $('#logindiv').removeClass('hide');
                                    show_notification('Error', response.data.message, '', 'no');
@@ -2067,7 +2068,11 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                                              sym =' | ';
                                         }
                                         mulOrderId +=a[j]['msku']+sym;
-                                        msg +='With regard to SKU GH-25B-2. Were we credited for the 0 damaged units? Were we credited for the 0 destroyed units? Were we credited for the 0 lost units?';
+                                        msg +='With regard to SKU '+a[j]['msku']+'. Were we credited for the '+a[j]['damaged']+' damaged units? Were we credited for the '+a[j]['destroyed']+' destroyed units?';
+                                        
+                                        if(a[j]['lost']!=0){
+                                            msg+='Were we credited for the '+a[j]['lost']+' lost units?';
+                                        }
                                            msg+='\n';
                                             msg+='\n';
                                       }
@@ -2168,7 +2173,10 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                    issue +='We are reconciling our inventory for the last '+daydiff+' days using the inventory reconciliation report in seller central.';
                    issue +='\n';
                    issue +='\n';
-                   issue +='With regard to SKU '+$stateParams.sku+'. Were we credited for the '+$stateParams.damaged+' damaged units? Were we credited for the '+$stateParams.destroyed+' destroyed units? Were we credited for the '+$stateParams.lost+' lost units?';
+                   issue +='With regard to SKU '+$stateParams.sku+'. Were we credited for the '+$stateParams.damaged+' damaged units? Were we credited for the '+$stateParams.destroyed+' destroyed units?';
+                   if($stateParams.lost !=0){
+                       issue +='Were we credited for the '+$stateParams.lost+' lost units?';
+                   }
                    issue +='\n';
                    issue +='\n';
                    issue +='Thanks,';
