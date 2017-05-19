@@ -120,6 +120,7 @@ app.directive('exampleDatatable',function ($rootScope,$http,$compile) {
                 "ajax":{"url": 'api/index.php/'+attrs.url,"beforeSend": function(xhr){
                 }},
                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    
                     $compile(nRow)(scope);
                 },
                 initComplete: function (){
@@ -133,6 +134,8 @@ app.directive('exampleDatatable1',function ($rootScope,$http,$compile) {
      return {
         restrict: 'A',
         link: function(scope, elem, attrs) {
+            scope.reimeli = [];
+            scope.rembData=[];
             scope.quoteDatatable1 = elem.dataTable({
                 "serverSide": true,
                 "bLengthChange": false,
@@ -141,11 +144,20 @@ app.directive('exampleDatatable1',function ($rootScope,$http,$compile) {
                 "bSort":true,
                 "bsearching": true,
                 "bProcessing": true,
+                "columnDefs": [
+                       { "visible": false, "targets": 10},
+                       { "visible": false, "targets": 11},
+                       { "visible": false, "targets": 12},
+                       { "visible": false, "targets": 13}
+                     ],
                 "sDom": 'C<"clear">R<"leftside"><"scrolltbl"rt><"bottomside"ilp>',
                // "ajax": 'api/index.php/'+attrs.url,
                 "ajax":{"url": 'api/index.php/'+attrs.url,"beforeSend": function(xhr){
                 }},
                 "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                    debugger;
+                    scope.rembData.push(aData);
+                     console.log( scope.rembData);
                     $compile(nRow)(scope);
                 },
                 initComplete: function (){
@@ -399,6 +411,19 @@ app.directive('dateTimePicker',function () {
                 startDate: new Date(),
                 minuteStep: 10
             });
+        }
+    }
+});
+
+app.directive('reportRange',function () {
+    return {
+        restrict: 'A',
+        link: function(scope, elem, attrs) {
+            elem.daterangepicker({
+                      locale: {
+                        format: 'YYYY/MM/DD'
+                    }
+                  });
         }
     }
 });

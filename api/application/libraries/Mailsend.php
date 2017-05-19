@@ -26,19 +26,17 @@
 		public function mail($to,$cc,$bcc,$subject,$message,$path)
 		{
 			
-			$this->CI->email->from('support@wizardofamz.com', 'Wizard of AMZ');
-            $this->CI->email->to($to);
-            //$this->email->cc('another@another-example.com');
-            //$this->email->bcc('them@their-example.com');.
-	     $this->CI->email->attach($path);
-            $this->CI->email->subject($subject);
-            $this->CI->email->message($message);
-            $this->CI->email->send();
+                    $this->CI->email->from('support@wizardofamz.com', 'Wizard of AMZ');
+                    $this->CI->email->to($to);
+                    //$this->email->cc('another@another-example.com');
+                    //$this->email->bcc('them@their-example.com');.
+                     $this->CI->email->attach($path);
+                    $this->CI->email->subject($subject);
+                    $this->CI->email->message($message);
+                    $this->CI->email->send();
 
-            return $this->CI->email->print_debugger();
-
-            
-		}
+                    return $this->CI->email->print_debugger();
+                }
                 public function usermail($to,$cc,$bcc,$subject,$message)
 		{
 			$this->CI->email->from('your@example.com', 'Your Name');

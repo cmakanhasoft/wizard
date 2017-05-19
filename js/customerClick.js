@@ -47,6 +47,14 @@ var payment_count=casper.cli.get('payment_count');
 //var prev_year = d.getFullYear()-1;
 //var startDate=curr_month+'/'+curr_date+'/'+curr_year;
 //var endDate=curr_month+'/'+curr_date+'/'+prev_year;
+
+var d18=new Date();
+var c18date=d18.getDate();
+var c18month=(new Date(d18.setMonth(d18.getMonth() - 18, d18.getDate()))).getMonth()+1;
+var c18year=d18.getFullYear();
+var startDate18=c18month+'/'+c18date+'/'+c18year;
+
+
 var d = new Date();
 var cdate=d.getDate();
 var cmonth=d.getMonth()+1;
@@ -103,7 +111,7 @@ if(rem_count==0){
 }
 
 if(inventory_count==0){
-     var ipath= "https://sellercentral.amazon.com/gp/ssof/reports/request-download.html/ref=ag_xx_cont_fbafulrpts?recordType=INVENTORY_ADJUSTMENT&eventDateTypeFilterOption=orderDate&eventDateOption=0&startDate="+startDate+"&endDate="+endDate+"";
+     var ipath= "https://sellercentral.amazon.com/gp/ssof/reports/request-download.html/ref=ag_xx_cont_fbafulrpts?recordType=INVENTORY_ADJUSTMENT&eventDateTypeFilterOption=orderDate&eventDateOption=0&startDate="+startDate18+"&endDate="+endDate+"";
 }else {
   //   var ipath="https://sellercentral.amazon.com/gp/ssof/reports/request-download.html/ref=ag_xx_cont_fbafulrpts?recordType=INVENTORY_ADJUSTMENT&eventDateTypeFilterOption=orderDate&eventDateOption=7";
    var ipath= "https://sellercentral.amazon.com/gp/ssof/reports/request-download.html/ref=ag_xx_cont_fbafulrpts?recordType=INVENTORY_ADJUSTMENT&eventDateTypeFilterOption=orderDate&eventDateOption=0&startDate="+startDate7+"&endDate="+endDate+"";

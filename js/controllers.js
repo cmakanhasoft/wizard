@@ -807,11 +807,23 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          method: "POST",
                          data:$scope.download 
                     }).success(function(response) {
+                        debugger;
                          if (response.error == false) {
-                               var link = document.createElement("a");
-                              link.download = response.data.fromDate+'-'+response.data.toDate;
-                              link.href = response.data.path;
-                              link.click();
+                             debugger;
+//                               var link = document.createElement("a");
+//                               document.body.appendChild(link);
+//                                link.setAttribute("type", "hidden"); 
+//                              link.download = response.data.fromDate+'-'+response.data.toDate;
+//                              link.href = response.data.path;
+//                              link.click();
+                              
+                              var link = document.createElement('a');
+                            // Add the element to the DOM
+                            document.body.appendChild(link);
+                            link.setAttribute("type", "hidden"); // make it hidden if needed
+                            link.download = response.data.fromDate+'-'+response.data.toDate;
+                            link.href = response.data.path;
+                            link.click();
 
                          } else {
                                show_notification('Error', response.message, '', 'no');
@@ -835,9 +847,14 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
 
 
      }]).controller('refundManagerCtrl', ['$rootScope', '$scope', '$window', '$http', '$location', '$stateParams', '$cookies', function($rootScope, $scope, $window, $http, $location, $stateParams, $cookies) {
+
           if ($rootScope.userdata === undefined && $cookies.get('userdata') !== undefined)
           {
                $rootScope.userdata = JSON.parse($cookies.get('userdata'));
+          }
+          if($scope.reimeli==undefined){
+               $scope.reimeli={};
+
           }
           $scope.globalFilter = function() {
                $scope.quoteDatatable.fnFilter($scope.search_refund);
@@ -935,7 +952,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                $http({
                     url: path + "user/markresolvedescrepency",
                     method: "POST",
-                    data: Resolveorder,
+                    data: {'resolver':Resolveorder,'user_id':$rootScope.userdata.user_id},
                }).success(function(response) {
                     if (response.error == false) {
                          show_notification('Success', response.message, '#/refundManager', 'yes');
@@ -944,6 +961,30 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                     }
                });
           }
+          $scope.addDocument=function(){
+                console.log($scope.rembData);
+                debugger;
+                console.log($scope.reimeli);
+                var flag=''
+                if(Object.keys($scope.reimeli).length==0){
+                            flag='all';
+                             $http({
+                                url: path + "user/addAllDocument",
+                                method: "POST",
+                                data: {'rembData':$scope.rembData},
+                           }).success(function(response) {
+                               
+                           });
+                 }else {
+                        flag='not_all';
+                 }
+          }
+          
+          
+             
+          
+         
+          
           $scope.addIssue = function() {
                if($scope.reimeli==undefined){
                $scope.reimeli={};
@@ -1963,12 +2004,17 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
           if($scope.audit==undefined){
                $scope.audit={};
           }
+          
+
           $scope.auditData='-';
           $scope.getAuditData=function(frm_id){
                if ($('#' + frm_id).valid()) {
-                    $scope.audit.fromDate=$('#fromDate').val();
-                    $scope.audit.toDate=$('#toDate').val();
-                    $scope.audit.user_id = $rootScope.userdata.user_id;
+                
+                   var Newdate=$('#reportrange').val().split('-');
+                 
+                    $scope.audit.fromDate= Newdate[0].replace(/\//g, "-"); 
+                    $scope.audit.toDate=Newdate[1].replace(/\//g, "-"); 
+                     $scope.audit.user_id = $rootScope.userdata.user_id;
                     console.log(  $scope.audit);
                     $http({
                          method: "POST",

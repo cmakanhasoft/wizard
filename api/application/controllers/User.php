@@ -1004,9 +1004,76 @@ Team WizardofAMZ
     }
 
     public function stest_get() {
-        echo date('Y-m-d h:i:s');
-        $insertdata=array('time'=>date('Y-m-d H:i:s'),'data'=>'test');
-        $this->db->insert('test',$insertdata);
+        $fileName='test.doc';
+        $filePath = $_SERVER['DOCUMENT_ROOT'] . "/amazon_local/case_log/" . $fileName;
+        $out = '<html>';
+        $out .= '<head>';
+        $out .= '</head>';
+        $out .="<body>";
+        $out .="<h1> FBA ISSUE </h1>";
+        $out .="<b style='font-size:17px;'> Contact Reason: </b><br />Customers and orders | Other customer and order issues | Order ID: 104-9946575-4325845 <br />";
+        $out .="<b style='font-size:17px;'>Your issue</b><br /><br />";
+        $out .="<textarea> Hello <br/><br/> Looking through the details of order ID 104-9946575-4325845 it appears this customer was refunded  $4.52 but the customer never actually returned the item and it is more then 147 days since the refund. Please review this order and issue a reimbursement for $4.52. I appreciate your help with this matter. <br/><br/> In Summary: <br/>
+Order ID 104-9946575-4325845 - Please reimburse $4.52 - Reason: No Customer Return <br/> Thanks, <br /> ";
+        $out .="</textarea> <br />";
+        $out .="<b style='font-size:17px;'>Order Id:</b>104-9946575-4325845 <br /> <br />";
+        $out .="<b style='font-size:17px;'>Email Id:</b>104-9946575-4325845";
+        $out .="<br />";
+        $out .="<br />";
+        $out .="<table>";
+        $out .="<tr>";
+        $out .="<th  style='text-align: left;'>SKU</th>";
+        $out .="<td>IceKing-SC-70</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Order Date</th>";
+        $out .="<td>2016-12-20</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Quantity</th>";
+        $out .="<td>1</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Days between order and refund</th>";
+        $out .="<td>2 Days</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Price</th>";
+        $out .="<td>41.08</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Days between order and refund</th>";
+        $out .="<td>2 Days</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Refund amount</th>";
+        $out .="<td>4.52</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Refund Date</th>";
+        $out .="<td>2016-12-22</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Days between order and refund</th>";
+        $out .="<td>2 Days</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Return Date</th>";
+        $out .="<td>2016-12-22</td>";
+        $out .="</tr>";
+        $out .="<tr>";
+        $out .="<th style='text-align: left;'>Days between refund and return</th>";
+        $out .="<td>3 days</td>";
+        $out .="</tr>";
+        $out .="</table>";
+        $out .="</body>";
+        $out .= '</html>';
+        
+
+        $fp = fopen($_SERVER['DOCUMENT_ROOT'] . "/amazon_local/case_log/" . $fileName . "", "wb");
+        fwrite($fp, $out);
+        fclose($fp);
+        
     }
 
     public function getUserData_get() {
@@ -2178,6 +2245,11 @@ print_r($message);
                         $this->db->insert('proxy_ip',$insertarray);
                     }
                 }
+        }
+        public function addAllDocument_post(){
+            $postData=$this->post();
+            $caseData=$this->user_model->addAllDocument($postData);
+            
         }
 
 }
