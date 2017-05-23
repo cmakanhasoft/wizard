@@ -1555,7 +1555,8 @@ AND
 
     public function getUserList() {
         $currentDate = date("Y-m-d");
-        return $this->db->select('*')->from('user_email')->where('customer_execution_time', $currentDate)->where('first_time_status', '1')->where('user_status', '3')->limit(1)->get()->result_array();
+        return $this->db->select('*')->from('user_email')->where('customer_execution_time <=', $currentDate)->where('first_time_status', '1')->where('user_status', '3')->limit(1)->get()->result_array();
+        
     }
 
     public function addTime($data = '') {

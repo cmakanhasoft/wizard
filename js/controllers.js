@@ -69,6 +69,7 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                          url: path + 'user/login',
                          data: $scope.user
                     }).then(function mySucces(response) {
+                        debugger;
                               if (response.data.error == false) {
                                    $cookies.put('userdata', JSON.stringify(response.data.data[0]));
                                    $rootScope.userdata = response.data.data[0];
@@ -78,9 +79,9 @@ app.controller('loginCtrl', ['$rootScope', '$scope', '$window', '$http', '$locat
                                         body_sizer();
                                    }, 300);
                          } else {
-                              if (response.data.error == 'false') {
-                                   //$('#myModal').modal('show');
-                                   //$rootScope.userPaymentData = response.data.data[0];
+                              if (response.data.login_token == '1') {
+                                   $('#myModal').modal('show');
+                                   $rootScope.userPaymentData = response.data.data[0];
                                    $rootScope.userdata = response.data.data[0];
                               } else {
                                    $('#logindiv').removeClass('hide');

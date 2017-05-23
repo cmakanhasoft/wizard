@@ -97,13 +97,14 @@ define('DB_HOST', 'localhost');
 //define('SITE_NAME', 'http://192.168.1.140:88/geniemanager');
 //define('MAIN_DOMAIN', 'http://192.168.1.140:88');
 //define('RELATIVE_PATH', 'http://192.168.1.140:88/geniemanager');
-
+//client test=sk_test_2etqg3OfqaDT322hDjGnQFVE
+//client test=pk_test_vIO19hB1RDoX2Ny2GfVBo5Fm
 
 define('filePath', $_SERVER['DOCUMENT_ROOT'].'/amazon_local/fileFolder/');
 define('Rpath', $_SERVER['DOCUMENT_ROOT'].'/amazon_local/'); 
 define('POSTMARK_API_KEY', 'be6b1380-fe16-4caa-8bc2-83165526879a');
-define('STRIPE_SECRET_KEY', 'sk_live_CX5y4Ahp15T3CLg6twENGGPJ');
-define('STRIPE_PUBLIC_KEY', 'pk_live_vbwOSI4yQ51RASkEwhSeNiQh');
+define('STRIPE_SECRET_KEY', 'sk_test_2etqg3OfqaDT322hDjGnQFVE');
+define('STRIPE_PUBLIC_KEY', 'pk_test_vIO19hBlRDoX2Ny2GfVBo5Fm');
 define('POSTMARKDOMAIN', '@inbound.kanhasoftdev.com');
 define('OXYUSERNAME', 'pradeep');
 define('OXYPASSWORD', 'a7G3nceY0J');

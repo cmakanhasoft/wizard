@@ -213,7 +213,7 @@ class User extends REST_Middel_Controller {
                 $message['error'] = false;
                 $message['message'] = "Login successfully.";
                 $message['data'] = $activation;
-                  /*$payment = $this->user_model->checkPayment($postData); 
+                $payment = $this->user_model->checkPayment($postData); 
                 if(!empty($payment)){
                     $message['error'] = false;
                     $message['message'] = "Login successfully.";
@@ -223,7 +223,7 @@ class User extends REST_Middel_Controller {
                     $message['error'] = true;
                     $message['message'] = "Before move ahead, please enter your card details for payment processing. ";
                     $message['data'] = $activation;
-                }*/
+                }
             }else {
                 $message['login_token']='0';
                 $message['error'] = true;
@@ -1104,7 +1104,7 @@ Order ID 104-9946575-4325845 - Please reimburse $4.52 - Reason: No Customer Retu
     }
 
     public function clickCustomerReport_get(){
-        $addtime = $this->user_model->addTime();
+        //$addtime = $this->user_model->addTime();
         $userData = $this->user_model->getUserList();
         if (!empty($userData)) {
             $path = $_SERVER["DOCUMENT_ROOT"] . '/js/customerClick.js';
